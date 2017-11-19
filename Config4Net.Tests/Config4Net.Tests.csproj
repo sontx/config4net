@@ -47,9 +47,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Config4Net\Config4Net.csproj">
+    <ProjectReference Include="..\Config4Net.Core\Config4Net.Core.csproj">
       <Project>{bf637ccc-e60f-4b7a-9712-f3011d1ac14b}</Project>
-      <Name>Config4Net</Name>
+      <Name>Config4Net.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,4 @@
-﻿namespace Config4Net
+﻿namespace Config4Net.Core
 {
     public static class Constants
     {

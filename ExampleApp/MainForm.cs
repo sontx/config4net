@@ -1,6 +1,7 @@
 ﻿using Config4Net;
 using System;
 using System.Windows.Forms;
+using Config4Net.Core;
 
 namespace ExampleApp
 {

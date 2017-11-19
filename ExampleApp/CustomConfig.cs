@@ -1,4 +1,5 @@
 ﻿using Config4Net;
+using Config4Net.Core;
 
 namespace ExampleApp
 {

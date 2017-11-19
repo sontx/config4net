@@ -1,11 +1,11 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
-namespace Config4Net
+namespace Config4Net.Core
 {
     /// <summary>
     /// Provides a pool of configs that can be used to contain settings, share them among modules

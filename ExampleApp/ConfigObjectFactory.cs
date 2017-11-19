@@ -1,6 +1,7 @@
 ﻿using Config4Net;
 using System;
 using System.Drawing;
+using Config4Net.Core;
 
 namespace ExampleApp
 {

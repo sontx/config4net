@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Config4Net
+namespace Config4Net.Core
 {
     /// <summary>
     /// Provides a helper class that can produce an config object from a giving type.

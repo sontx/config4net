@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Config4Net.Core;
 
 namespace Config4Net.Tests
 {

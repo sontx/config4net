@@ -1,4 +1,4 @@
-﻿using Config4Net;
+﻿using Config4Net.Core;
 using System;
 using System.Drawing;
 using System.Windows.Forms;

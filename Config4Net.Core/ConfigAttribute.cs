@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Config4Net
+namespace Config4Net.Core
 {
     /// <inheritdoc />
     /// <summary>
