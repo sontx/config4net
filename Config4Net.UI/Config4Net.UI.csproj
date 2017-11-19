@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{24E2E163-56A8-49B5-92CF-2E0DA4348AB9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Config4Net.UI</RootNamespace>
+    <AssemblyName>Config4Net.UI</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Containers\IContainer.cs" />
+    <Compile Include="Containers\IWindowContainer.cs" />
+    <Compile Include="Containers\IGroupContainer.cs" />
+    <Compile Include="DisplayDirection.cs" />
+    <Compile Include="DisplayMode.cs" />
+    <Compile Include="Editors\IColorEditor.cs" />
+    <Compile Include="Editors\IDateEditor.cs" />
+    <Compile Include="Editors\IDateTimeEditor.cs" />
+    <Compile Include="Editors\IEditor.cs" />
+    <Compile Include="Editors\IEnumEditor.cs" />
+    <Compile Include="Editors\IFilePickerEditor.cs" />
+    <Compile Include="Editors\IFolderPickerEditor.cs" />
+    <Compile Include="Editors\ISelectEditor.cs" />
+    <Compile Include="Editors\ITextEditor.cs" />
+    <Compile Include="Editors\INumberEditor.cs" />
+    <Compile Include="Editors\ITimeEditor.cs" />
+    <Compile Include="IComponent.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Config4Net.Types\Config4Net.Types.csproj">
+      <Project>{19498bd6-f31c-4522-9a83-8050d43139a2}</Project>
+      <Name>Config4Net.Types</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
