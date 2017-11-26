@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Config4Net.UI", "Config4Net
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Config4Net.Types", "Config4Net.Types\Config4Net.Types.csproj", "{19498BD6-F31C-4522-9A83-8050D43139A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Config4Net.UI.WinForms", "Config4Net.UI.WinForms\Config4Net.UI.WinForms.csproj", "{EA470DB4-9A24-4551-9D1E-47FA173C5B63}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Config4Net.Utils", "Config4Net.Utils\Config4Net.Utils.csproj", "{A91DAB73-396A-49D8-9F99-B531835A32B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{19498BD6-F31C-4522-9A83-8050D43139A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19498BD6-F31C-4522-9A83-8050D43139A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19498BD6-F31C-4522-9A83-8050D43139A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA470DB4-9A24-4551-9D1E-47FA173C5B63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA470DB4-9A24-4551-9D1E-47FA173C5B63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA470DB4-9A24-4551-9D1E-47FA173C5B63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA470DB4-9A24-4551-9D1E-47FA173C5B63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A91DAB73-396A-49D8-9F99-B531835A32B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A91DAB73-396A-49D8-9F99-B531835A32B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A91DAB73-396A-49D8-9F99-B531835A32B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A91DAB73-396A-49D8-9F99-B531835A32B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

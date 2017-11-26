@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 
 namespace Config4Net.UI.Editors
 {
@@ -10,11 +11,15 @@ namespace Config4Net.UI.Editors
 
         T Value { get; set; }
 
+        EditorAppearance Appearance { get; set; }
+
         bool ReadOnly { get; set; }
 
-        void SetReferenceInfo(object source, string propertyPath);
+        void SetReferenceInfo(object source, PropertyInfo propertyInfo);
 
         void Bind();
+
+        void Reset();
     }
 
     public delegate void ValueChangedEventHandler(object sender, ValueChangedEventArgs e);
@@ -31,19 +36,18 @@ namespace Config4Net.UI.Editors
         }
     }
 
-    public delegate void ValueChangingEventHandler(object sender, ValueChangedEventArgs e);
+    public delegate void ValueChangingEventHandler(object sender, ValueChangingEventArgs e);
 
     public class ValueChangingEventArgs : EventArgs
     {
         public object OldValue { get; set; }
         public object NewValue { get; set; }
-        public bool Passed { get; set; }
+        public bool Cancel { get; set; }
 
         public ValueChangingEventArgs(object oldValue, object newValue)
         {
             this.OldValue = oldValue;
             this.NewValue = newValue;
-            this.Passed = true;
         }
     }
 }

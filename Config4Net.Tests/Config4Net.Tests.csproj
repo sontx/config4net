@@ -51,6 +51,10 @@
       <Project>{bf637ccc-e60f-4b7a-9712-f3011d1ac14b}</Project>
       <Name>Config4Net.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Config4Net.Utils\Config4Net.Utils.csproj">
+      <Project>{a91dab73-396a-49d8-9f99-b531835a32b9}</Project>
+      <Name>Config4Net.Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

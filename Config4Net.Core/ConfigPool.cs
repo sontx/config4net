@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using Config4Net.Utils;
 using Newtonsoft.Json.Linq;
 
 namespace Config4Net.Core

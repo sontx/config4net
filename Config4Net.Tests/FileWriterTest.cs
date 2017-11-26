@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Config4Net.Core;
+using Config4Net.Utils;
 
 namespace Config4Net.Tests
 {

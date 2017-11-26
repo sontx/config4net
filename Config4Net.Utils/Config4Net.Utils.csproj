@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BF637CCC-E60F-4B7A-9712-F3011D1AC14B}</ProjectGuid>
+    <ProjectGuid>{A91DAB73-396A-49D8-9F99-B531835A32B9}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Config4Net.Core</RootNamespace>
-    <AssemblyName>Config4Net.Core</AssemblyName>
+    <RootNamespace>Config4Net.Utils</RootNamespace>
+    <AssemblyName>Config4Net.Utils</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -34,19 +34,12 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConfigAttribute.cs" />
-    <Compile Include="ConfigPool.cs" />
-    <Compile Include="ConfigWrapper.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="IApplicationClosingEvent.cs" />
-    <Compile Include="IConfigObjectFactory.cs" />
-    <Compile Include="InvalidConfigTypeException.cs" />
+    <Compile Include="PropertyBinder.cs" />
+    <Compile Include="FileWriter.cs" />
+    <Compile Include="Precondition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -56,9 +49,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -71,12 +62,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Config4Net.Utils\Config4Net.Utils.csproj">
-      <Project>{a91dab73-396a-49d8-9f99-b531835a32b9}</Project>
-      <Name>Config4Net.Utils</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

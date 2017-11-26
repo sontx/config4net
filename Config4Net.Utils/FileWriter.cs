@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Config4Net.Core
+namespace Config4Net.Utils
 {
     /// <summary>
     /// Provides a saving file hepler that ensure content will be
