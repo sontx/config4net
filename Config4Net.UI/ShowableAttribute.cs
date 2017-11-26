@@ -11,7 +11,7 @@ namespace Config4Net.UI
         public string Condition { get; set; }
         public Type ComponentType { get; set; }
 
-        public ShowableAttribute(string label)
+        public ShowableAttribute(string label = null)
         {
             this.Label = label;
         }

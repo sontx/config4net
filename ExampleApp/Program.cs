@@ -20,13 +20,13 @@ namespace ExampleApp
             //Application.Run(new MainForm());
             var loader = new WinFormFlatformLoader();
             loader.Load();
-            var config = new Config();
+            var config = new ConfigDemoClass();
             var window = UiManager.Default.Build<IWindowContainer>(config);
             Application.Run((Form) window);
         }
 
-        [Showable("config here")]
-        private class Config
+        [Showable]
+        private class ConfigDemoClass
         {
             [Showable("First name:", ComponentType = typeof(ITextEditor))]
             public string Name { get; set; }
