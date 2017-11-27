@@ -3,5 +3,7 @@
     public interface IComponent
     {
         string Text { get; set; }
+
+        void Bind();
     }
 }

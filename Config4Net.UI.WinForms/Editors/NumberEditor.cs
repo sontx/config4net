@@ -6,8 +6,7 @@ namespace Config4Net.UI.WinForms.Editors
     public partial class NumberEditor : DefaultEditor, INumberEditor
     {
         private readonly EditorHelper<decimal> _editorHelper;
-
-        private decimal _value;
+        
         private bool _readOnly;
 
         public event ValueChangedEventHandler ValueChanged;
@@ -16,12 +15,12 @@ namespace Config4Net.UI.WinForms.Editors
 
         public decimal Value
         {
-            get => _value;
+            get => numContent.Value;
             set
             {
                 _editorHelper.ChangeValue(
                     value,
-                    () => { numContent.Value = value; _value = value; },
+                    () => { numContent.Value = value; },
                     ValueChanging,
                     ValueChanged);
             }

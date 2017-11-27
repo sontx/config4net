@@ -6,8 +6,7 @@ namespace Config4Net.UI.WinForms.Editors
     public partial class TextEditor : DefaultEditor, ITextEditor
     {
         private readonly EditorHelper<string> _editorHelper;
-
-        private string _value;
+        
         private bool _readOnly;
 
         public event ValueChangedEventHandler ValueChanged;
@@ -16,12 +15,12 @@ namespace Config4Net.UI.WinForms.Editors
 
         public string Value
         {
-            get => _value;
+            get => txtContent.Text;
             set
             {
                 _editorHelper.ChangeValue(
                     value,
-                    () => { txtContent.Text = value; _value = value; },
+                    () => { txtContent.Text = value; },
                     ValueChanging,
                     ValueChanged);
             }

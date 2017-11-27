@@ -1,8 +1,6 @@
 ﻿using Config4Net.UI.Editors;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
 using System.Windows.Forms;
 
 namespace Config4Net.UI.WinForms.Editors

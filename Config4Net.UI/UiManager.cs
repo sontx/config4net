@@ -24,31 +24,23 @@ namespace Config4Net.UI
 
         public ILayoutManagerFactory LayoutManagerFactory { get; set; }
         public ISettingFactory SettingFactory { get; set; }
+        public bool AllowAutoCreateInstanceIfMissing { get; set; } = true;
 
-        public T Build<T>(object config) where T : IComponent
+        public T Build<T>(object config) where T : IContainer
         {
             Precondition.ArgumentNotNull(config, nameof(config));
             Precondition.ArgumentHasAttribute(config, typeof(ShowableAttribute), nameof(config));
 
             var factory = GetFactoryByComponentType<T>();
-
-            // create an editor
-            if (!(factory is IContainerFactory<IWindowContainer>) && !(factory is IContainerFactory<IGroupContainer>))
-            {
-                var component = factory.Create();
-                ApplyDescription(component, config.GetType());
-                return component;
-            }
-
+            
             // create a container
             var container = (IContainer)factory.Create();
             var configType = config.GetType();
-            var showableAttribute = configType.GetCustomAttribute<ShowableAttribute>();
             ApplyDescription(container, configType);
 
             foreach (var propertyInfo in configType.GetProperties())
             {
-                var component = BuildRecursive(propertyInfo);
+                var component = BuildRecursive(config, propertyInfo);
                 if (component == null) continue;
 
                 container.AddChild(component);
@@ -66,7 +58,7 @@ namespace Config4Net.UI
             _registeredComponentFactories.Add(componentType, factory);
         }
 
-        private IComponent BuildRecursive(PropertyInfo propertyInfo)
+        private IComponent BuildRecursive(object parentInstance, PropertyInfo propertyInfo)
         {
             var showableAttribute = propertyInfo.GetCustomAttribute<ShowableAttribute>();
             if (showableAttribute == null) return null;
@@ -80,10 +72,15 @@ namespace Config4Net.UI
                 var factory = GetFactoryByComponentType<IGroupContainer>();
                 var groupContainer = factory.Create();
                 ApplyDescription(groupContainer, propertyInfo);
+                var currentInstance = propertyInfo.GetValue(parentInstance);
+                if (currentInstance == null && AllowAutoCreateInstanceIfMissing)
+                {
+                    propertyInfo.SetValue(parentInstance, currentInstance = Activator.CreateInstance(propertyInfo.PropertyType));
+                }
 
                 foreach (var childPropertyInfo in propertyInfos)
                 {
-                    var component = BuildRecursive(childPropertyInfo);
+                    var component = BuildRecursive(currentInstance, childPropertyInfo);
                     if (component == null) continue;
 
                     groupContainer.AddChild(component);
@@ -100,7 +97,16 @@ namespace Config4Net.UI
                 }
 
                 var factory = _registeredComponentFactories[showableAttribute.ComponentType];
+
                 var component = factory.GetType().GetMethod("Create")?.Invoke(factory, BindingFlags.Instance, null, null, CultureInfo.CurrentCulture);
+
+                component?.GetType().GetMethod("SetReferenceInfo")?.Invoke(
+                    component,
+                    BindingFlags.Instance,
+                    null,
+                    new[] {parentInstance, propertyInfo},
+                    CultureInfo.CurrentCulture);
+
                 ApplyDescription((IComponent)component, propertyInfo);
                 return (IComponent)component;
             }

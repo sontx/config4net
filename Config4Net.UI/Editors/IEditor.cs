@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Config4Net.UI.Editors
 {
-    public interface IEditor<T>: IComponent
+    public interface IEditor<T> : IComponent
     {
         event ValueChangedEventHandler ValueChanged;
 
@@ -16,8 +16,6 @@ namespace Config4Net.UI.Editors
         bool ReadOnly { get; set; }
 
         void SetReferenceInfo(object source, PropertyInfo propertyInfo);
-
-        void Bind();
 
         void Reset();
     }

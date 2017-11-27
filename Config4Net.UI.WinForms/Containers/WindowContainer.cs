@@ -68,5 +68,19 @@ namespace Config4Net.UI.WinForms.Containers
 
             return base.ShowDialog((IWin32Window)owner) == DialogResult.OK;
         }
+
+        public void Bind()
+        {
+            if (_layoutManager == null) return;
+            foreach (var component in _layoutManager.RegistedComponents)
+            {
+                component.Bind();
+            }
+        }
+
+        protected override void OnAccept()
+        {
+            Bind();
+        }
     }
 }

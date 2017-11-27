@@ -48,6 +48,15 @@ namespace Config4Net.UI.WinForms.Containers
             LayoutManager?.Register(component);
         }
 
+        public void Bind()
+        {
+            if (_layoutManager == null) return;
+            foreach (var component in _layoutManager.RegistedComponents)
+            {
+                component.Bind();
+            }
+        }
+
         public GroupContainer()
         {
             AutoSize = true;

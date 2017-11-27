@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 namespace Config4Net.Utils
 {
@@ -6,17 +7,22 @@ namespace Config4Net.Utils
     {
         private readonly object _source;
         private readonly PropertyInfo _propertyInfo;
-        private readonly T _originValue;
+        private readonly object _originValue;
 
         public T Value
         {
             get => (T) _propertyInfo.GetValue(_source);
-            set => _propertyInfo.SetValue(_source, value);
+            set => SetValue(value);
         }
 
         public void Reset()
         {
-            Value = _originValue;
+            SetValue(_originValue);
+        }
+
+        private void SetValue(object value)
+        {
+            _propertyInfo.SetValue(_source, Convert.ChangeType(value, _propertyInfo.PropertyType));
         }
 
         public PropertyBinder(object source, PropertyInfo propertyInfo)
@@ -27,7 +33,7 @@ namespace Config4Net.Utils
             _source = source;
             _propertyInfo = propertyInfo;
 
-            _originValue = (T) _propertyInfo.GetValue(_source);
+            _originValue = _propertyInfo.GetValue(_source);
         }
     }
 }
