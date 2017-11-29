@@ -61,6 +61,9 @@ namespace Config4Net.UI.WinForms.Editors
         public DefaultEditor()
         {
             InitializeComponent();
+#if DEBUG_COLORS
+            BackColor = Color.Red;
+#endif
         }
 
         protected void ComputeSize()

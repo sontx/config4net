@@ -35,6 +35,9 @@ namespace Config4Net.UI.WinForms.Containers
                         var layoutControl = (Control)value;
                         Controls.Add(layoutControl);
                         layoutControl.Dock = DockStyle.Fill;
+#if DEBUG_COLORS
+                        layoutControl.BackColor = Color.Aqua;
+#endif
                     }
                 }
 
