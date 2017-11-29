@@ -34,6 +34,8 @@ namespace Config4Net.UI.WinForms.Editors
             }
         }
 
+        public virtual string Description { get; set; }
+
         public override string Text
         {
             get => _text;

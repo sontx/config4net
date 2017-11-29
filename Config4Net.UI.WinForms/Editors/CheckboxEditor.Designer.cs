@@ -42,10 +42,12 @@
             this.chkContent.AutoSize = true;
             this.chkContent.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chkContent.Location = new System.Drawing.Point(0, 0);
+            this.chkContent.Margin = new System.Windows.Forms.Padding(0);
             this.chkContent.Name = "chkContent";
             this.chkContent.Size = new System.Drawing.Size(244, 23);
             this.chkContent.TabIndex = 0;
-            this.chkContent.UseVisualStyleBackColor = true;
+            this.chkContent.UseCompatibleTextRendering = true;
+            this.chkContent.UseVisualStyleBackColor = false;
             // 
             // CheckboxEditor
             // 

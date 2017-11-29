@@ -9,10 +9,21 @@ namespace Config4Net.UI.WinForms.Editors
         private readonly EditorHelper<bool> _editorHelper;
         
         private bool _readOnly;
+        private string _description;
 
         public event ValueChangedEventHandler ValueChanged;
 
         public event ValueChangingEventHandler ValueChanging;
+
+        public override string Description
+        {
+            get => _description;
+            set
+            {
+                _description = value;
+                chkContent.Text = value;
+            }
+        }
 
         public bool Value
         {

@@ -80,6 +80,8 @@ namespace Config4Net.UI.WinForms.Containers
             return base.ShowDialog((IWin32Window)owner) == DialogResult.OK;
         }
 
+        public string Description { get; set; }
+
         public SizeMode SizeMode
         {
             get => _sizeMode;

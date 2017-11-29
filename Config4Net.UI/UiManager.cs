@@ -126,6 +126,8 @@ namespace Config4Net.UI
                 ? StringUtils.ToFriendlyString(memberInfo.Name)
                 : showableAttribute.Label;
 
+            component.Description = showableAttribute.Description;
+
             // it's a container
             if (component is IContainer container)
             {

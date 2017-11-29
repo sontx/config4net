@@ -64,6 +64,8 @@ namespace Config4Net.UI.WinForms.Containers
             UpdateHeightByContent();
         }
 
+        public string Description { get; set; }
+
         public SizeMode SizeMode
         {
             get => _sizeMode;
