@@ -11,5 +11,7 @@ namespace Config4Net.UI
         EditorAppearance CreatEditorAppearance();
 
         ContainerAppearance CreateContainerAppearance();
+
+        SizeOptions CreateSizeOptions();
     }
 }

@@ -43,7 +43,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(666, 310);
+            this.panel1.Size = new System.Drawing.Size(666, 308);
             this.panel1.TabIndex = 0;
             // 
             // panel2
@@ -53,17 +53,17 @@
             this.panel2.Controls.Add(this.btnCancel);
             this.panel2.Controls.Add(this.btnOK);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(0, 310);
+            this.panel2.Location = new System.Drawing.Point(0, 308);
             this.panel2.Name = "panel2";
-            this.panel2.Padding = new System.Windows.Forms.Padding(5);
-            this.panel2.Size = new System.Drawing.Size(666, 44);
+            this.panel2.Padding = new System.Windows.Forms.Padding(6);
+            this.panel2.Size = new System.Drawing.Size(666, 46);
             this.panel2.TabIndex = 1;
             // 
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(570, 8);
+            this.btnCancel.Location = new System.Drawing.Point(569, 9);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(85, 28);
             this.btnCancel.TabIndex = 1;
@@ -74,7 +74,7 @@
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(479, 8);
+            this.btnOK.Location = new System.Drawing.Point(478, 9);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(85, 28);
             this.btnOK.TabIndex = 0;

@@ -43,9 +43,29 @@ namespace Config4Net.UI.WinForms.Layout
             Precondition.ArgumentCompatibleType(component, typeof(Control), nameof(component));
             Precondition.PropertyNotNull(LayoutOptions, nameof(LayoutOptions));
 
-            var control = (Control)component;
+            var control = (Control) component;
             control.Margin = Margin;
+            control.Padding = Padding;
             Controls.Add(control);
+        }
+
+        public Size ComputeWholeRegion()
+        {
+            var width = 0;
+            var height = 0;
+
+            foreach (Control control in Controls)
+            {
+                width += control.Width;
+                height += control.Height;
+            }
+
+            width += Measurement.ComputeInnerHorizontalSpace(this);
+
+            height += Measurement.ComputeInnerVerticalSpace(this) +
+                      Measurement.ComputeOuterVerticalSpace(this) * Controls.Count;
+
+            return new Size(width, height);
         }
 
         private void ApplyLayoutOptions(LayoutOptions layoutOptions)
@@ -77,7 +97,7 @@ namespace Config4Net.UI.WinForms.Layout
         public FlowLayoutManager()
         {
             AutoSize = true;
-            AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            Dock = DockStyle.Fill;
         }
     }
 }

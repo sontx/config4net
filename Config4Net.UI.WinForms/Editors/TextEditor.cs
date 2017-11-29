@@ -1,5 +1,6 @@
 ﻿using Config4Net.UI.Editors;
 using System.Reflection;
+using System.Text;
 
 namespace Config4Net.UI.WinForms.Editors
 {
@@ -49,6 +50,12 @@ namespace Config4Net.UI.WinForms.Editors
         public void Reset()
         {
             _editorHelper.Reset();
+        }
+
+        public override int PreferHeight
+        {
+            get => txtContent.Height;
+            set => base.PreferHeight = value;
         }
 
         public TextEditor()

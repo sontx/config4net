@@ -11,7 +11,7 @@ namespace Config4Net.UI
             return new LayoutOptions
             {
                 Padding = new Padding(6),
-                Margin = new Padding(2)
+                Margin = new Padding(0)
             };
         }
 
@@ -20,7 +20,7 @@ namespace Config4Net.UI
             return new EditorAppearance
             {
                 Width = 300,
-                LabelWidth = 200
+                LabelWidth = 150
             };
         }
 
@@ -28,6 +28,17 @@ namespace Config4Net.UI
         {
             return new ContainerAppearance
             {
+                Width = 300
+            };
+        }
+
+        public virtual SizeOptions CreateSizeOptions()
+        {
+            return new SizeOptions
+            {
+                EditorSizeMode = SizeMode.Default,
+                WindowContainerSizeMode = SizeMode.Default,
+                GroupContainerSizeMode = SizeMode.Default
             };
         }
     }

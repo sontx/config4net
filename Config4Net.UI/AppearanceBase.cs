@@ -2,5 +2,6 @@
 {
     public abstract class AppearanceBase
     {
+        public int Width { get; set; }
     }
 }

@@ -30,23 +30,25 @@ namespace Config4Net.UI
         {
             Precondition.ArgumentNotNull(config, nameof(config));
             Precondition.ArgumentHasAttribute(config, typeof(ShowableAttribute), nameof(config));
+            Precondition.PropertyNotNull(SettingFactory, nameof(SettingFactory));
 
             var factory = GetFactoryByComponentType<T>();
-            
+            var sizeOptions = SettingFactory.CreateSizeOptions();
+
             // create a container
-            var container = (IContainer)factory.Create();
+            var container = (IContainer) factory.Create();
             var configType = config.GetType();
-            ApplyDescription(container, configType);
+            ApplyDescription(container, configType, sizeOptions);
 
             foreach (var propertyInfo in configType.GetProperties())
             {
-                var component = BuildRecursive(config, propertyInfo);
+                var component = BuildRecursive(config, propertyInfo, sizeOptions);
                 if (component == null) continue;
 
                 container.AddChild(component);
             }
 
-            return (T)container;
+            return (T) container;
         }
 
         public void RegisterFactory(Type componentType, object factory)
@@ -58,29 +60,31 @@ namespace Config4Net.UI
             _registeredComponentFactories.Add(componentType, factory);
         }
 
-        private IComponent BuildRecursive(object parentInstance, PropertyInfo propertyInfo)
+        private IComponent BuildRecursive(object parentInstance, PropertyInfo propertyInfo, SizeOptions sizeOptions)
         {
             var showableAttribute = propertyInfo.GetCustomAttribute<ShowableAttribute>();
             if (showableAttribute == null) return null;
 
             var propertyInfos = propertyInfo.PropertyType.GetProperties();
-            var hasChildrenComponents = propertyInfos.Any(ipropertyInfo => ipropertyInfo.GetCustomAttribute<ShowableAttribute>() != null);
+            var hasChildrenComponents = propertyInfos.Any(ipropertyInfo =>
+                ipropertyInfo.GetCustomAttribute<ShowableAttribute>() != null);
 
             // create a container
             if (hasChildrenComponents)
             {
                 var factory = GetFactoryByComponentType<IGroupContainer>();
                 var groupContainer = factory.Create();
-                ApplyDescription(groupContainer, propertyInfo);
+                ApplyDescription(groupContainer, propertyInfo, sizeOptions);
                 var currentInstance = propertyInfo.GetValue(parentInstance);
                 if (currentInstance == null && AllowAutoCreateInstanceIfMissing)
                 {
-                    propertyInfo.SetValue(parentInstance, currentInstance = Activator.CreateInstance(propertyInfo.PropertyType));
+                    propertyInfo.SetValue(parentInstance,
+                        currentInstance = Activator.CreateInstance(propertyInfo.PropertyType));
                 }
 
                 foreach (var childPropertyInfo in propertyInfos)
                 {
-                    var component = BuildRecursive(currentInstance, childPropertyInfo);
+                    var component = BuildRecursive(currentInstance, childPropertyInfo, sizeOptions);
                     if (component == null) continue;
 
                     groupContainer.AddChild(component);
@@ -93,12 +97,14 @@ namespace Config4Net.UI
             {
                 if (showableAttribute.ComponentType == null)
                 {
-                    throw new CustomAttributeFormatException($"{nameof(showableAttribute.ComponentType)} must be defined.");
+                    throw new CustomAttributeFormatException(
+                        $"{nameof(showableAttribute.ComponentType)} must be defined.");
                 }
 
                 var factory = _registeredComponentFactories[showableAttribute.ComponentType];
 
-                var component = factory.GetType().GetMethod("Create")?.Invoke(factory, BindingFlags.Instance, null, null, CultureInfo.CurrentCulture);
+                var component = factory.GetType().GetMethod("Create")?.Invoke(factory, BindingFlags.Instance, null,
+                    null, CultureInfo.CurrentCulture);
 
                 component?.GetType().GetMethod("SetReferenceInfo")?.Invoke(
                     component,
@@ -107,30 +113,34 @@ namespace Config4Net.UI
                     new[] {parentInstance, propertyInfo},
                     CultureInfo.CurrentCulture);
 
-                ApplyDescription((IComponent)component, propertyInfo);
-                return (IComponent)component;
+                ApplyDescription((IComponent) component, propertyInfo, sizeOptions);
+                return (IComponent) component;
             }
         }
 
-        private void ApplyDescription(IComponent component, MemberInfo memberInfo)
+        private void ApplyDescription(IComponent component, MemberInfo memberInfo, SizeOptions sizeOptions)
         {
             var showableAttribute = memberInfo.GetCustomAttribute<ShowableAttribute>();
 
-            component.Text = string.IsNullOrEmpty(showableAttribute.Label) ? StringUtils.ToFriendlyString(memberInfo.Name) : showableAttribute.Label;
+            component.Text = string.IsNullOrEmpty(showableAttribute.Label)
+                ? StringUtils.ToFriendlyString(memberInfo.Name)
+                : showableAttribute.Label;
 
             // it's a container
             if (component is IContainer container)
             {
-                ApplyDescriptionToContainer(container);
+                ApplyDescriptionToContainer(container, sizeOptions);
             }
             // it's an editor
             else
             {
-                component.GetType().GetProperty("Appearance")?.SetValue(component, SettingFactory.CreatEditorAppearance());
+                component.GetType().GetProperty("Appearance")
+                    ?.SetValue(component, SettingFactory.CreatEditorAppearance());
+                component.SizeMode = sizeOptions.EditorSizeMode;
             }
         }
 
-        private void ApplyDescriptionToContainer(IContainer container)
+        private void ApplyDescriptionToContainer(IContainer container, SizeOptions sizeOptions)
         {
             Precondition.PropertyNotNull(LayoutManagerFactory, nameof(LayoutManagerFactory));
             Precondition.PropertyNotNull(SettingFactory, nameof(SettingFactory));
@@ -140,12 +150,21 @@ namespace Config4Net.UI
 
             container.LayoutManager = layoutManager;
             container.Appearance = SettingFactory.CreateContainerAppearance();
+
+            if (container is IGroupContainer)
+            {
+                container.SizeMode = sizeOptions.GroupContainerSizeMode;
+            }
+            else // IWindowContainer
+            {
+                container.SizeMode = sizeOptions.WindowContainerSizeMode;
+            }
         }
 
         private IComponentFactory<T> GetFactoryByComponentType<T>() where T : IComponent
         {
             var registeredFactory = _registeredComponentFactories[typeof(T)];
-            return (IComponentFactory<T>)registeredFactory;
+            return (IComponentFactory<T>) registeredFactory;
         }
 
         public UiManager()

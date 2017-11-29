@@ -39,9 +39,6 @@ namespace ExampleApp
 
             [Showable("Sub config2")]
             public SubConfig SubConfig2 { get; set; }
-
-            [Showable("Sub config3")]
-            public SubConfig SubConfig3 { get; set; }
         }
 
         class SubConfig

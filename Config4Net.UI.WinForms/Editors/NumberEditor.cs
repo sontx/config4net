@@ -51,6 +51,12 @@ namespace Config4Net.UI.WinForms.Editors
             _editorHelper.Reset();
         }
 
+        public override int PreferHeight
+        {
+            get => numContent.Height;
+            set => base.PreferHeight = value;
+        }
+
         public NumberEditor()
         {
             InitializeComponent();

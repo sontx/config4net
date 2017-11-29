@@ -4,6 +4,8 @@
     {
         string Text { get; set; }
 
+        SizeMode SizeMode { get; set; }
+
         void Bind();
     }
 }

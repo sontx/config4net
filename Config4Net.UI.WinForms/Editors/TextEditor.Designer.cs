@@ -35,15 +35,14 @@
             // pnlWorkingArea
             // 
             this.pnlWorkingArea.Controls.Add(this.txtContent);
-            this.pnlWorkingArea.Location = new System.Drawing.Point(155, 5);
-            this.pnlWorkingArea.Size = new System.Drawing.Size(140, 23);
+            this.pnlWorkingArea.Size = new System.Drawing.Size(244, 23);
             // 
             // txtContent
             // 
             this.txtContent.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtContent.Location = new System.Drawing.Point(0, 0);
             this.txtContent.Name = "txtContent";
-            this.txtContent.Size = new System.Drawing.Size(140, 22);
+            this.txtContent.Size = new System.Drawing.Size(244, 22);
             this.txtContent.TabIndex = 0;
             // 
             // TextEditor
@@ -51,8 +50,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Name = "TextEditor";
-            this.PreferHeight = 23;
-            this.Size = new System.Drawing.Size(300, 33);
+            this.PreferHeight = 22;
+            this.Size = new System.Drawing.Size(300, 23);
             this.pnlWorkingArea.ResumeLayout(false);
             this.pnlWorkingArea.PerformLayout();
             this.ResumeLayout(false);

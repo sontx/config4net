@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 
 namespace Config4Net.UI.Layout
 {
@@ -9,5 +10,7 @@ namespace Config4Net.UI.Layout
         IReadOnlyCollection<IComponent> RegistedComponents { get; }
 
         void Register(IComponent component);
+
+        Size ComputeWholeRegion();
     }
 }

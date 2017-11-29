@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.labLabel = new System.Windows.Forms.Label();
+            this.labLabel = new NoPaddingLabel();
             this.pnlWorkingArea = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
@@ -37,6 +37,7 @@
             this.labLabel.AutoEllipsis = true;
             this.labLabel.Dock = System.Windows.Forms.DockStyle.Left;
             this.labLabel.Location = new System.Drawing.Point(0, 0);
+            this.labLabel.Margin = new System.Windows.Forms.Padding(0);
             this.labLabel.Name = "labLabel";
             this.labLabel.Size = new System.Drawing.Size(56, 35);
             this.labLabel.TabIndex = 0;
@@ -67,7 +68,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Label labLabel;
+        private NoPaddingLabel labLabel;
         protected System.Windows.Forms.Panel pnlWorkingArea;
     }
 }

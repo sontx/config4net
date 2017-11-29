@@ -35,6 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppearanceBase.cs" />
+    <Compile Include="SizeMode.cs" />
     <Compile Include="Containers\ContainerAppearance.cs" />
     <Compile Include="Containers\IContainer.cs" />
     <Compile Include="Containers\IContainerFactory.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="Padding.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShowableAttribute.cs" />
+    <Compile Include="SizeOptions.cs" />
     <Compile Include="UiManager.cs" />
   </ItemGroup>
   <ItemGroup>
