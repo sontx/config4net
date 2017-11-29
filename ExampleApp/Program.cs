@@ -36,12 +36,21 @@ namespace ExampleApp
 
             [Showable("Sub config1")]
             public SubConfig SubConfig1 { get; set; }
-
-            [Showable("Sub config2")]
-            public SubConfig SubConfig2 { get; set; }
         }
 
         class SubConfig
+        {
+            [Showable("First name1:", ComponentType = typeof(ITextEditor))]
+            public string Name1 { get; set; }
+
+            [Showable("Age1:", ComponentType = typeof(INumberEditor))]
+            public int Age1 { get; set; }
+
+            [Showable("Sub config3")]
+            public SubConfig1 SubConfig2 { get; set; }
+        }
+
+        class SubConfig1
         {
             [Showable("First name1:", ComponentType = typeof(ITextEditor))]
             public string Name1 { get; set; }

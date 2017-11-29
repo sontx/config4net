@@ -145,7 +145,7 @@ namespace Config4Net.UI.WinForms.Containers
 
             foreach (var component in _layoutManager.RegistedComponents)
             {
-                component.SizeMode = SizeMode.WrapContent;
+                component.SizeMode = SizeMode.MatchParent;
             }
         }
 
