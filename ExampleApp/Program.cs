@@ -4,6 +4,7 @@ using Config4Net.UI.Editors;
 using Config4Net.UI.WinForms;
 using System;
 using System.Windows.Forms;
+using Config4Net.Core;
 
 namespace ExampleApp
 {
@@ -18,14 +19,14 @@ namespace ExampleApp
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new MainForm());
-            var loader = new WinFormFlatformLoader();
-            loader.Load();
-            var config = new ConfigDemoClass();
-            var window = UiManager.Default.Build<IWindowContainer>(config);
+            new WinFormFlatformLoader().Load();
+            var configDemoClass = ConfigPool.Get<ConfigDemoClass>();
+            var window = UiManager.Default.Build<IWindowContainer>(configDemoClass);
             Application.Run((Form) window);
         }
 
         [Showable]
+        [Config]
         private class ConfigDemoClass
         {
             [Showable("First name:", ComponentType = typeof(ITextEditor))]
