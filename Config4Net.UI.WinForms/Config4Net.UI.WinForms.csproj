@@ -66,7 +66,14 @@
     <Compile Include="Editors\NumberEditor.Designer.cs">
       <DependentUpon>NumberEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Editors\CheckboxEditorFactory.cs" />
     <Compile Include="Editors\NumberEditorFactory.cs" />
+    <Compile Include="Editors\CheckboxEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Editors\CheckboxEditor.Designer.cs">
+      <DependentUpon>CheckboxEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Editors\TextEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -96,6 +103,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Editors\NumberEditor.resx">
       <DependentUpon>NumberEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editors\CheckboxEditor.resx">
+      <DependentUpon>CheckboxEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Editors\TextEditor.resx">
       <DependentUpon>TextEditor.cs</DependentUpon>
