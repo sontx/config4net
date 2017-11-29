@@ -11,7 +11,7 @@ namespace Config4Net.Utils
 
         public T Value
         {
-            get => (T) _propertyInfo.GetValue(_source);
+            get => (T) Convert.ChangeType(_propertyInfo.GetValue(_source), typeof(T));
             set => SetValue(value);
         }
 

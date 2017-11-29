@@ -18,6 +18,7 @@ namespace Config4Net.UI
         public void SetReferenceInfo(object source, PropertyInfo propertyInfo)
         {
             _binder = new PropertyBinder<T>(source, propertyInfo);
+            _editor.Value = _binder.Value;
         }
 
         public void Bind()
