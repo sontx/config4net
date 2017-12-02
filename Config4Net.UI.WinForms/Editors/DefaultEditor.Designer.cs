@@ -30,7 +30,7 @@ namespace Config4Net.UI.WinForms.Editors
         /// </summary>
         private void InitializeComponent()
         {
-            this.labLabel = new NoPaddingLabel();
+            this.labLabel = new Config4Net.UI.WinForms.Editors.Helpers.NoPaddingLabel();
             this.pnlWorkingArea = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
@@ -41,6 +41,7 @@ namespace Config4Net.UI.WinForms.Editors
             this.labLabel.Location = new System.Drawing.Point(0, 0);
             this.labLabel.Margin = new System.Windows.Forms.Padding(0);
             this.labLabel.Name = "labLabel";
+            this.labLabel.RightAlignment = false;
             this.labLabel.Size = new System.Drawing.Size(56, 35);
             this.labLabel.TabIndex = 0;
             this.labLabel.Text = "Config:";

@@ -3,6 +3,7 @@ using Config4Net.UI.Containers;
 using Config4Net.UI.Editors;
 using Config4Net.UI.WinForms;
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 using Config4Net.Core;
 
@@ -39,6 +40,9 @@ namespace ExampleApp
 
             [Showable(ComponentType = typeof(INumberEditor))]
             public int Age { get; set; }
+
+            [Showable(ComponentType = typeof(IColorEditor))]
+            public Color SkinColor { get; set; }
 
             [Showable("Sex:", ComponentType = typeof(ICheckboxEditor), Description = "You are male?")]
             public bool Male { get; set; }
