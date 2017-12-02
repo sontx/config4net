@@ -1,7 +1,7 @@
 ﻿using Config4Net.UI.Containers;
 using Config4Net.UI.Editors;
-using Config4Net.UI.WinForms.Containers;
-using Config4Net.UI.WinForms.Editors;
+using Config4Net.UI.WinForms.Containers.Factories;
+using Config4Net.UI.WinForms.Editors.Factories;
 using Config4Net.UI.WinForms.Layout;
 
 namespace Config4Net.UI.WinForms

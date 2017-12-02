@@ -1,7 +1,6 @@
-﻿using System.Windows.Forms;
-using System.Windows.Forms.Design;
+﻿using System.Windows.Forms.Design;
 
-namespace Config4Net.UI.WinForms.Editors
+namespace Config4Net.UI.WinForms.Editors.Helpers
 {
     public class UserControlDesigner : ParentControlDesigner
     {

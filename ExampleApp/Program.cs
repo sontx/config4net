@@ -19,45 +19,57 @@ namespace ExampleApp
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new MainForm());
+
             new WinFormFlatformLoader().Load();
-            var configDemoClass = ConfigPool.Get<ConfigDemoClass>();
-            var window = UiManager.Default.Build<IWindowContainer>(configDemoClass);
+            var person = ConfigPool.Get<Person>();
+            var window = UiManager.Default.Build<IWindowContainer>(person);
+
             Application.Run((Form) window);
         }
 
-        [Showable]
+        [Showable("Your personal information")]
         [Config]
-        private class ConfigDemoClass
+        class Person
         {
             [Showable("First name:", ComponentType = typeof(ITextEditor))]
-            public string Name { get; set; }
+            public string FirstName { get; set; }
 
             [Showable("Last name:", ComponentType = typeof(ITextEditor))]
             public string LastName { get; set; }
 
-            [Showable("Sub config1")]
-            public SubConfig SubConfig1 { get; set; }
+            [Showable(ComponentType = typeof(INumberEditor))]
+            public int Age { get; set; }
+
+            [Showable("Sex:", ComponentType = typeof(ICheckboxEditor), Description = "You are male?")]
+            public bool Male { get; set; }
+
+            [Showable("Where are you now:")]
+            public Address Address { get; set; }
+
+            [Showable("Your job:")]
+            public Job Job { get; set; }
         }
 
-        class SubConfig
+        class Address
         {
-            [Showable("First name1:", ComponentType = typeof(ITextEditor))]
-            public string Name1 { get; set; }
+            [Showable(ComponentType = typeof(ITextEditor))]
+            public string City { get; set; }
 
-            [Showable("Age1:", ComponentType = typeof(INumberEditor))]
-            public int Age1 { get; set; }
+            [Showable(ComponentType = typeof(INumberEditor))]
+            public int FaxCode { get; set; }
 
-            [Showable("Sub config3")]
-            public SubConfig1 SubConfig2 { get; set; }
+            public string InvisibleField { get; set; }
         }
 
-        class SubConfig1
+        class Job
         {
-            [Showable("First name1:", ComponentType = typeof(ITextEditor))]
-            public string Name1 { get; set; }
+            [Showable(ComponentType = typeof(ITextEditor))]
+            public string Company { get; set; }
 
-            [Showable("Age1:", ComponentType = typeof(INumberEditor))]
-            public int Age1 { get; set; }
+            [Showable(ComponentType = typeof(ITextEditor))]
+            public string Position { get; set; }
+
+            public int Salary { get; set; }
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Config4Net.UI.WinForms.Editors
+﻿using Config4Net.UI.WinForms.Editors.Helpers;
+
+namespace Config4Net.UI.WinForms.Editors
 {
     partial class DefaultEditor
     {

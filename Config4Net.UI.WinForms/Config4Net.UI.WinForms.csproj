@@ -52,12 +52,12 @@
     <Compile Include="Containers\GroupContainer.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Containers\GroupContainerFactory.cs" />
+    <Compile Include="Containers\Factories\GroupContainerFactory.cs" />
     <Compile Include="Containers\WindowContainer.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Containers\WindowContainerFactory.cs" />
-    <Compile Include="Editors\NoPaddingLabel.cs">
+    <Compile Include="Containers\Factories\WindowContainerFactory.cs" />
+    <Compile Include="Editors\Helpers\NoPaddingLabel.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Editors\NumberEditor.cs">
@@ -66,8 +66,8 @@
     <Compile Include="Editors\NumberEditor.Designer.cs">
       <DependentUpon>NumberEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Editors\CheckboxEditorFactory.cs" />
-    <Compile Include="Editors\NumberEditorFactory.cs" />
+    <Compile Include="Editors\Factories\CheckboxEditorFactory.cs" />
+    <Compile Include="Editors\Factories\NumberEditorFactory.cs" />
     <Compile Include="Editors\CheckboxEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -86,8 +86,8 @@
     <Compile Include="Editors\DefaultEditor.Designer.cs">
       <DependentUpon>DefaultEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Editors\TextEditorFactory.cs" />
-    <Compile Include="Editors\UserControlDesigner.cs" />
+    <Compile Include="Editors\Factories\TextEditorFactory.cs" />
+    <Compile Include="Editors\Helpers\UserControlDesigner.cs" />
     <Compile Include="Layout\FlowLayoutManager.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using Config4Net.UI.WinForms.Editors.Helpers;
 
 namespace Config4Net.UI.WinForms.Editors
 {

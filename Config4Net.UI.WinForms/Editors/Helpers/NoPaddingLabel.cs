@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Config4Net.UI.WinForms.Editors
+namespace Config4Net.UI.WinForms.Editors.Helpers
 {
     /// <summary>
     /// https://stackoverflow.com/a/27924873
