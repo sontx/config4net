@@ -13,7 +13,7 @@ namespace ExampleApp
         {
             InitializeComponent();
 
-            _customConfig = ConfigPool.Get<CustomConfig>();
+            _customConfig = ConfigPool.Default.Get<CustomConfig>();
 
             textBox1.Text = _customConfig.Config1;
             dateTimePicker1.Value = _customConfig.Config2.Config1;

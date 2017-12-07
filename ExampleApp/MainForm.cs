@@ -15,8 +15,8 @@ namespace ExampleApp
 
         private void SetupConfig()
         {
-            ConfigPool.RegisterFactory(new AppConfigFactory());
-            ConfigPool.RegisterFactory(new CustomConfigFactory());
+            ConfigPool.Default.RegisterFactory(new AppConfigFactory());
+            ConfigPool.Default.RegisterFactory(new CustomConfigFactory());
         }
 
         private void btnOpenAppSetting_Click(object sender, EventArgs e)

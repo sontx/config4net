@@ -1,161 +1,194 @@
-﻿using NUnit.Framework;
+﻿using Config4Net.Core;
+using NUnit.Framework;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Config4Net.Core;
 
 namespace Config4Net.Tests
 {
     [TestFixture]
     public class ConfigPoolTest
     {
-        private static readonly string ConfigDir = Path.GetTempPath();
+        private readonly ConcurrentBag<string> _registeredConfigDirList = new ConcurrentBag<string>();
 
-        [OneTimeSetUp]
-        public void TestSetup()
+        private string ConfigDir
         {
-            ConfigPool.ConfigDir = ConfigDir;
+            get
+            {
+                var dir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+                Directory.CreateDirectory(dir);
+                _registeredConfigDirList.Add(dir);
+                return dir;
+            }
         }
 
+        [OneTimeTearDown]
+        public void CleanUp()
+        {
+            foreach (var dir in _registeredConfigDirList)
+            {
+                Directory.Delete(dir, true);
+            }
+        }
+            
         [Test]
         public void get_app_config_that_already_exists_should_return_config_object()
         {
-            ConfigPool.RegisterConfigType<MyConfig>();
-            var config = ConfigPool.App<MyConfig>();
+            var configPool = new ConfigPool();
+            configPool.RegisterConfigType<MyConfig>();
+            var config = configPool.App<MyConfig>();
             Assert.IsInstanceOf<MyConfig>(config);
         }
 
         [Test]
         public void get_calling_config_that_already_exists_should_return_config_object()
         {
-            ConfigPool.RegisterConfigType<MyConfig>();
-            var config = ConfigPool.Calling<MyConfig>();
+            var configPool = new ConfigPool();
+            configPool.RegisterConfigType<MyConfig>();
+            var config = configPool.Calling<MyConfig>();
             Assert.IsInstanceOf<MyConfig>(config);
         }
 
         [Test]
         public void get_config_by_key_that_already_exists_should_return_config_object()
         {
-            ConfigPool.RegisterConfigType<MySubConfig1>();
-            var config = ConfigPool.Get<MySubConfig1>("subConfig1");
+            var configPool = new ConfigPool();
+            configPool.RegisterConfigType<MySubConfig1>();
+            var config = configPool.Get<MySubConfig1>("subConfig1");
             Assert.IsInstanceOf<MySubConfig1>(config);
         }
 
         [Test]
         public void get_config_by_config_type_should_return_config_object()
         {
-            ConfigPool.RegisterConfigType<MySubConfig1>();
-            var config = ConfigPool.Get<MySubConfig1>();
+            var configPool = new ConfigPool();
+            configPool.RegisterConfigType<MySubConfig1>();
+            var config = configPool.Get<MySubConfig1>();
             Assert.IsInstanceOf<MySubConfig1>(config);
         }
 
         [Test]
         public void get_config_that_does_not_exist_should_return_null_if_AutoRegisterConfigType_is_false()
         {
-            ConfigPool.AutoRegisterConfigType = false;
-            ConfigPool.UnregisterConfigType<MyConfig>();
-            var config = ConfigPool.App<MyConfig>();
+            var configPool = new ConfigPool();
+            configPool.AutoRegisterConfigType = false;
+            configPool.UnregisterConfigType<MyConfig>();
+            var config = configPool.App<MyConfig>();
             Assert.IsNull(config);
         }
 
         [Test]
         public void get_config_that_does_not_exist_should_return_config_object_if_AutoRegisterConfigType_is_true()
         {
-            ConfigPool.AutoRegisterConfigType = true;
-            ConfigPool.UnregisterConfigType<MyConfig>();
-            var config = ConfigPool.App<MyConfig>();
+            var configPool = new ConfigPool();
+            configPool.AutoRegisterConfigType = true;
+            configPool.UnregisterConfigType<MyConfig>();
+            var config = configPool.App<MyConfig>();
             Assert.IsInstanceOf<MyConfig>(config);
         }
 
         [Test]
         public void register_config_type_should_return_config_object_if_success()
         {
-            ConfigPool.UnregisterConfigType<MyConfig>();
-            var config = ConfigPool.RegisterConfigType<MyConfig>();
+            var configPool = new ConfigPool();
+            configPool.UnregisterConfigType<MyConfig>();
+            var config = configPool.RegisterConfigType<MyConfig>();
             Assert.IsInstanceOf<MyConfig>(config);
         }
 
         [Test]
         public void register_config_type_should_throw_exception_if_registered_invalid_config_class()
         {
-            Assert.Throws<InvalidConfigTypeException>(() => ConfigPool.RegisterConfigType<NotConfigClass>());
+            var configPool = new ConfigPool();
+            Assert.Throws<InvalidConfigTypeException>(() => configPool.RegisterConfigType<NotConfigClass>());
         }
 
         [Test]
         public void register_config_type_should_ignore_the_one_that_already_exists()
         {
-            ConfigPool.UnregisterConfigType<MyConfig>();
-            var config1 = ConfigPool.RegisterConfigType<MyConfig>();
-            var config2 = ConfigPool.RegisterConfigType<MyConfig>();
+            var configPool = new ConfigPool();
+            configPool.UnregisterConfigType<MyConfig>();
+            var config1 = configPool.RegisterConfigType<MyConfig>();
+            var config2 = configPool.RegisterConfigType<MyConfig>();
             Assert.AreEqual(config1, config2);
         }
 
         [Test]
         public void register_config_type_with_IsAppConfig_attribute_should_be_app_config()
         {
-            ConfigPool.UnregisterConfigType<MyConfig>();
-            ConfigPool.RegisterConfigType<MyConfig>();
-            var config = ConfigPool.Get<MyConfig>();
+            var configPool = new ConfigPool();
+            configPool.UnregisterConfigType<MyConfig>();
+            configPool.RegisterConfigType<MyConfig>();
+            var config = configPool.Get<MyConfig>();
             Assert.IsInstanceOf<MyConfig>(config);
         }
 
         [Test]
         public void register_config_type_with_IsAppConfig_attribute_should_ignore_Key_attribute()
         {
-            ConfigPool.AutoRegisterConfigType = false;
-            ConfigPool.UnregisterConfigType<MyConfig>();
-            ConfigPool.RegisterConfigType<MyConfig>();
-            var config = ConfigPool.Get<MyConfig>("myConfig");
+            var configPool = new ConfigPool();
+            configPool.AutoRegisterConfigType = false;
+            configPool.UnregisterConfigType<MyConfig>();
+            configPool.RegisterConfigType<MyConfig>();
+            var config = configPool.Get<MyConfig>("myConfig");
             Assert.IsNull(config);
         }
 
         [Test]
         public void register_config_type_should_take_Key_attribute_as_config_key()
         {
-            ConfigPool.AutoRegisterConfigType = false;
-            ConfigPool.UnregisterConfigType<MySubConfig1>();
-            ConfigPool.RegisterConfigType<MySubConfig1>();
-            var config = ConfigPool.Get<MySubConfig1>("subConfig1");
+            var configPool = new ConfigPool();
+            configPool.AutoRegisterConfigType = false;
+            configPool.UnregisterConfigType<MySubConfig1>();
+            configPool.RegisterConfigType<MySubConfig1>();
+            var config = configPool.Get<MySubConfig1>("subConfig1");
             Assert.IsInstanceOf<MySubConfig1>(config);
         }
 
         [Test]
         public void register_config_type_should_auto_detect_key_by_calling_assembly_when_Key_and_IsAppConfig_attributes_are_blank()
         {
-            ConfigPool.AutoRegisterConfigType = false;
-            ConfigPool.UnregisterConfigType<MySubConfig2>();
-            ConfigPool.RegisterConfigType<MySubConfig2>();
+            var configPool = new ConfigPool();
+            configPool.AutoRegisterConfigType = false;
+            configPool.UnregisterConfigType<MySubConfig2>();
+            configPool.RegisterConfigType<MySubConfig2>();
             var keyByAssembly = Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
-            var config = ConfigPool.Get<MySubConfig2>(keyByAssembly);
+            var config = configPool.Get<MySubConfig2>(keyByAssembly);
             Assert.IsInstanceOf<MySubConfig2>(config);
         }
 
         [Test]
         public void register_config_type_should_init_with_given_config_object()
         {
-            ConfigPool.AutoRegisterConfigType = false;
-            ConfigPool.UnregisterConfigType<MySubConfig1>();
+            var configPool = new ConfigPool();
+            configPool.AutoRegisterConfigType = false;
+            configPool.UnregisterConfigType<MySubConfig1>();
             var initConfig = new MySubConfig1 { Config1 = 1 };
-            ConfigPool.RegisterConfigType(initConfig);
-            var config = ConfigPool.Get<MySubConfig1>("subConfig1");
+            configPool.RegisterConfigType(initConfig);
+            var config = configPool.Get<MySubConfig1>("subConfig1");
             Assert.AreEqual(initConfig, config);
         }
 
         [Test]
         public void save_config_files_should_place_in_defined_dir()
         {
-            var subConfig1FilePath = Path.Combine(ConfigDir, $@"subConfig1.{Constants.ConfigFileExtention}");
-            var appConfigFilePath = Path.Combine(ConfigDir, $@"{Constants.ApplicationConfigKey}.{Constants.ConfigFileExtention}");
+            var configPool = new ConfigPool();
+            var configDir = ConfigDir;
+
+            var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{Constants.ConfigFileExtention}");
+            var appConfigFilePath = Path.Combine(configDir, $@"{Constants.ApplicationConfigKey}.{Constants.ConfigFileExtention}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
             FileUtils.EnsureDelete(appConfigFilePath);
 
-            ConfigPool.RegisterConfigType<MySubConfig1>();
-            ConfigPool.RegisterConfigType(new MyConfig { MySubConfig2 = new MySubConfig2() });
-            ConfigPool.SaveAsync(ConfigDir).Wait();
+            configPool.RegisterConfigType<MySubConfig1>();
+            configPool.RegisterConfigType(new MyConfig { MySubConfig2 = new MySubConfig2() });
+            configPool.SaveAsync(configDir).Wait();
 
             Assert.That(File.Exists(subConfig1FilePath), Is.True);
             Assert.That(File.Exists(appConfigFilePath), Is.True);
@@ -170,6 +203,8 @@ namespace Config4Net.Tests
         [Test]
         public void save_config_files_should_place_in_current_dir_if_did_not_give_config_dir()
         {
+            var configPool = new ConfigPool();
+
             var currentDir = Environment.CurrentDirectory;
             var subConfig1FilePath = Path.Combine(currentDir, $@"subConfig1.{Constants.ConfigFileExtention}");
             var appConfigFilePath = Path.Combine(currentDir, $@"{Constants.ApplicationConfigKey}.{Constants.ConfigFileExtention}");
@@ -177,11 +212,11 @@ namespace Config4Net.Tests
             FileUtils.EnsureDelete(subConfig1FilePath);
             FileUtils.EnsureDelete(appConfigFilePath);
 
-            ConfigPool.ConfigDir = null;
+            configPool.ConfigDir = null;
 
-            ConfigPool.RegisterConfigType<MySubConfig1>();
-            ConfigPool.RegisterConfigType(new MyConfig { MySubConfig2 = new MySubConfig2() });
-            ConfigPool.SaveAsync(null).Wait();
+            configPool.RegisterConfigType<MySubConfig1>();
+            configPool.RegisterConfigType(new MyConfig { MySubConfig2 = new MySubConfig2() });
+            configPool.SaveAsync(null).Wait();
 
             Assert.That(File.Exists(subConfig1FilePath), Is.True);
             Assert.That(File.Exists(appConfigFilePath), Is.True);
@@ -196,10 +231,13 @@ namespace Config4Net.Tests
         [Test]
         public void save_config_files_should_be_successful_if_not_over_timeout()
         {
-            var subConfig1FilePath = Path.Combine(ConfigDir, $@"subConfig1.{Constants.ConfigFileExtention}");
+            var configPool = new ConfigPool();
+            var configDir = ConfigDir;
+
+            var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{Constants.ConfigFileExtention}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
-            ConfigPool.LoadAsync(ConfigDir).Wait();
+            configPool.LoadAsync(configDir).Wait();
 
             var task = Task.Run(async () =>
             {
@@ -211,8 +249,8 @@ namespace Config4Net.Tests
 
             Thread.Sleep(200);
 
-            ConfigPool.RegisterConfigType<MySubConfig1>();
-            ConfigPool.SaveAsync(ConfigDir, true).Wait();
+            configPool.RegisterConfigType<MySubConfig1>();
+            configPool.SaveAsync(configDir, true).Wait();
 
             Assert.That(File.Exists(subConfig1FilePath), Is.True);
             Assert.Greater(File.ReadAllText(subConfig1FilePath).Length, 0);
@@ -225,10 +263,13 @@ namespace Config4Net.Tests
         [Test]
         public void save_config_files_should_throw_exception_if_over_timeout_in_persistant_mode()
         {
-            var subConfig1FilePath = Path.Combine(ConfigDir, $@"subConfig1.{Constants.ConfigFileExtention}");
+            var configPool = new ConfigPool();
+            var configDir = ConfigDir;
+
+            var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{Constants.ConfigFileExtention}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
-            ConfigPool.LoadAsync(ConfigDir).Wait();
+            configPool.LoadAsync(configDir).Wait();
 
             var task = Task.Run(async () =>
             {
@@ -240,8 +281,8 @@ namespace Config4Net.Tests
 
             Thread.Sleep(200);
 
-            ConfigPool.RegisterConfigType<MySubConfig1>();
-            Assert.Throws(Is.InstanceOf<Exception>(), () => ConfigPool.SaveAsync(ConfigDir, true).Wait());
+            configPool.RegisterConfigType<MySubConfig1>();
+            Assert.Throws(Is.InstanceOf<Exception>(), () => configPool.SaveAsync(configDir, true).Wait());
 
             task.Wait();
 
@@ -251,10 +292,13 @@ namespace Config4Net.Tests
         [Test]
         public void save_config_files_should_not_throw_exception_if_over_timeout_in_normal_mode()
         {
-            var subConfig1FilePath = Path.Combine(ConfigDir, $@"subConfig1.{Constants.ConfigFileExtention}");
+            var configPool = new ConfigPool();
+            var configDir = ConfigDir;
+
+            var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{Constants.ConfigFileExtention}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
-            ConfigPool.LoadAsync(ConfigDir).Wait();
+            configPool.LoadAsync(configDir).Wait();
 
             var task = Task.Run(async () =>
             {
@@ -266,8 +310,8 @@ namespace Config4Net.Tests
 
             Thread.Sleep(200);
 
-            ConfigPool.RegisterConfigType<MySubConfig1>();
-            Assert.DoesNotThrow(() => ConfigPool.SaveAsync(ConfigDir, false).Wait());
+            configPool.RegisterConfigType<MySubConfig1>();
+            Assert.DoesNotThrow(() => configPool.SaveAsync(configDir, false).Wait());
 
             task.Wait();
 
@@ -277,18 +321,22 @@ namespace Config4Net.Tests
         [Test]
         public void save_config_files_should_done_automatically_when_app_closing()
         {
-            var subConfig1FilePath = Path.Combine(ConfigDir, $@"subConfig1.{Constants.ConfigFileExtention}");
-            var appConfigFilePath = Path.Combine(ConfigDir, $@"{Constants.ApplicationConfigKey}.{Constants.ConfigFileExtention}");
+            var configPool = new ConfigPool();
+            var configDir = ConfigDir;
+
+            var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{Constants.ConfigFileExtention}");
+            var appConfigFilePath = Path.Combine(configDir, $@"{Constants.ApplicationConfigKey}.{Constants.ConfigFileExtention}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
             FileUtils.EnsureDelete(appConfigFilePath);
 
             var applicationClosingEvent = new MockApplicationClosingEvent();
 
-            ConfigPool.SetApplicationClosingEvent(applicationClosingEvent);
-            ConfigPool.AutoSaveWhenApplicationClosing = true;
-            ConfigPool.RegisterConfigType<MySubConfig1>();
-            ConfigPool.RegisterConfigType(new MyConfig { MySubConfig2 = new MySubConfig2() });
+            configPool.ConfigDir = configDir;
+            configPool.SetApplicationClosingEvent(applicationClosingEvent);
+            configPool.AutoSaveWhenApplicationClosing = true;
+            configPool.RegisterConfigType<MySubConfig1>();
+            configPool.RegisterConfigType(new MyConfig { MySubConfig2 = new MySubConfig2() });
             applicationClosingEvent.Raise();
 
             Assert.That(File.Exists(subConfig1FilePath), Is.True);
@@ -304,8 +352,11 @@ namespace Config4Net.Tests
         [Test]
         public void load_config_files_from_given_config_dir_should_be_successful()
         {
-            var subConfig1FilePath = Path.Combine(ConfigDir, $@"subConfig1.{Constants.ConfigFileExtention}");
-            var appConfigFilePath = Path.Combine(ConfigDir, $@"{Constants.ApplicationConfigKey}.{Constants.ConfigFileExtention}");
+            var configPool = new ConfigPool();
+            var configDir = ConfigDir;
+
+            var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{Constants.ConfigFileExtention}");
+            var appConfigFilePath = Path.Combine(configDir, $@"{Constants.ApplicationConfigKey}.{Constants.ConfigFileExtention}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
             FileUtils.EnsureDelete(appConfigFilePath);
@@ -321,17 +372,17 @@ namespace Config4Net.Tests
                 Config3 = TimeSpan.MaxValue
             };
 
-            ConfigPool.ConfigDir = ConfigDir;
+            configPool.ConfigDir = configDir;
 
-            ConfigPool.RegisterConfigType(oldSubConfig1);
-            ConfigPool.RegisterConfigType(oldAppConfig);
+            configPool.RegisterConfigType(oldSubConfig1);
+            configPool.RegisterConfigType(oldAppConfig);
 
-            ConfigPool.SaveAsync(ConfigDir).Wait();
+            configPool.SaveAsync(configDir).Wait();
 
-            ConfigPool.LoadAsync(ConfigDir).Wait();
+            configPool.LoadAsync(configDir).Wait();
 
-            var subConfig1 = ConfigPool.Get<MySubConfig1>();
-            var appConfig = ConfigPool.Get<MyConfig>();
+            var subConfig1 = configPool.Get<MySubConfig1>();
+            var appConfig = configPool.Get<MyConfig>();
 
             AssertEx.PropertyValuesAreEquals(subConfig1, oldSubConfig1);
             AssertEx.PropertyValuesAreEquals(oldAppConfig, appConfig);
@@ -343,6 +394,8 @@ namespace Config4Net.Tests
         [Test]
         public void load_config_files_without_given_config_dir_should_lookup_in_current_dir()
         {
+            var configPool = new ConfigPool();
+
             var configDir = Environment.CurrentDirectory;
 
             var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{Constants.ConfigFileExtention}");
@@ -362,17 +415,17 @@ namespace Config4Net.Tests
                 Config3 = TimeSpan.MaxValue
             };
 
-            ConfigPool.ConfigDir = null;
+            configPool.ConfigDir = null;
 
-            ConfigPool.RegisterConfigType(oldSubConfig1);
-            ConfigPool.RegisterConfigType(oldAppConfig);
+            configPool.RegisterConfigType(oldSubConfig1);
+            configPool.RegisterConfigType(oldAppConfig);
 
-            ConfigPool.SaveAsync(null).Wait();
+            configPool.SaveAsync(null).Wait();
 
-            ConfigPool.LoadAsync(null).Wait();
+            configPool.LoadAsync(null).Wait();
 
-            var subConfig1 = ConfigPool.Get<MySubConfig1>();
-            var appConfig = ConfigPool.Get<MyConfig>();
+            var subConfig1 = configPool.Get<MySubConfig1>();
+            var appConfig = configPool.Get<MyConfig>();
 
             AssertEx.PropertyValuesAreEquals(subConfig1, oldSubConfig1);
             AssertEx.PropertyValuesAreEquals(oldAppConfig, appConfig);

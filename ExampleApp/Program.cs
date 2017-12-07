@@ -22,7 +22,7 @@ namespace ExampleApp
             //Application.Run(new MainForm());
 
             new WinFormFlatformLoader().Load();
-            var person = ConfigPool.Get<Person>();
+            var person = ConfigPool.Default.Get<Person>();
             var window = UiManager.Default.Build<IWindowContainer>(person);
 
             Application.Run((Form) window);

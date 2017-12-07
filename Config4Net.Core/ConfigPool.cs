@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Config4Net.Utils;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
-using Config4Net.Utils;
-using Newtonsoft.Json.Linq;
 
 namespace Config4Net.Core
 {
@@ -25,40 +25,42 @@ namespace Config4Net.Core
     /// The config is identified by key, see <seealso cref="ConfigAttribute"/> for more detail.
     /// </para>
     /// </summary>
-    public static class ConfigPool
+    public sealed class ConfigPool
     {
-        private static readonly Dictionary<string, ConfigWrapper> ConfigMap;
-        private static readonly List<IConfigObjectFactory> ConfigObjectFactoryList;
-        private static IApplicationClosingEvent _applicationClosingEvent;
-        private static volatile bool _loaded;
+        public static ConfigPool Default { get; } = new ConfigPool();
+
+        private readonly Dictionary<string, ConfigWrapper> _configMap;
+        private readonly List<IConfigObjectFactory> _configObjectFactoryList;
+        private IApplicationClosingEvent _applicationClosingEvent;
+        private volatile bool _loaded;
 
         /// <summary>
         /// Auto register type whenever there have a request configuration data from an unkown type.
         /// </summary>
-        public static bool AutoRegisterConfigType { get; set; } = true;
+        public bool AutoRegisterConfigType { get; set; } = true;
 
         /// <summary>
         /// Auto save configuration data to files when application is closing.
         /// Configuration will be saved into <see cref="ConfigDir"/> automatically.
         /// </summary>
-        public static bool AutoSaveWhenApplicationClosing { get; set; } = true;
+        public bool AutoSaveWhenApplicationClosing { get; set; } = true;
 
         /// <summary>
         /// The directory that will be held configuration files. If it's null or empty,
         /// library will use current directory instead.
         /// </summary>
-        public static string ConfigDir { get; set; }
+        public string ConfigDir { get; set; }
 
-        static ConfigPool()
+        public ConfigPool()
         {
-            ConfigMap = new Dictionary<string, ConfigWrapper>();
-            ConfigObjectFactoryList = new List<IConfigObjectFactory> {new DefaultConfigObjectFactory()};
+            _configMap = new Dictionary<string, ConfigWrapper>();
+            _configObjectFactoryList = new List<IConfigObjectFactory> { new DefaultConfigObjectFactory() };
             _loaded = false;
 
             SetApplicationClosingEvent(new DefaultApplicationClosingEvent());
         }
 
-        public static void SetApplicationClosingEvent(IApplicationClosingEvent applicationClosingEvent)
+        public void SetApplicationClosingEvent(IApplicationClosingEvent applicationClosingEvent)
         {
             if (_applicationClosingEvent != null)
             {
@@ -78,7 +80,7 @@ namespace Config4Net.Core
         /// <summary>
         /// Load configuration files from <see cref="ConfigDir"/>.
         /// </summary>
-        public static Task LoadAsync()
+        public Task LoadAsync()
         {
             return LoadAsync(null);
         }
@@ -86,7 +88,7 @@ namespace Config4Net.Core
         /// <summary>
         /// Load configuration files from specify config directory.
         /// </summary>
-        public static Task LoadAsync(string configDir)
+        public Task LoadAsync(string configDir)
         {
             return Task.Run(() =>
             {
@@ -99,7 +101,7 @@ namespace Config4Net.Core
         /// Save configuration data to files, the directory that will contain these files
         /// is specified by <see cref="ConfigDir"/>.
         /// </summary>
-        public static Task SaveAsync()
+        public Task SaveAsync()
         {
             return SaveAsync(null, true);
         }
@@ -111,7 +113,7 @@ namespace Config4Net.Core
         /// If it's null or empty, the library will
         /// use <see cref="ConfigDir"/> instead otherwise use this param.
         /// </param>
-        public static Task SaveAsync(string configDir)
+        public Task SaveAsync(string configDir)
         {
             return SaveAsync(configDir, true);
         }
@@ -127,7 +129,7 @@ namespace Config4Net.Core
         /// data will be saved after some tries) otherwise the library just save and doesn't care
         /// about the saving is successful or not.
         /// </param>
-        public static Task SaveAsync(bool isPersistent)
+        public Task SaveAsync(bool isPersistent)
         {
             return SaveAsync(null, true);
         }
@@ -146,7 +148,7 @@ namespace Config4Net.Core
         /// data will be saved after some tries) otherwise the library just save and doesn't care
         /// about the saving is successful or not.
         /// </param>
-        public static Task SaveAsync(string configDir, bool isPersistent)
+        public Task SaveAsync(string configDir, bool isPersistent)
         {
             return Task.Run(() => { Save(configDir, isPersistent); });
         }
@@ -159,7 +161,7 @@ namespace Config4Net.Core
         /// App config type.
         /// </typeparam>
         /// <returns></returns>
-        public static T App<T>() where T : class
+        public T App<T>() where T : class
         {
             return Get<T>(Constants.ApplicationConfigKey);
         }
@@ -170,7 +172,7 @@ namespace Config4Net.Core
         /// <typeparam name="T">
         /// Config type that is annotated by a <see cref="ConfigAttribute"/>.
         /// </typeparam>
-        public static T Get<T>() where T : class
+        public T Get<T>() where T : class
         {
             var key = GetConfigKey(typeof(T));
             return Get<T>(key);
@@ -185,7 +187,7 @@ namespace Config4Net.Core
         /// <param name="key">
         /// Config key.
         /// </param>
-        public static T Get<T>(string key) where T : class
+        public T Get<T>(string key) where T : class
         {
             return GetConfig<T>(key);
         }
@@ -197,7 +199,7 @@ namespace Config4Net.Core
         /// <typeparam name="T">
         /// Config type that is annotated by a <see cref="ConfigAttribute"/>.
         /// </typeparam>
-        public static T Calling<T>() where T : class
+        public T Calling<T>() where T : class
         {
             return QualifiedByAssembly<T>(Assembly.GetCallingAssembly());
         }
@@ -209,7 +211,7 @@ namespace Config4Net.Core
         /// <typeparam name="T">
         /// Config type that is annotated by a <see cref="ConfigAttribute"/>.
         /// </typeparam>
-        public static T Entry<T>() where T : class
+        public T Entry<T>() where T : class
         {
             return QualifiedByAssembly<T>(Assembly.GetEntryAssembly());
         }
@@ -217,24 +219,24 @@ namespace Config4Net.Core
         /// <summary>
         /// Register a factory that will be used when create new instance for a config type.
         /// </summary>
-        public static void RegisterFactory(IConfigObjectFactory factory)
+        public void RegisterFactory(IConfigObjectFactory factory)
         {
             EnsureConfigLoaded();
 
-            lock (ConfigObjectFactoryList)
+            lock (_configObjectFactoryList)
             {
-                ConfigObjectFactoryList.Add(factory);
+                _configObjectFactoryList.Add(factory);
             }
         }
 
         /// <summary>
         /// Unregister a factory that was registered by <see cref="RegisterFactory"/> method.
         /// </summary>
-        public static void UnregisterFactory(IConfigObjectFactory factory)
+        public void UnregisterFactory(IConfigObjectFactory factory)
         {
-            lock (ConfigObjectFactoryList)
+            lock (_configObjectFactoryList)
             {
-                ConfigObjectFactoryList.Remove(factory);
+                _configObjectFactoryList.Remove(factory);
             }
         }
 
@@ -246,7 +248,7 @@ namespace Config4Net.Core
         /// <typeparam name="T">
         /// Config type that is annotated by a <see cref="ConfigAttribute"/>.
         /// </typeparam>
-        public static T RegisterConfigType<T>() where T : class
+        public T RegisterConfigType<T>() where T : class
         {
             return RegisterConfigType<T>(null);
         }
@@ -270,7 +272,7 @@ namespace Config4Net.Core
         /// <typeparam name="T">
         /// Config type that is annotated by a <see cref="ConfigAttribute"/>.
         /// </typeparam>
-        public static T RegisterConfigType<T>(T instance) where T : class
+        public T RegisterConfigType<T>(T instance) where T : class
         {
             EnsureConfigLoaded();
 
@@ -278,23 +280,23 @@ namespace Config4Net.Core
             var key = GetConfigKey(type);
             var configObject = instance;
 
-            lock (ConfigMap)
+            lock (_configMap)
             {
-                if (ConfigMap.ContainsKey(key))
+                if (_configMap.ContainsKey(key))
                 {
-                    var obj = ConfigMap[key].ConfigObject;
+                    var obj = _configMap[key].ConfigObject;
                     return obj is T variable ? variable : null;
                 }
             }
 
             if (configObject == null)
             {
-                lock (ConfigObjectFactoryList)
+                lock (_configObjectFactoryList)
                 {
-                    for (var i = ConfigObjectFactoryList.Count - 1; i >= 0; i--)
+                    for (var i = _configObjectFactoryList.Count - 1; i >= 0; i--)
                     {
-                        var configObjectFactory = ConfigObjectFactoryList[i];
-                        configObject = (T) configObjectFactory.CreateDefault(type);
+                        var configObjectFactory = _configObjectFactoryList[i];
+                        configObject = (T)configObjectFactory.CreateDefault(type);
                         if (configObject != null) break;
                     }
                 }
@@ -302,9 +304,9 @@ namespace Config4Net.Core
                 if (configObject == null) return null;
             }
 
-            lock (ConfigMap)
+            lock (_configMap)
             {
-                ConfigMap.Add(key, new ConfigWrapper
+                _configMap.Add(key, new ConfigWrapper
                 {
                     ConfigObject = configObject,
                     TypeIdentify = type.AssemblyQualifiedName
@@ -321,23 +323,23 @@ namespace Config4Net.Core
         /// <typeparam name="T">
         /// Config type that is annotated by a <see cref="ConfigAttribute"/>.
         /// </typeparam>
-        public static void UnregisterConfigType<T>() where T : class
+        public void UnregisterConfigType<T>() where T : class
         {
             EnsureConfigLoaded();
 
             var type = typeof(T);
             var key = GetConfigKey(type);
 
-            lock (ConfigMap)
+            lock (_configMap)
             {
-                if (ConfigMap.ContainsKey(key))
+                if (_configMap.ContainsKey(key))
                 {
-                    ConfigMap.Remove(key);
+                    _configMap.Remove(key);
                 }
             }
         }
 
-        private static T QualifiedByAssembly<T>(Assembly assembly) where T : class
+        private T QualifiedByAssembly<T>(Assembly assembly) where T : class
         {
             var fileLocation = assembly.Location;
             var key = GetKeyFromFile(fileLocation);
@@ -345,20 +347,20 @@ namespace Config4Net.Core
             return GetConfig<T>(key);
         }
 
-        private static T GetConfig<T>(string key) where T : class
+        private T GetConfig<T>(string key) where T : class
         {
             EnsureConfigLoaded();
 
-            lock (ConfigMap)
+            lock (_configMap)
             {
-                if (ConfigMap.TryGetValue(key, out var configWrapper))
-                    return (T) configWrapper.ConfigObject;
+                if (_configMap.TryGetValue(key, out var configWrapper))
+                    return (T)configWrapper.ConfigObject;
             }
 
             return AutoRegisterConfigType ? RegisterConfigType<T>() : null;
         }
 
-        private static string EnsureConfigDir(string configDir = null)
+        private string EnsureConfigDir(string configDir = null)
         {
             configDir = string.IsNullOrEmpty(configDir)
                 ? (string.IsNullOrEmpty(ConfigDir) ? Environment.CurrentDirectory : ConfigDir)
@@ -372,35 +374,35 @@ namespace Config4Net.Core
             return configDir;
         }
 
-        private static void Load(string configDir)
+        private void Load(string configDir)
         {
             configDir = EnsureConfigDir(configDir);
             var configFiles = Directory.GetFiles(configDir, $@"*.{Constants.ConfigFileExtention}");
 
-            lock (ConfigMap)
+            lock (_configMap)
             {
-                ConfigMap.Clear();
+                _configMap.Clear();
 
                 foreach (var configFile in configFiles)
                 {
                     var configWrapper = LoadFromFile(configFile);
                     if (configWrapper == null) continue;
                     var configKey = GetKeyFromFile(configFile);
-                    ConfigMap.Add(configKey, configWrapper);
+                    _configMap.Add(configKey, configWrapper);
                 }
             }
 
             _loaded = true;
         }
 
-        private static ConfigWrapper LoadFromFile(string configFile)
+        private ConfigWrapper LoadFromFile(string configFile)
         {
             var json = File.ReadAllText(configFile);
 
             if (string.IsNullOrEmpty(json)) return null;
 
             var jsonObject = JObject.Parse(json);
-            var typeIdentify = (string) jsonObject.GetValue(nameof(ConfigWrapper.TypeIdentify));
+            var typeIdentify = (string)jsonObject.GetValue(nameof(ConfigWrapper.TypeIdentify));
             var type = Type.GetType(typeIdentify, true);
             var configObject = jsonObject.GetValue(nameof(ConfigWrapper.ConfigObject)).ToObject(type);
 
@@ -411,13 +413,13 @@ namespace Config4Net.Core
             };
         }
 
-        private static void EnsureConfigLoaded()
+        private void EnsureConfigLoaded()
         {
             if (!_loaded)
                 Load(null);
         }
 
-        private static string GetKeyFromFile(string file)
+        private string GetKeyFromFile(string file)
         {
             if (string.IsNullOrEmpty(file)) return null;
 
@@ -428,7 +430,7 @@ namespace Config4Net.Core
             return extentionIndex > 0 ? file.Substring(0, extentionIndex - 1) : file;
         }
 
-        private static string GetConfigKey(Type type)
+        private string GetConfigKey(Type type)
         {
             if (!type.IsDefined(typeof(ConfigAttribute), false))
                 throw new InvalidConfigTypeException($@"Config class must be defined with {nameof(ConfigAttribute)}.");
@@ -442,12 +444,12 @@ namespace Config4Net.Core
                 : configAttribute.Key;
         }
 
-        private static void Save(string configDir, bool isPersistent)
+        private void Save(string configDir, bool isPersistent)
         {
             configDir = EnsureConfigDir(configDir);
-            lock (ConfigMap)
+            lock (_configMap)
             {
-                foreach (var configWrapper in ConfigMap)
+                foreach (var configWrapper in _configMap)
                 {
                     var configKey = configWrapper.Key;
                     var configFileName = $@"{configKey}.{Constants.ConfigFileExtention}";
@@ -459,7 +461,7 @@ namespace Config4Net.Core
             }
         }
 
-        private static void SaveToFile(bool isPersistent, string configFile, JObject jsonObject)
+        private void SaveToFile(bool isPersistent, string configFile, JObject jsonObject)
         {
             FileWriter fileWriter;
 
@@ -483,7 +485,7 @@ namespace Config4Net.Core
             fileWriter.SaveAsync().Wait();
         }
 
-        private static void OnApplicationClosing(object sender, EventArgs e)
+        private void OnApplicationClosing(object sender, EventArgs e)
         {
             if (!AutoSaveWhenApplicationClosing) return;
 

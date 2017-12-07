@@ -14,7 +14,7 @@ namespace ExampleApp
         {
             InitializeComponent();
 
-            _appConfig = ConfigPool.App<AppConfig>();
+            _appConfig = ConfigPool.Default.App<AppConfig>();
 
             textBox1.Text = _appConfig.Config1;
             numericUpDown1.Value = _appConfig.Config2;
