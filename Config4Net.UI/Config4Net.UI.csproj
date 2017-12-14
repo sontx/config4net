@@ -35,7 +35,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppearanceBase.cs" />
+    <Compile Include="Editors\Definations\DefinationAttribute.cs" />
+    <Compile Include="Editors\Definations\SelectDefination.cs" />
     <Compile Include="Editors\ICheckboxEditor.cs" />
+    <Compile Include="Editors\Definations\IDefinationType.cs" />
     <Compile Include="SizeMode.cs" />
     <Compile Include="Containers\ContainerAppearance.cs" />
     <Compile Include="Containers\IContainer.cs" />

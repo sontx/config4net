@@ -1,4 +1,5 @@
 ﻿using Config4Net.UI.Containers;
+using Config4Net.UI.Editors.Definations;
 using Config4Net.UI.Layout;
 using Config4Net.Utils;
 using System;
@@ -36,7 +37,7 @@ namespace Config4Net.UI
             var sizeOptions = SettingFactory.CreateSizeOptions();
 
             // create a container
-            var container = (IContainer) factory.Create();
+            var container = (IContainer)factory.Create();
             var configType = config.GetType();
             ApplyDescription(container, configType, sizeOptions);
 
@@ -48,7 +49,7 @@ namespace Config4Net.UI
                 container.AddChild(component);
             }
 
-            return (T) container;
+            return (T)container;
         }
 
         public void RegisterFactory(Type componentType, object factory)
@@ -110,11 +111,11 @@ namespace Config4Net.UI
                     component,
                     BindingFlags.Instance,
                     null,
-                    new[] {parentInstance, propertyInfo},
+                    new[] { parentInstance, propertyInfo },
                     CultureInfo.CurrentCulture);
 
-                ApplyDescription((IComponent) component, propertyInfo, sizeOptions);
-                return (IComponent) component;
+                ApplyDescription((IComponent)component, propertyInfo, sizeOptions);
+                return (IComponent)component;
             }
         }
 
@@ -136,9 +137,14 @@ namespace Config4Net.UI
             // it's an editor
             else
             {
-                component.GetType().GetProperty("Appearance")
-                    ?.SetValue(component, SettingFactory.CreatEditorAppearance());
+                ObjectUtils.SetProperty(component, "Appearance", SettingFactory.CreatEditorAppearance());
                 component.SizeMode = sizeOptions.EditorSizeMode;
+
+                var definationAttribute = memberInfo.GetCustomAttribute<DefinationAttribute>();
+                if (definationAttribute != null)
+                {
+                    ObjectUtils.SetProperty(component, "DefinationType", definationAttribute.Value);
+                }
             }
         }
 
@@ -166,7 +172,7 @@ namespace Config4Net.UI
         private IComponentFactory<T> GetFactoryByComponentType<T>() where T : IComponent
         {
             var registeredFactory = _registeredComponentFactories[typeof(T)];
-            return (IComponentFactory<T>) registeredFactory;
+            return (IComponentFactory<T>)registeredFactory;
         }
 
         public UiManager()

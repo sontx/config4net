@@ -17,6 +17,7 @@ namespace Config4Net.UI.WinForms
             UiManager.Default.RegisterFactory(typeof(ITextEditor), new TextEditorFactory());
             UiManager.Default.RegisterFactory(typeof(ICheckboxEditor), new CheckboxEditorFactory());
             UiManager.Default.RegisterFactory(typeof(IColorEditor), new ColorEditorFactory());
+            UiManager.Default.RegisterFactory(typeof(ISelectEditor), new SelectEditorFactory());
         }
     }
 }

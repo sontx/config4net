@@ -1,11 +1,13 @@
-﻿using Config4Net.UI;
+﻿using Config4Net.Core;
+using Config4Net.Types;
+using Config4Net.UI;
 using Config4Net.UI.Containers;
 using Config4Net.UI.Editors;
+using Config4Net.UI.Editors.Definations;
 using Config4Net.UI.WinForms;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Config4Net.Core;
 
 namespace ExampleApp
 {
@@ -22,21 +24,46 @@ namespace ExampleApp
             //Application.Run(new MainForm());
 
             new WinFormFlatformLoader().Load();
+            ConfigPool.Default.IgnoreMismatchType = true;
             var person = ConfigPool.Default.Get<Person>();
             var window = UiManager.Default.Build<IWindowContainer>(person);
 
-            Application.Run((Form) window);
+            Application.Run((Form)window);
+        }
+
+        private class MyValue
+        {
+            public string Value1 { get; set; }
+            public int Value2 { get; set; }
+
+            public override string ToString()
+            {
+                return Value1;
+            }
+        }
+
+        private class MySelectDefination : SelectDefination
+        {
+            protected override Select GetSelect()
+            {
+                return new Select.Builder()
+                    .AddOption("Last name 1", new MyValue { Value1 = "value 1", Value2 = 1 })
+                    .AddOption("Last name 2", new MyValue { Value1 = "value 2", Value2 = 2 })
+                    .AddOption("Last name 3", new MyValue { Value1 = "value 3", Value2 = 3 })
+                    .Build();
+            }
         }
 
         [Showable("Your personal information")]
         [Config]
-        class Person
+        private class Person
         {
             [Showable("First name:", ComponentType = typeof(ITextEditor))]
             public string FirstName { get; set; }
 
-            [Showable("Last name:", ComponentType = typeof(ITextEditor))]
-            public string LastName { get; set; }
+            [Showable("Last name:", ComponentType = typeof(ISelectEditor))]
+            [Defination(typeof(MySelectDefination))]
+            public MyValue LastName { get; set; }
 
             [Showable(ComponentType = typeof(INumberEditor))]
             public int Age { get; set; }
@@ -54,7 +81,7 @@ namespace ExampleApp
             public Job Job { get; set; }
         }
 
-        class Address
+        private class Address
         {
             [Showable(ComponentType = typeof(ITextEditor))]
             public string City { get; set; }
@@ -65,7 +92,7 @@ namespace ExampleApp
             public string InvisibleField { get; set; }
         }
 
-        class Job
+        private class Job
         {
             [Showable(ComponentType = typeof(ITextEditor))]
             public string Company { get; set; }

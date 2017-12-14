@@ -11,7 +11,11 @@ namespace Config4Net.Utils
 
         public T Value
         {
-            get => (T) Convert.ChangeType(_propertyInfo.GetValue(_source), typeof(T));
+            get
+            {
+                var value = _propertyInfo.GetValue(_source);
+                return (T)(value is IConvertible ? Convert.ChangeType(value, typeof(T)) : value);
+            }
             set => SetValue(value);
         }
 
@@ -22,7 +26,17 @@ namespace Config4Net.Utils
 
         private void SetValue(object value)
         {
-            _propertyInfo.SetValue(_source, Convert.ChangeType(value, _propertyInfo.PropertyType));
+            object convertedValue;
+            if (value is IConvertible)
+            {
+                convertedValue = Convert.ChangeType(value, _propertyInfo.PropertyType);
+            }
+            else
+            {
+                convertedValue = value.GetType() == _propertyInfo.PropertyType ? value : ObjectUtils.ToString(value);
+            }
+
+            _propertyInfo.SetValue(_source, convertedValue);
         }
 
         public PropertyBinder(object source, PropertyInfo propertyInfo)

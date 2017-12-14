@@ -58,6 +58,13 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Containers\Factories\WindowContainerFactory.cs" />
+    <Compile Include="Editors\Factories\SelectEditorFactory.cs" />
+    <Compile Include="Editors\SelectEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Editors\SelectEditor.Designer.cs">
+      <DependentUpon>SelectEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Editors\ColorEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -109,6 +116,9 @@
     <EmbeddedResource Include="Containers\ChooserForm.resx">
       <DependentUpon>ChooserForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Editors\SelectEditor.resx">
+      <DependentUpon>SelectEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Editors\ColorEditor.resx">
       <DependentUpon>ColorEditor.cs</DependentUpon>
     </EmbeddedResource>
@@ -148,6 +158,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\Config4Net.Types\Config4Net.Types.csproj">
+      <Project>{19498BD6-F31C-4522-9A83-8050D43139A2}</Project>
+      <Name>Config4Net.Types</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Config4Net.UI\Config4Net.UI.csproj">
       <Project>{24E2E163-56A8-49B5-92CF-2E0DA4348AB9}</Project>
       <Name>Config4Net.UI</Name>

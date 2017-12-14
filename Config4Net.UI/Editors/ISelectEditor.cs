@@ -2,7 +2,7 @@
 
 namespace Config4Net.UI.Editors
 {
-    public interface ISelectEditor : IEditor<Select>
+    public interface ISelectEditor : IEditor<object>
     {
         DisplayMode DisplayMode { get; set; }
     }

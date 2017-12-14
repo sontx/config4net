@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using Config4Net.UI.Editors.Definations;
 
 namespace Config4Net.UI.Editors
 {
@@ -10,6 +11,8 @@ namespace Config4Net.UI.Editors
         event ValueChangingEventHandler ValueChanging;
 
         T Value { get; set; }
+
+        Type DefinationType { get; set; }
 
         EditorAppearance Appearance { get; set; }
 

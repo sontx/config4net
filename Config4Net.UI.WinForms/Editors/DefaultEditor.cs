@@ -1,9 +1,8 @@
 ﻿using Config4Net.UI.Editors;
+using Config4Net.UI.WinForms.Editors.Helpers;
 using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
-using Config4Net.UI.WinForms.Editors.Helpers;
 
 namespace Config4Net.UI.WinForms.Editors
 {
@@ -34,6 +33,8 @@ namespace Config4Net.UI.WinForms.Editors
                 ComputeSize();
             }
         }
+
+        public virtual Type DefinationType { get; set; }
 
         public virtual string Description { get; set; }
 
@@ -78,15 +79,19 @@ namespace Config4Net.UI.WinForms.Editors
                 case SizeMode.Default:
                     ComputeSizeAbsolute();
                     break;
+
                 case SizeMode.Absolute:
                     ComputeSizeAbsolute();
                     break;
+
                 case SizeMode.MatchParent:
                     ComputeSizeMatchParent();
                     break;
+
                 case SizeMode.WrapContent:
                     ComputeSizeWrapContent();
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -114,7 +119,7 @@ namespace Config4Net.UI.WinForms.Editors
             var numberOfLines = labelSize.Width / Appearance.LabelWidth + 1;
             Height = Math.Max(PreferHeight, numberOfLines * labelSize.Height) + Padding.Top + Padding.Bottom;
             Width = allowWidth;
-            labLabel.Width = (int) (allowWidth * (_appearance.LabelWidth / (float)_appearance.Width));
+            labLabel.Width = (int)(allowWidth * (_appearance.LabelWidth / (float)_appearance.Width));
         }
 
         protected override void OnResize(EventArgs e)

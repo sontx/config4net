@@ -13,7 +13,7 @@ namespace Config4Net.UI
 
         public ShowableAttribute(string label = null)
         {
-            this.Label = label;
+            Label = label;
         }
     }
 }
