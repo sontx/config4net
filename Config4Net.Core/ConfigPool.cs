@@ -1,4 +1,5 @@
 ﻿using Config4Net.Utils;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,7 @@ namespace Config4Net.Core
         private readonly List<IConfigObjectFactory> _configObjectFactoryList;
         private IApplicationClosingEvent _applicationClosingEvent;
         private volatile bool _loaded;
+        private JsonSerializerSettings _jsonSerializerSettings;
 
         /// <summary>
         /// Auto register type whenever there have a request configuration data from an unkown type.
@@ -46,6 +48,12 @@ namespace Config4Net.Core
         public bool AutoSaveWhenApplicationClosing { get; set; } = true;
 
         /// <summary>
+        /// Ignore mismatch type, the property that is mismatch type will be assigned
+        /// default value.
+        /// </summary>
+        public bool IgnoreMismatchType { get; set; } = true;
+
+        /// <summary>
         /// The directory that will be held configuration files. If it's null or empty,
         /// library will use current directory instead.
         /// </summary>
@@ -54,10 +62,11 @@ namespace Config4Net.Core
         public ConfigPool()
         {
             _configMap = new Dictionary<string, ConfigWrapper>();
-            _configObjectFactoryList = new List<IConfigObjectFactory> { new DefaultConfigObjectFactory() };
+            _configObjectFactoryList = new List<IConfigObjectFactory> {new DefaultConfigObjectFactory()};
             _loaded = false;
 
             SetApplicationClosingEvent(new DefaultApplicationClosingEvent());
+            HandleJsonError();
         }
 
         public void SetApplicationClosingEvent(IApplicationClosingEvent applicationClosingEvent)
@@ -296,7 +305,7 @@ namespace Config4Net.Core
                     for (var i = _configObjectFactoryList.Count - 1; i >= 0; i--)
                     {
                         var configObjectFactory = _configObjectFactoryList[i];
-                        configObject = (T)configObjectFactory.CreateDefault(type);
+                        configObject = (T) configObjectFactory.CreateDefault(type);
                         if (configObject != null) break;
                     }
                 }
@@ -354,7 +363,7 @@ namespace Config4Net.Core
             lock (_configMap)
             {
                 if (_configMap.TryGetValue(key, out var configWrapper))
-                    return (T)configWrapper.ConfigObject;
+                    return (T) configWrapper.ConfigObject;
             }
 
             return AutoRegisterConfigType ? RegisterConfigType<T>() : null;
@@ -402,9 +411,14 @@ namespace Config4Net.Core
             if (string.IsNullOrEmpty(json)) return null;
 
             var jsonObject = JObject.Parse(json);
-            var typeIdentify = (string)jsonObject.GetValue(nameof(ConfigWrapper.TypeIdentify));
+            var typeIdentify = (string) jsonObject.GetValue(nameof(ConfigWrapper.TypeIdentify));
             var type = Type.GetType(typeIdentify, true);
-            var configObject = jsonObject.GetValue(nameof(ConfigWrapper.ConfigObject)).ToObject(type);
+            var serializer = _jsonSerializerSettings != null
+                ? JsonSerializer.CreateDefault(_jsonSerializerSettings)
+                : JsonSerializer.CreateDefault();
+            var configObject = jsonObject
+                .GetValue(nameof(ConfigWrapper.ConfigObject))
+                .ToObject(type, serializer);
 
             return new ConfigWrapper
             {
@@ -491,6 +505,17 @@ namespace Config4Net.Core
 
             var configDir = EnsureConfigDir();
             SaveAsync(configDir).Wait(5000);
+        }
+
+        private void HandleJsonError()
+        {
+            _jsonSerializerSettings = new JsonSerializerSettings
+            {
+                Error = (sender, args) =>
+                {
+                    args.ErrorContext.Handled = IgnoreMismatchType;
+                }
+            };
         }
     }
 }
