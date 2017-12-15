@@ -433,6 +433,24 @@ namespace Config4Net.Tests
             FileUtils.EnsureDelete(subConfig1FilePath);
             FileUtils.EnsureDelete(appConfigFilePath);
         }
+
+        [Test]
+        public void config_object_should_has_non_null_properties__with_PreventNullReference_is_true()
+        {
+            var configPool = new ConfigPool();
+            configPool.Settings.PreventNullReference = true;
+            var config = configPool.Get<MySubConfig1>();
+            Assert.NotNull(config.Config2);
+        }
+
+        [Test]
+        public void config_object_should_has_null_properties_if_they_dont_present__with_PreventNullReference_is_false()
+        {
+            var configPool = new ConfigPool();
+            configPool.Settings.PreventNullReference = false;
+            var config = configPool.Get<MySubConfig1>();
+            Assert.Null(config.Config2);
+        }
     }
 
     [Config(IsAppConfig = true, Key = "myConfig")]

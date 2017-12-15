@@ -34,6 +34,11 @@ namespace Config4Net.Core
         public bool IgnoreMismatchType { get; set; }
 
         /// <summary>
+        /// The library will create new instance for null properties to prevent null reference.
+        /// </summary>
+        public bool PreventNullReference { get; set; }
+
+        /// <summary>
         /// The directory that will be held configuration files. If it's null or empty,
         /// library will use current directory instead.
         /// </summary>

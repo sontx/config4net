@@ -55,15 +55,15 @@ namespace Config4Net.Core
             _configMap = new Dictionary<string, ConfigWrapper>();
             _configObjectFactoryList = new List<IConfigObjectFactory> {new DefaultConfigObjectFactory()};
             _loaded = false;
-            
+
             HandleJsonError();
         }
 
         public ConfigPool()
-            :this(new DefaultSettingsFactory().Create())
+            : this(new DefaultSettingsFactory().Create())
         {
         }
-        
+
         /// <summary>
         /// Load configuration files from <see cref="Core.Settings.ConfigDir"/>"/>.
         /// </summary>
@@ -293,11 +293,7 @@ namespace Config4Net.Core
 
             lock (_configMap)
             {
-                _configMap.Add(key, new ConfigWrapper
-                {
-                    ConfigObject = configObject,
-                    TypeIdentify = type.AssemblyQualifiedName
-                });
+                _configMap.Add(key, CreateConfigWrapper(type.AssemblyQualifiedName, configObject));
             }
 
             return configObject;
@@ -398,6 +394,20 @@ namespace Config4Net.Core
                 .GetValue(nameof(ConfigWrapper.ConfigObject))
                 .ToObject(type, serializer);
 
+            return CreateConfigWrapper(typeIdentify, configObject);
+        }
+
+        private ConfigWrapper CreateConfigWrapper(string typeIdentify, object configObject)
+        {
+            if (Settings.PreventNullReference)
+            {
+                ObjectUtils.FillNullProperties(
+                    configObject,
+                    propertyType => propertyType == typeof(string)
+                        ? string.Empty
+                        : ObjectUtils.CreateDefaultInstance(propertyType));
+            }
+
             return new ConfigWrapper
             {
                 TypeIdentify = typeIdentify,
@@ -489,10 +499,7 @@ namespace Config4Net.Core
         {
             _jsonSerializerSettings = new JsonSerializerSettings
             {
-                Error = (sender, args) =>
-                {
-                    args.ErrorContext.Handled = Settings.IgnoreMismatchType;
-                }
+                Error = (sender, args) => { args.ErrorContext.Handled = Settings.IgnoreMismatchType; }
             };
         }
     }

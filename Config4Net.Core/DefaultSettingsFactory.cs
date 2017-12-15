@@ -11,6 +11,7 @@ namespace Config4Net.Core
                 AutoRegisterConfigType = true,
                 AutoSaveWhenApplicationClosing = true,
                 IgnoreMismatchType = true,
+                PreventNullReference = false,
                 ConfigDir = Environment.CurrentDirectory,
                 ApplicationClosingEvent = new DefaultApplicationClosingEvent()
             };
