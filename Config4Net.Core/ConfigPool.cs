@@ -32,62 +32,40 @@ namespace Config4Net.Core
 
         private readonly Dictionary<string, ConfigWrapper> _configMap;
         private readonly List<IConfigObjectFactory> _configObjectFactoryList;
-        private IApplicationClosingEvent _applicationClosingEvent;
         private volatile bool _loaded;
         private JsonSerializerSettings _jsonSerializerSettings;
+        private Settings _settings;
 
-        /// <summary>
-        /// Auto register type whenever there have a request configuration data from an unkown type.
-        /// </summary>
-        public bool AutoRegisterConfigType { get; set; } = true;
-
-        /// <summary>
-        /// Auto save configuration data to files when application is closing.
-        /// Configuration will be saved into <see cref="ConfigDir"/> automatically.
-        /// </summary>
-        public bool AutoSaveWhenApplicationClosing { get; set; } = true;
-
-        /// <summary>
-        /// Ignore mismatch type, the property that is mismatch type will be assigned
-        /// default value.
-        /// </summary>
-        public bool IgnoreMismatchType { get; set; } = true;
-
-        /// <summary>
-        /// The directory that will be held configuration files. If it's null or empty,
-        /// library will use current directory instead.
-        /// </summary>
-        public string ConfigDir { get; set; }
-
-        public ConfigPool()
+        public Settings Settings
         {
+            get => _settings;
+            set
+            {
+                Precondition.ArgumentNotNull(value, nameof(Settings));
+                _settings?.Release();
+                _settings = value;
+                _settings.SetOnApplicationClosing(OnApplicationClosing);
+            }
+        }
+
+        public ConfigPool(Settings settings)
+        {
+            Settings = settings;
+
             _configMap = new Dictionary<string, ConfigWrapper>();
             _configObjectFactoryList = new List<IConfigObjectFactory> {new DefaultConfigObjectFactory()};
             _loaded = false;
-
-            SetApplicationClosingEvent(new DefaultApplicationClosingEvent());
+            
             HandleJsonError();
         }
 
-        public void SetApplicationClosingEvent(IApplicationClosingEvent applicationClosingEvent)
+        public ConfigPool()
+            :this(new DefaultSettingsFactory().Create())
         {
-            if (_applicationClosingEvent != null)
-            {
-                _applicationClosingEvent.AppClosing -= OnApplicationClosing;
-                _applicationClosingEvent.Unregister();
-            }
-
-            _applicationClosingEvent = applicationClosingEvent;
-
-            if (_applicationClosingEvent != null)
-            {
-                _applicationClosingEvent.AppClosing += OnApplicationClosing;
-                _applicationClosingEvent.Register();
-            }
         }
-
+        
         /// <summary>
-        /// Load configuration files from <see cref="ConfigDir"/>.
+        /// Load configuration files from <see cref="Core.Settings.ConfigDir"/>"/>.
         /// </summary>
         public Task LoadAsync()
         {
@@ -108,7 +86,7 @@ namespace Config4Net.Core
 
         /// <summary>
         /// Save configuration data to files, the directory that will contain these files
-        /// is specified by <see cref="ConfigDir"/>.
+        /// is specified by <see cref="Core.Settings.ConfigDir"/>.
         /// </summary>
         public Task SaveAsync()
         {
@@ -120,7 +98,7 @@ namespace Config4Net.Core
         /// </summary>
         /// <param name="configDir">
         /// If it's null or empty, the library will
-        /// use <see cref="ConfigDir"/> instead otherwise use this param.
+        /// use <see cref="Core.Settings.ConfigDir"/> instead otherwise use this param.
         /// </param>
         public Task SaveAsync(string configDir)
         {
@@ -129,7 +107,7 @@ namespace Config4Net.Core
 
         /// <summary>
         /// Save configuration data to files, the directory that will contain these files
-        /// is specified by <see cref="ConfigDir"/>.
+        /// is specified by <see cref="Core.Settings.ConfigDir"/>.
         /// </summary>
         /// <param name="isPersistent">
         /// If it's true, the library will make sure that all
@@ -148,7 +126,7 @@ namespace Config4Net.Core
         /// </summary>
         /// <param name="configDir">
         /// If it's null or empty, the library will
-        /// use <see cref="ConfigDir"/> instead otherwise use this param.
+        /// use <see cref="Core.Settings.ConfigDir"/> instead otherwise use this param.
         /// </param>
         /// <param name="isPersistent">
         /// If it's true, the library will make sure that all
@@ -366,13 +344,13 @@ namespace Config4Net.Core
                     return (T) configWrapper.ConfigObject;
             }
 
-            return AutoRegisterConfigType ? RegisterConfigType<T>() : null;
+            return Settings.AutoRegisterConfigType ? RegisterConfigType<T>() : null;
         }
 
         private string EnsureConfigDir(string configDir = null)
         {
             configDir = string.IsNullOrEmpty(configDir)
-                ? (string.IsNullOrEmpty(ConfigDir) ? Environment.CurrentDirectory : ConfigDir)
+                ? (string.IsNullOrEmpty(Settings.ConfigDir) ? Environment.CurrentDirectory : Settings.ConfigDir)
                 : configDir;
 
             if (!Directory.Exists(configDir))
@@ -499,9 +477,9 @@ namespace Config4Net.Core
             fileWriter.SaveAsync().Wait();
         }
 
-        private void OnApplicationClosing(object sender, EventArgs e)
+        private void OnApplicationClosing()
         {
-            if (!AutoSaveWhenApplicationClosing) return;
+            if (!Settings.AutoSaveWhenApplicationClosing) return;
 
             var configDir = EnsureConfigDir();
             SaveAsync(configDir).Wait(5000);
@@ -513,7 +491,7 @@ namespace Config4Net.Core
             {
                 Error = (sender, args) =>
                 {
-                    args.ErrorContext.Handled = IgnoreMismatchType;
+                    args.ErrorContext.Handled = Settings.IgnoreMismatchType;
                 }
             };
         }

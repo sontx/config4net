@@ -24,7 +24,7 @@ namespace ExampleApp
             //Application.Run(new MainForm());
 
             new WinFormFlatformLoader().Load();
-            ConfigPool.Default.IgnoreMismatchType = true;
+            ConfigPool.Default.Settings.IgnoreMismatchType = true;
             var person = ConfigPool.Default.Get<Person>();
             var window = UiManager.Default.Build<IWindowContainer>(person);
 

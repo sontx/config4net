@@ -76,7 +76,7 @@ namespace Config4Net.Tests
         public void get_config_that_does_not_exist_should_return_null_if_AutoRegisterConfigType_is_false()
         {
             var configPool = new ConfigPool();
-            configPool.AutoRegisterConfigType = false;
+            configPool.Settings.AutoRegisterConfigType = false;
             configPool.UnregisterConfigType<MyConfig>();
             var config = configPool.App<MyConfig>();
             Assert.IsNull(config);
@@ -86,7 +86,7 @@ namespace Config4Net.Tests
         public void get_config_that_does_not_exist_should_return_config_object_if_AutoRegisterConfigType_is_true()
         {
             var configPool = new ConfigPool();
-            configPool.AutoRegisterConfigType = true;
+            configPool.Settings.AutoRegisterConfigType = true;
             configPool.UnregisterConfigType<MyConfig>();
             var config = configPool.App<MyConfig>();
             Assert.IsInstanceOf<MyConfig>(config);
@@ -132,7 +132,7 @@ namespace Config4Net.Tests
         public void register_config_type_with_IsAppConfig_attribute_should_ignore_Key_attribute()
         {
             var configPool = new ConfigPool();
-            configPool.AutoRegisterConfigType = false;
+            configPool.Settings.AutoRegisterConfigType = false;
             configPool.UnregisterConfigType<MyConfig>();
             configPool.RegisterConfigType<MyConfig>();
             var config = configPool.Get<MyConfig>("myConfig");
@@ -143,7 +143,7 @@ namespace Config4Net.Tests
         public void register_config_type_should_take_Key_attribute_as_config_key()
         {
             var configPool = new ConfigPool();
-            configPool.AutoRegisterConfigType = false;
+            configPool.Settings.AutoRegisterConfigType = false;
             configPool.UnregisterConfigType<MySubConfig1>();
             configPool.RegisterConfigType<MySubConfig1>();
             var config = configPool.Get<MySubConfig1>("subConfig1");
@@ -154,7 +154,7 @@ namespace Config4Net.Tests
         public void register_config_type_should_auto_detect_key_by_calling_assembly_when_Key_and_IsAppConfig_attributes_are_blank()
         {
             var configPool = new ConfigPool();
-            configPool.AutoRegisterConfigType = false;
+            configPool.Settings.AutoRegisterConfigType = false;
             configPool.UnregisterConfigType<MySubConfig2>();
             configPool.RegisterConfigType<MySubConfig2>();
             var keyByAssembly = Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
@@ -166,7 +166,7 @@ namespace Config4Net.Tests
         public void register_config_type_should_init_with_given_config_object()
         {
             var configPool = new ConfigPool();
-            configPool.AutoRegisterConfigType = false;
+            configPool.Settings.AutoRegisterConfigType = false;
             configPool.UnregisterConfigType<MySubConfig1>();
             var initConfig = new MySubConfig1 { Config1 = 1 };
             configPool.RegisterConfigType(initConfig);
@@ -212,7 +212,7 @@ namespace Config4Net.Tests
             FileUtils.EnsureDelete(subConfig1FilePath);
             FileUtils.EnsureDelete(appConfigFilePath);
 
-            configPool.ConfigDir = null;
+            configPool.Settings.ConfigDir = null;
 
             configPool.RegisterConfigType<MySubConfig1>();
             configPool.RegisterConfigType(new MyConfig { MySubConfig2 = new MySubConfig2() });
@@ -332,9 +332,9 @@ namespace Config4Net.Tests
 
             var applicationClosingEvent = new MockApplicationClosingEvent();
 
-            configPool.ConfigDir = configDir;
-            configPool.SetApplicationClosingEvent(applicationClosingEvent);
-            configPool.AutoSaveWhenApplicationClosing = true;
+            configPool.Settings.ConfigDir = configDir;
+            configPool.Settings.ApplicationClosingEvent = applicationClosingEvent;
+            configPool.Settings.AutoSaveWhenApplicationClosing = true;
             configPool.RegisterConfigType<MySubConfig1>();
             configPool.RegisterConfigType(new MyConfig { MySubConfig2 = new MySubConfig2() });
             applicationClosingEvent.Raise();
@@ -372,7 +372,7 @@ namespace Config4Net.Tests
                 Config3 = TimeSpan.MaxValue
             };
 
-            configPool.ConfigDir = configDir;
+            configPool.Settings.ConfigDir = configDir;
 
             configPool.RegisterConfigType(oldSubConfig1);
             configPool.RegisterConfigType(oldAppConfig);
@@ -415,7 +415,7 @@ namespace Config4Net.Tests
                 Config3 = TimeSpan.MaxValue
             };
 
-            configPool.ConfigDir = null;
+            configPool.Settings.ConfigDir = null;
 
             configPool.RegisterConfigType(oldSubConfig1);
             configPool.RegisterConfigType(oldAppConfig);

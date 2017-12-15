@@ -44,10 +44,13 @@
     <Compile Include="ConfigPool.cs" />
     <Compile Include="ConfigWrapper.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="DefaultSettingsFactory.cs" />
     <Compile Include="IApplicationClosingEvent.cs" />
     <Compile Include="IConfigObjectFactory.cs" />
     <Compile Include="InvalidConfigTypeException.cs" />
+    <Compile Include="ISettingsFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
