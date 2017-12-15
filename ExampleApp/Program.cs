@@ -59,6 +59,7 @@ namespace ExampleApp
         private class Person
         {
             [Showable("First name:", ComponentType = typeof(ITextEditor))]
+            [Default("son")]
             public string FirstName { get; set; }
 
             [Showable("Last name:", ComponentType = typeof(ISelectEditor))]

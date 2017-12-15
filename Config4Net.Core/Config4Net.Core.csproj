@@ -44,6 +44,7 @@
     <Compile Include="ConfigPool.cs" />
     <Compile Include="ConfigWrapper.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="DefaultAttribute.cs" />
     <Compile Include="DefaultSettingsFactory.cs" />
     <Compile Include="IApplicationClosingEvent.cs" />
     <Compile Include="IConfigObjectFactory.cs" />

@@ -37,7 +37,7 @@ namespace Config4Net.Utils
                 : null;
         }
 
-        public static void FillNullProperties(object source, Func<Type, object> propertyValueFactory)
+        public static void FillNullProperties(object source, Func<PropertyInfo, object> propertyValueFactory)
         {
             Precondition.ArgumentNotNull(source, nameof(source));
             Precondition.ArgumentNotNull(propertyValueFactory, nameof(propertyValueFactory));
@@ -58,7 +58,7 @@ namespace Config4Net.Utils
                 }
                 else if (propertyInfo.CanWrite)
                 {
-                    propertyValue = propertyValueFactory(propertyInfo.PropertyType);
+                    propertyValue = propertyValueFactory(propertyInfo);
                     if (propertyValue == null) continue;
                     FillNullProperties(propertyValue, propertyValueFactory);
                     propertyInfo.SetValue(source, propertyValue);

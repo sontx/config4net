@@ -435,7 +435,7 @@ namespace Config4Net.Tests
         }
 
         [Test]
-        public void config_object_should_has_non_null_properties__with_PreventNullReference_is_true()
+        public void config_object_should_have_non_null_properties__with_PreventNullReference_is_true()
         {
             var configPool = new ConfigPool();
             configPool.Settings.PreventNullReference = true;
@@ -444,13 +444,29 @@ namespace Config4Net.Tests
         }
 
         [Test]
-        public void config_object_should_has_null_properties_if_they_dont_present__with_PreventNullReference_is_false()
+        public void config_object_should_have_null_properties_if_they_dont_present__with_PreventNullReference_is_false()
         {
             var configPool = new ConfigPool();
             configPool.Settings.PreventNullReference = false;
             var config = configPool.Get<MySubConfig1>();
             Assert.Null(config.Config2);
         }
+
+        [Test]
+        public void config_properties_should_have_default_value_that_define_by_DefaultAttribute()
+        {
+            var configPool = new ConfigPool();
+            configPool.Settings.PreventNullReference = false;
+            var config = configPool.Get<DefaultValueConfig>();
+            Assert.AreEqual(config.Value, "some default value here");
+        }
+    }
+
+    [Config]
+    public class DefaultValueConfig
+    {
+        [Default("some default value here")]
+        public string Value { get; set; }
     }
 
     [Config(IsAppConfig = true, Key = "myConfig")]

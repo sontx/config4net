@@ -399,14 +399,20 @@ namespace Config4Net.Core
 
         private ConfigWrapper CreateConfigWrapper(string typeIdentify, object configObject)
         {
-            if (Settings.PreventNullReference)
+            ObjectUtils.FillNullProperties(configObject, propertyInfo =>
             {
-                ObjectUtils.FillNullProperties(
-                    configObject,
-                    propertyType => propertyType == typeof(string)
+                var defaultAttribute = propertyInfo.GetCustomAttribute<DefaultAttribute>();
+                if (defaultAttribute != null) return defaultAttribute.DefaultValue;
+
+                if (Settings.PreventNullReference)
+                {
+                    return propertyInfo.PropertyType == typeof(string)
                         ? string.Empty
-                        : ObjectUtils.CreateDefaultInstance(propertyType));
-            }
+                        : ObjectUtils.CreateDefaultInstance(propertyInfo.PropertyType);
+                }
+
+                return null;
+            });
 
             return new ConfigWrapper
             {
