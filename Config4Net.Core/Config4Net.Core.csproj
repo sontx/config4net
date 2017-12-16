@@ -43,7 +43,6 @@
     <Compile Include="ConfigAttribute.cs" />
     <Compile Include="ConfigPool.cs" />
     <Compile Include="ConfigWrapper.cs" />
-    <Compile Include="Constants.cs" />
     <Compile Include="DefaultAttribute.cs" />
     <Compile Include="DefaultSettingsFactory.cs" />
     <Compile Include="IApplicationClosingEvent.cs" />

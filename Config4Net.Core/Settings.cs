@@ -44,6 +44,23 @@ namespace Config4Net.Core
         /// </summary>
         public string ConfigDir { get; set; }
 
+        /// <summary>
+        /// The extenstion of configuration file that store configuration data. These files
+        /// will be placed in <see cref="ConfigDir"/>
+        /// </summary>
+        public string ConfigFileExtension { get; set; }
+
+        /// <summary>
+        /// The special key for each application. That key belongs to application config which
+        /// contains configuration data for whole application.
+        /// </summary>
+        public string AppConfigKey { get; set; }
+
+        /// <summary>
+        /// The write file timeout in milliseconds.
+        /// </summary>
+        public int WriteFileTimeout { get; set; }
+
         internal void SetOnApplicationClosing(Action onApplicationClosing)
         {
             _applicationClosingEventWrapper.OnApplicationClosing = onApplicationClosing;

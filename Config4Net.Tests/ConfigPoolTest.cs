@@ -173,8 +173,8 @@ namespace Config4Net.Tests
             var configPool = ConfigPool.Create();
             var configDir = ConfigDir;
 
-            var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{Constants.ConfigFileExtention}");
-            var appConfigFilePath = Path.Combine(configDir, $@"{Constants.ApplicationConfigKey}.{Constants.ConfigFileExtention}");
+            var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{configPool.Settings.ConfigFileExtension}");
+            var appConfigFilePath = Path.Combine(configDir, $@"{configPool.Settings.AppConfigKey}.{configPool.Settings.ConfigFileExtension}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
             FileUtils.EnsureDelete(appConfigFilePath);
@@ -199,8 +199,8 @@ namespace Config4Net.Tests
             var configPool = ConfigPool.Create();
 
             var currentDir = Environment.CurrentDirectory;
-            var subConfig1FilePath = Path.Combine(currentDir, $@"subConfig1.{Constants.ConfigFileExtention}");
-            var appConfigFilePath = Path.Combine(currentDir, $@"{Constants.ApplicationConfigKey}.{Constants.ConfigFileExtention}");
+            var subConfig1FilePath = Path.Combine(currentDir, $@"subConfig1.{configPool.Settings.ConfigFileExtension}");
+            var appConfigFilePath = Path.Combine(currentDir, $@"{configPool.Settings.AppConfigKey}.{configPool.Settings.ConfigFileExtension}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
             FileUtils.EnsureDelete(appConfigFilePath);
@@ -227,7 +227,7 @@ namespace Config4Net.Tests
             var configPool = ConfigPool.Create();
             var configDir = ConfigDir;
 
-            var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{Constants.ConfigFileExtention}");
+            var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{configPool.Settings.ConfigFileExtension}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
             configPool.LoadAsync(configDir).Wait();
@@ -259,7 +259,7 @@ namespace Config4Net.Tests
             var configPool = ConfigPool.Create();
             var configDir = ConfigDir;
 
-            var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{Constants.ConfigFileExtention}");
+            var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{configPool.Settings.ConfigFileExtension}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
             configPool.LoadAsync(configDir).Wait();
@@ -268,7 +268,7 @@ namespace Config4Net.Tests
             {
                 using (var fs = new FileStream(subConfig1FilePath, FileMode.Create))
                 {
-                    await Task.Delay(Constants.WriteFileTimeoutInMilliseconds + 1000);
+                    await Task.Delay(configPool.Settings.WriteFileTimeout + 1000);
                 }
             });
 
@@ -288,7 +288,7 @@ namespace Config4Net.Tests
             var configPool = ConfigPool.Create();
             var configDir = ConfigDir;
 
-            var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{Constants.ConfigFileExtention}");
+            var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{configPool.Settings.ConfigFileExtension}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
             configPool.LoadAsync(configDir).Wait();
@@ -297,7 +297,7 @@ namespace Config4Net.Tests
             {
                 using (var fs = new FileStream(subConfig1FilePath, FileMode.Create))
                 {
-                    await Task.Delay(Constants.WriteFileTimeoutInMilliseconds + 1000);
+                    await Task.Delay(configPool.Settings.WriteFileTimeout + 1000);
                 }
             });
 
@@ -317,8 +317,8 @@ namespace Config4Net.Tests
             var configPool = ConfigPool.Create();
             var configDir = ConfigDir;
 
-            var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{Constants.ConfigFileExtention}");
-            var appConfigFilePath = Path.Combine(configDir, $@"{Constants.ApplicationConfigKey}.{Constants.ConfigFileExtention}");
+            var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{configPool.Settings.ConfigFileExtension}");
+            var appConfigFilePath = Path.Combine(configDir, $@"{configPool.Settings.AppConfigKey}.{configPool.Settings.ConfigFileExtension}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
             FileUtils.EnsureDelete(appConfigFilePath);
@@ -348,8 +348,8 @@ namespace Config4Net.Tests
             var configPool = ConfigPool.Create();
             var configDir = ConfigDir;
 
-            var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{Constants.ConfigFileExtention}");
-            var appConfigFilePath = Path.Combine(configDir, $@"{Constants.ApplicationConfigKey}.{Constants.ConfigFileExtention}");
+            var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{configPool.Settings.ConfigFileExtension}");
+            var appConfigFilePath = Path.Combine(configDir, $@"{configPool.Settings.AppConfigKey}.{configPool.Settings.ConfigFileExtension}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
             FileUtils.EnsureDelete(appConfigFilePath);
@@ -391,8 +391,8 @@ namespace Config4Net.Tests
 
             var configDir = Environment.CurrentDirectory;
 
-            var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{Constants.ConfigFileExtention}");
-            var appConfigFilePath = Path.Combine(configDir, $@"{Constants.ApplicationConfigKey}.{Constants.ConfigFileExtention}");
+            var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{configPool.Settings.ConfigFileExtension}");
+            var appConfigFilePath = Path.Combine(configDir, $@"{configPool.Settings.AppConfigKey}.{configPool.Settings.ConfigFileExtension}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
             FileUtils.EnsureDelete(appConfigFilePath);

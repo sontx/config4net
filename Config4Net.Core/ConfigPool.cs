@@ -155,7 +155,7 @@ namespace Config4Net.Core
         /// <returns></returns>
         public T App<T>() where T : class
         {
-            return Get<T>(Constants.ApplicationConfigKey);
+            return Get<T>(Settings.AppConfigKey);
         }
 
         /// <summary>
@@ -255,7 +255,7 @@ namespace Config4Net.Core
         /// is null or empty then the library will use the assembly name that contains this register type instead.
         /// There is an option is <see cref="ConfigAttribute.IsAppConfig"/>, if it's true then the library will
         /// ignore the <see cref="ConfigAttribute.Key"/> and use the default app key for this config type
-        /// that defined by <see cref="Constants.ApplicationConfigKey"/>.
+        /// that defined by <see cref="Core.Settings.AppConfigKey"/>.
         /// </para>
         /// </summary>
         /// <param name="instance">
@@ -365,7 +365,7 @@ namespace Config4Net.Core
         private void Load(string configDir)
         {
             configDir = EnsureConfigDir(configDir);
-            var configFiles = Directory.GetFiles(configDir, $@"*.{Constants.ConfigFileExtention}");
+            var configFiles = Directory.GetFiles(configDir, $@"*.{Settings.ConfigFileExtension}");
 
             lock (_configMap)
             {
@@ -438,7 +438,7 @@ namespace Config4Net.Core
 
             file = Path.GetFileName(file);
 
-            var extentionIndex = file.LastIndexOf(Constants.ConfigFileExtention, StringComparison.Ordinal);
+            var extentionIndex = file.LastIndexOf(Settings.ConfigFileExtension, StringComparison.Ordinal);
 
             return extentionIndex > 0 ? file.Substring(0, extentionIndex - 1) : file;
         }
@@ -450,7 +450,7 @@ namespace Config4Net.Core
             if (configAttribute != null)
             {
                 if (configAttribute.IsAppConfig)
-                    return Constants.ApplicationConfigKey;
+                    return Settings.AppConfigKey;
 
                 return string.IsNullOrEmpty(configAttribute.Key)
                     ? Path.GetFileNameWithoutExtension(type.Assembly.Location)
@@ -468,7 +468,7 @@ namespace Config4Net.Core
                 foreach (var configWrapper in _configMap)
                 {
                     var configKey = configWrapper.Key;
-                    var configFileName = $@"{configKey}.{Constants.ConfigFileExtention}";
+                    var configFileName = $@"{configKey}.{Settings.ConfigFileExtension}";
                     var configFile = Path.Combine(configDir, configFileName);
                     var jsonObject = JObject.FromObject(configWrapper.Value);
 
@@ -484,7 +484,7 @@ namespace Config4Net.Core
             if (isPersistent)
                 fileWriter = new FileWriter
                 {
-                    Timeout = Constants.WriteFileTimeoutInMilliseconds,
+                    Timeout = Settings.WriteFileTimeout,
                     FilePath = configFile,
                     ThrowIfFail = true,
                     Content = jsonObject.ToString()
