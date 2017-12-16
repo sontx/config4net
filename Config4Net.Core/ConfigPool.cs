@@ -28,7 +28,17 @@ namespace Config4Net.Core
     /// </summary>
     public sealed class ConfigPool
     {
-        public static ConfigPool Default { get; } = new ConfigPool();
+        public static ConfigPool Default { get; } = Create();
+
+        public static ConfigPool Create()
+        {
+            return new ConfigPool(new DefaultSettingsFactory().Create());
+        }
+
+        public static ConfigPool Create(Settings settings)
+        {
+            return new ConfigPool(settings);
+        }
 
         private readonly Dictionary<string, ConfigWrapper> _configMap;
         private readonly List<IConfigObjectFactory> _configObjectFactoryList;
@@ -48,7 +58,7 @@ namespace Config4Net.Core
             }
         }
 
-        public ConfigPool(Settings settings)
+        private ConfigPool(Settings settings)
         {
             Settings = settings;
 
@@ -58,12 +68,7 @@ namespace Config4Net.Core
 
             HandleJsonError();
         }
-
-        public ConfigPool()
-            : this(new DefaultSettingsFactory().Create())
-        {
-        }
-
+        
         /// <summary>
         /// Load configuration files from <see cref="Core.Settings.ConfigDir"/>"/>.
         /// </summary>
