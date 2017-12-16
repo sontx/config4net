@@ -116,6 +116,9 @@ namespace ExampleApp
             [Showable(ComponentType = typeof(ITextEditor))]
             public string Position { get; set; }
 
+            [Showable(ComponentType = typeof(ITimeEditor))]
+            public DateTime WorkTime { get; set; }
+
             public int Salary { get; set; }
         }
     }

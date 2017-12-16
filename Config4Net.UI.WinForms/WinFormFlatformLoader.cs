@@ -20,6 +20,7 @@ namespace Config4Net.UI.WinForms
             UiManager.Default.RegisterFactory(typeof(ISelectEditor), new SelectEditorFactory());
             UiManager.Default.RegisterFactory(typeof(IEnumEditor), new EnumEditorFactory());
             UiManager.Default.RegisterFactory(typeof(IDateEditor), new DateEditorFactory());
+            UiManager.Default.RegisterFactory(typeof(ITimeEditor), new TimeEditorFactory());
         }
     }
 }

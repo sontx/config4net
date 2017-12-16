@@ -58,6 +58,13 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Containers\Factories\WindowContainerFactory.cs" />
+    <Compile Include="Editors\Factories\TimeEditorFactory.cs" />
+    <Compile Include="Editors\TimeEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Editors\TimeEditor.Designer.cs">
+      <DependentUpon>TimeEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Editors\Factories\DateEditorFactory.cs" />
     <Compile Include="Editors\Factories\EnumEditorFactory.cs" />
     <Compile Include="Editors\Factories\SelectEditorFactory.cs" />
@@ -129,6 +136,9 @@
     <Compile Include="WinFormFlatformLoader.cs" />
     <EmbeddedResource Include="Containers\ChooserForm.resx">
       <DependentUpon>ChooserForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editors\TimeEditor.resx">
+      <DependentUpon>TimeEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Editors\EnumEditor.resx">
       <DependentUpon>EnumEditor.cs</DependentUpon>
