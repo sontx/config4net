@@ -453,12 +453,40 @@ namespace Config4Net.Tests
             var config = configPool.Get<DefaultValueConfig>();
             Assert.AreEqual(config.Value, "some default value here");
         }
+
+        [Test]
+        public void should_throw_exception_if_register_config_key_that_already_exists_but_difference_type()
+        {
+            var configPool = ConfigPool.Create();
+            configPool.RegisterConfigType<MySubConfig1>();
+            Assert.Throws<ArgumentException>(() => { configPool.RegisterConfigType<SameKeyConfig>(); });
+        }
+
+        [Test]
+        public void should_throw_exception_if_register_config_key_that_isnt_app_config_but_has_a_same_key()
+        {
+            var configPool = ConfigPool.Create();
+            configPool.RegisterConfigType<MyConfig>();
+            Assert.Throws<ArgumentException>(() => { configPool.RegisterConfigType<SameKeyAsAppConfig>(); });
+        }
     }
 
     [Config]
     public class DefaultValueConfig
     {
         [Default("some default value here")]
+        public string Value { get; set; }
+    }
+
+    [Config(Key = "subConfig1")]
+    public class SameKeyConfig
+    {
+        public string Value { get; set; }
+    }
+
+    [Config(Key = "app")]
+    public class SameKeyAsAppConfig
+    {
         public string Value { get; set; }
     }
 

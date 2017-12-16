@@ -276,8 +276,10 @@ namespace Config4Net.Core
             {
                 if (_configMap.ContainsKey(key))
                 {
-                    var obj = _configMap[key].ConfigObject;
-                    return obj is T variable ? variable : null;
+                    var wrapper = _configMap[key];
+                    if (wrapper.TypeIdentify != type.AssemblyQualifiedName)
+                        throw new ArgumentException("Same key but difference type.");
+                    return wrapper.ConfigObject is T variable ? variable : null;
                 }
             }
 
@@ -452,12 +454,20 @@ namespace Config4Net.Core
                 if (configAttribute.IsAppConfig)
                     return Settings.AppConfigKey;
 
-                return string.IsNullOrEmpty(configAttribute.Key)
-                    ? Path.GetFileNameWithoutExtension(type.Assembly.Location)
-                    : configAttribute.Key;
+                if (!string.IsNullOrEmpty(configAttribute.Key))
+                {
+                    if (configAttribute.Key == Settings.AppConfigKey)
+                        throw new ArgumentException("A module config key must be difference to app key." +
+                                                    "If you intent to use it as the app config, you can set IsAppConfig property to true.");
+                    return configAttribute.Key;
+                }
             }
 
-            return Path.GetFileNameWithoutExtension(type.Assembly.Location);
+            var moduleKey = Path.GetFileNameWithoutExtension(type.Assembly.Location);
+            if (moduleKey == Settings.AppConfigKey)
+                throw new ArgumentException("A module config key must be difference to app key." +
+                                            "You should change your app config key in the Settings.");
+            return moduleKey;
         }
 
         private void Save(string configDir, bool isPersistent)
