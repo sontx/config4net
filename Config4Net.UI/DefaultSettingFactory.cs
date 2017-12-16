@@ -19,7 +19,7 @@ namespace Config4Net.UI
         {
             return new EditorAppearance
             {
-                Width = 300,
+                Width = 350,
                 LabelWidth = 150
             };
         }
@@ -28,7 +28,7 @@ namespace Config4Net.UI
         {
             return new ContainerAppearance
             {
-                Width = 300
+                Width = 350
             };
         }
 

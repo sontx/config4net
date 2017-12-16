@@ -119,6 +119,9 @@ namespace ExampleApp
             [Showable(ComponentType = typeof(ITimeEditor))]
             public DateTime WorkTime { get; set; }
 
+            [Showable(ComponentType = typeof(IDateTimeEditor))]
+            public DateTime SomeDateTime { get; set; }
+
             public int Salary { get; set; }
         }
     }
