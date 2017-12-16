@@ -35,7 +35,7 @@ namespace Config4Net.Tests
                 Directory.Delete(dir, true);
             }
         }
-            
+
         [Test]
         public void get_app_config_that_already_exists_should_return_config_object()
         {

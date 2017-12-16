@@ -46,6 +46,9 @@
     <Compile Include="Precondition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringUtils.cs" />
+    <Compile Include="WrapperUtils.cs" />
+    <Compile Include="Wrapper\EnumerableWrapper.cs" />
+    <Compile Include="Wrapper\EnumeratorWrapper.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

@@ -31,6 +31,20 @@ namespace ExampleApp
             Application.Run((Form)window);
         }
 
+        private enum Gender
+        {
+            Male,
+            Female,
+            Unkown
+        }
+
+        private class MyEnumDefination: EnumDefination
+        {
+            public MyEnumDefination() : base(typeof(Gender))
+            {
+            }
+        }
+
         private class MyValue
         {
             public string Value1 { get; set; }
@@ -72,8 +86,9 @@ namespace ExampleApp
             [Showable(ComponentType = typeof(IColorEditor))]
             public Color SkinColor { get; set; }
 
-            [Showable("Sex:", ComponentType = typeof(ICheckboxEditor), Description = "You are male?")]
-            public bool Male { get; set; }
+            [Showable("Sex:", ComponentType = typeof(IEnumEditor))]
+            [Defination(typeof(MyEnumDefination))]
+            public Gender Male { get; set; }
 
             [Showable("Where are you now:")]
             public Address Address { get; set; }
