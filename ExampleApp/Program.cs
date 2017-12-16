@@ -84,6 +84,7 @@ namespace ExampleApp
             public DateTime Birth { get; set; }
 
             [Showable(ComponentType = typeof(IFilePickerEditor))]
+            [FilePicker(TextEditable = false, ShowFileName = true, FileFilter = "Jpg files|*.jpg")]
             public string Avatar { get; set; }
 
             [Showable(ComponentType = typeof(IFolderPickerEditor), Description = "Where are your documents?")]

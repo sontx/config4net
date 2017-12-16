@@ -10,6 +10,8 @@ namespace Config4Net.UI.WinForms.Editors
         private readonly EditorHelper<string> _editorHelper;
 
         private bool _readOnly;
+        private string _value;
+        private FilePickerAttribute _filePickerAttribute;
 
         public event ValueChangedEventHandler ValueChanged;
 
@@ -17,12 +19,20 @@ namespace Config4Net.UI.WinForms.Editors
 
         public string Value
         {
-            get => txtContent.Text;
+            get => _value;
             set
             {
                 _editorHelper.ChangeValue(
                     value,
-                    () => { txtContent.Text = value; },
+                    () =>
+                    {
+                        _value = value;
+
+                        if (_filePickerAttribute != null && _filePickerAttribute.ShowFileName && value != null)
+                            txtContent.Text = Path.GetFileName(value);
+                        else
+                            txtContent.Text = value;
+                    },
                     ValueChanging,
                     ValueChanged);
             }
@@ -33,7 +43,10 @@ namespace Config4Net.UI.WinForms.Editors
             get => _readOnly;
             set
             {
-                txtContent.ReadOnly = value;
+                if (_filePickerAttribute == null || _filePickerAttribute.TextEditable)
+                    txtContent.ReadOnly = value;
+
+                btnBrowse.Enabled = !value;
                 _readOnly = value;
             }
         }
@@ -41,6 +54,16 @@ namespace Config4Net.UI.WinForms.Editors
         public void SetReferenceInfo(object source, PropertyInfo propertyInfo)
         {
             _editorHelper.SetReferenceInfo(source, propertyInfo);
+
+            var filePickerAttribute = propertyInfo.GetCustomAttribute<FilePickerAttribute>();
+
+            if (filePickerAttribute == null) return;
+
+            txtContent.ReadOnly = !filePickerAttribute.TextEditable;
+            openFileDialog1.Filter = filePickerAttribute.FileFilter;
+            _filePickerAttribute = filePickerAttribute;
+
+            Value = _value;
         }
 
         public void Bind()
@@ -70,7 +93,7 @@ namespace Config4Net.UI.WinForms.Editors
             if (!string.IsNullOrWhiteSpace(Description))
                 openFileDialog1.Title = Description;
 
-            var fileName = txtContent.Text;
+            var fileName = _value;
             if (!string.IsNullOrWhiteSpace(fileName))
             {
                 openFileDialog1.FileName = Path.GetFileName(fileName);
@@ -79,7 +102,7 @@ namespace Config4Net.UI.WinForms.Editors
 
             if (openFileDialog1.ShowDialog(FindForm()) == DialogResult.OK)
             {
-                txtContent.Text = openFileDialog1.FileName;
+                Value = openFileDialog1.FileName;
             }
         }
     }

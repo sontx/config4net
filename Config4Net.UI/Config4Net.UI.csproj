@@ -38,6 +38,7 @@
     <Compile Include="Editors\Definations\DefinationAttribute.cs" />
     <Compile Include="Editors\Definations\EnumDefination.cs" />
     <Compile Include="Editors\Definations\SelectDefination.cs" />
+    <Compile Include="Editors\FilePickerAttribute.cs" />
     <Compile Include="Editors\ICheckboxEditor.cs" />
     <Compile Include="Editors\Definations\IDefinationType.cs" />
     <Compile Include="SizeMode.cs" />
