@@ -33,7 +33,7 @@ namespace Config4Net.Utils
             }
             else
             {
-                convertedValue = value.GetType() == _propertyInfo.PropertyType ? value : ObjectUtils.ToString(value);
+                convertedValue = value == null || value.GetType() == _propertyInfo.PropertyType ? value : ObjectUtils.ToString(value);
             }
 
             _propertyInfo.SetValue(_source, convertedValue);
