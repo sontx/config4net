@@ -86,6 +86,9 @@ namespace ExampleApp
             [Showable(ComponentType = typeof(IFilePickerEditor))]
             public string Avatar { get; set; }
 
+            [Showable(ComponentType = typeof(IFolderPickerEditor), Description = "Where are your documents?")]
+            public string DocumentFolder { get; set; }
+
             [Showable(ComponentType = typeof(IColorEditor))]
             public Color SkinColor { get; set; }
 

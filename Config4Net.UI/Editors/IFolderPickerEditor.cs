@@ -2,7 +2,7 @@
 
 namespace Config4Net.UI.Editors
 {
-    public interface IFolderPickerEditor : IEditor<Folder>
+    public interface IFolderPickerEditor : IEditor<string>
     {
     }
 }

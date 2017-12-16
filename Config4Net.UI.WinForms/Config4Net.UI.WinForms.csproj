@@ -58,7 +58,14 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Containers\Factories\WindowContainerFactory.cs" />
+    <Compile Include="Editors\Factories\FolderPickerEditorFactory.cs" />
     <Compile Include="Editors\Factories\FilePickerEditorFactory.cs" />
+    <Compile Include="Editors\FolderPickerEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Editors\FolderPickerEditor.Designer.cs">
+      <DependentUpon>FolderPickerEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Editors\FilePickerEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -150,6 +157,9 @@
     <Compile Include="WinFormFlatformLoader.cs" />
     <EmbeddedResource Include="Containers\ChooserForm.resx">
       <DependentUpon>ChooserForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editors\FolderPickerEditor.resx">
+      <DependentUpon>FolderPickerEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Editors\FilePickerEditor.resx">
       <DependentUpon>FilePickerEditor.cs</DependentUpon>
