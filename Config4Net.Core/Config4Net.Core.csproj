@@ -48,7 +48,6 @@
     <Compile Include="DefaultSettingsFactory.cs" />
     <Compile Include="IApplicationClosingEvent.cs" />
     <Compile Include="IConfigObjectFactory.cs" />
-    <Compile Include="InvalidConfigTypeException.cs" />
     <Compile Include="ISettingsFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />

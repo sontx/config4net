@@ -14,16 +14,16 @@ namespace Config4Net.Core
     /// or save them to files and load them later.
     /// <para>
     /// There are two kinds of config are app config and the other. Each instance of application just has
-    /// only one app config but there are many module configs.
+    /// only an app config but there are many module configs.
     /// </para>
     /// <para>
-    /// A config is a class that is annotated by a <see cref="ConfigAttribute"/>. Example:
+    /// A config is a normal class with public properties, it can be annotated by a <see cref="ConfigAttribute"/>. Example:
     /// <code>
     /// [Config]
     /// class MyConfig
     /// {}
     /// </code>
-    /// The config is identified by key, see <seealso cref="ConfigAttribute"/> for more detail.
+    /// The config is identified by key, see <see cref="ConfigAttribute"/> for more detail.
     /// </para>
     /// </summary>
     public sealed class ConfigPool
@@ -162,7 +162,7 @@ namespace Config4Net.Core
         /// Get config by specify type.
         /// </summary>
         /// <typeparam name="T">
-        /// Config type that is annotated by a <see cref="ConfigAttribute"/>.
+        /// Config type that could be annotated by a <see cref="ConfigAttribute"/>.
         /// </typeparam>
         public T Get<T>() where T : class
         {
@@ -174,7 +174,7 @@ namespace Config4Net.Core
         /// Get config by specify key.
         /// </summary>
         /// <typeparam name="T">
-        /// Config type that is annotated by a <see cref="ConfigAttribute"/>.
+        /// Config type that could be annotated by a <see cref="ConfigAttribute"/>.
         /// </typeparam>
         /// <param name="key">
         /// Config key.
@@ -189,7 +189,7 @@ namespace Config4Net.Core
         /// or an executing.
         /// </summary>
         /// <typeparam name="T">
-        /// Config type that is annotated by a <see cref="ConfigAttribute"/>.
+        /// Config type that could be annotated by a <see cref="ConfigAttribute"/>.
         /// </typeparam>
         public T Calling<T>() where T : class
         {
@@ -201,7 +201,7 @@ namespace Config4Net.Core
         /// that is running the main method insides.
         /// </summary>
         /// <typeparam name="T">
-        /// Config type that is annotated by a <see cref="ConfigAttribute"/>.
+        /// Config type that could be annotated by a <see cref="ConfigAttribute"/>.
         /// </typeparam>
         public T Entry<T>() where T : class
         {
@@ -238,7 +238,7 @@ namespace Config4Net.Core
         /// it just ignores and return the existing object.
         /// </summary>
         /// <typeparam name="T">
-        /// Config type that is annotated by a <see cref="ConfigAttribute"/>.
+        /// Config type that could be annotated by a <see cref="ConfigAttribute"/>.
         /// </typeparam>
         public T RegisterConfigType<T>() where T : class
         {
@@ -250,7 +250,7 @@ namespace Config4Net.Core
         /// to hold configuration data if necessary. If the config type already exists then
         /// it just ignores and return the existing object.
         /// <para>
-        /// The library will detect register information automatically by the <see cref="ConfigAttribute"/>
+        /// The library will detect register information automatically by assembly name or the <see cref="ConfigAttribute"/>
         /// that is annotated to register type. If the key in <see cref="ConfigAttribute.Key"/>
         /// is null or empty then the library will use the assembly name that contains this register type instead.
         /// There is an option is <see cref="ConfigAttribute.IsAppConfig"/>, if it's true then the library will
@@ -262,7 +262,7 @@ namespace Config4Net.Core
         /// The default instance insteads of creating new one.
         /// </param>
         /// <typeparam name="T">
-        /// Config type that is annotated by a <see cref="ConfigAttribute"/>.
+        /// Config type that could be annotated by a <see cref="ConfigAttribute"/>.
         /// </typeparam>
         public T RegisterConfigType<T>(T instance) where T : class
         {
@@ -309,7 +309,7 @@ namespace Config4Net.Core
         /// It's useless except for creating test.
         /// </summary>
         /// <typeparam name="T">
-        /// Config type that is annotated by a <see cref="ConfigAttribute"/>.
+        /// Config type that could be annotated by a <see cref="ConfigAttribute"/>.
         /// </typeparam>
         public void UnregisterConfigType<T>() where T : class
         {
@@ -445,16 +445,19 @@ namespace Config4Net.Core
 
         private string GetConfigKey(Type type)
         {
-            if (!type.IsDefined(typeof(ConfigAttribute), false))
-                throw new InvalidConfigTypeException($@"Config class must be defined with {nameof(ConfigAttribute)}.");
-
             var configAttribute = type.GetCustomAttribute<ConfigAttribute>();
-            if (configAttribute.IsAppConfig)
-                return Constants.ApplicationConfigKey;
 
-            return string.IsNullOrEmpty(configAttribute.Key)
-                ? Path.GetFileNameWithoutExtension(type.Assembly.Location)
-                : configAttribute.Key;
+            if (configAttribute != null)
+            {
+                if (configAttribute.IsAppConfig)
+                    return Constants.ApplicationConfigKey;
+
+                return string.IsNullOrEmpty(configAttribute.Key)
+                    ? Path.GetFileNameWithoutExtension(type.Assembly.Location)
+                    : configAttribute.Key;
+            }
+
+            return Path.GetFileNameWithoutExtension(type.Assembly.Location);
         }
 
         private void Save(string configDir, bool isPersistent)

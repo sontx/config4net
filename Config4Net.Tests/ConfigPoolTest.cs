@@ -100,14 +100,7 @@ namespace Config4Net.Tests
             var config = configPool.RegisterConfigType<MyConfig>();
             Assert.IsInstanceOf<MyConfig>(config);
         }
-
-        [Test]
-        public void register_config_type_should_throw_exception_if_registered_invalid_config_class()
-        {
-            var configPool = ConfigPool.Create();
-            Assert.Throws<InvalidConfigTypeException>(() => configPool.RegisterConfigType<NotConfigClass>());
-        }
-
+        
         [Test]
         public void register_config_type_should_ignore_the_one_that_already_exists()
         {
