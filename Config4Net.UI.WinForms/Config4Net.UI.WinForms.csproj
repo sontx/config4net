@@ -58,6 +58,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Containers\Factories\WindowContainerFactory.cs" />
+    <Compile Include="Editors\Factories\DateEditorFactory.cs" />
     <Compile Include="Editors\Factories\EnumEditorFactory.cs" />
     <Compile Include="Editors\Factories\SelectEditorFactory.cs" />
     <Compile Include="Editors\EnumEditor.cs">
@@ -98,6 +99,12 @@
     </Compile>
     <Compile Include="Editors\CheckboxEditor.Designer.cs">
       <DependentUpon>CheckboxEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Editors\DateEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Editors\DateEditor.Designer.cs">
+      <DependentUpon>DateEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Editors\TextEditor.cs">
       <SubType>UserControl</SubType>
@@ -140,6 +147,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Editors\CheckboxEditor.resx">
       <DependentUpon>CheckboxEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editors\DateEditor.resx">
+      <DependentUpon>DateEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Editors\TextEditor.resx">
       <DependentUpon>TextEditor.cs</DependentUpon>

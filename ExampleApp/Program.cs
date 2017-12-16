@@ -80,8 +80,8 @@ namespace ExampleApp
             [Defination(typeof(MySelectDefination))]
             public MyValue LastName { get; set; }
 
-            [Showable(ComponentType = typeof(INumberEditor))]
-            public int Age { get; set; }
+            [Showable(ComponentType = typeof(IDateEditor))]
+            public DateTime Birth { get; set; }
 
             [Showable(ComponentType = typeof(IColorEditor))]
             public Color SkinColor { get; set; }
