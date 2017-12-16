@@ -83,6 +83,9 @@ namespace ExampleApp
             [Showable(ComponentType = typeof(IDateEditor))]
             public DateTime Birth { get; set; }
 
+            [Showable(ComponentType = typeof(IFilePickerEditor))]
+            public string Avatar { get; set; }
+
             [Showable(ComponentType = typeof(IColorEditor))]
             public Color SkinColor { get; set; }
 
