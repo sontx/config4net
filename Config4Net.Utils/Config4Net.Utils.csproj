@@ -40,6 +40,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ObjectUtils.cs" />
     <Compile Include="PropertyBinder.cs" />
     <Compile Include="FileWriter.cs" />
@@ -49,6 +50,8 @@
     <Compile Include="WrapperUtils.cs" />
     <Compile Include="Wrapper\EnumerableWrapper.cs" />
     <Compile Include="Wrapper\EnumeratorWrapper.cs" />
+    <Compile Include="Wrapper\ListUnwrapper.cs" />
+    <Compile Include="Wrapper\ListWrapper.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

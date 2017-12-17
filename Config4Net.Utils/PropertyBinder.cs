@@ -14,7 +14,8 @@ namespace Config4Net.Utils
             get
             {
                 var value = _propertyInfo.GetValue(_source);
-                return (T)(value is IConvertible ? Convert.ChangeType(value, typeof(T)) : value);
+                var convertedValue = ObjectUtils.ChangeType(value, typeof(T));
+                return convertedValue == null ? default(T) : (T) convertedValue;
             }
             set => SetValue(value);
         }
@@ -29,14 +30,18 @@ namespace Config4Net.Utils
             object convertedValue;
             if (value is IConvertible)
             {
-                convertedValue = Convert.ChangeType(value, _propertyInfo.PropertyType);
+                convertedValue = ObjectUtils.ChangeType(value, _propertyInfo.PropertyType);
             }
             else
             {
-                convertedValue = value == null || value.GetType() == _propertyInfo.PropertyType ? value : ObjectUtils.ToString(value);
+                convertedValue = value == null || value.GetType() == _propertyInfo.PropertyType
+                    ? value
+                    : ObjectUtils.IsGenericList(typeof(T))
+                        ? ObjectUtils.ChangeGenericListType(value, typeof(T))
+                        : ObjectUtils.ToString(value);
             }
-
-            _propertyInfo.SetValue(_source, convertedValue);
+            
+            ObjectUtils.SetProperty(_source, _propertyInfo.Name, convertedValue);
         }
 
         public PropertyBinder(object source, PropertyInfo propertyInfo)

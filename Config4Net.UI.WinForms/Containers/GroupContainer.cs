@@ -4,7 +4,6 @@ using Config4Net.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
 using System.Windows.Forms;
 
 namespace Config4Net.UI.WinForms.Containers
@@ -95,7 +94,7 @@ namespace Config4Net.UI.WinForms.Containers
         private void ComputeSize()
         {
             if (_appearance == null || _layoutManager == null) return;
-            
+
             switch (_sizeMode)
             {
                 case SizeMode.Default:

@@ -35,6 +35,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppearanceBase.cs" />
+    <Compile Include="BindInfo.cs" />
+    <Compile Include="ComponentFactoryWrapper.cs" />
+    <Compile Include="Editors\EditorWrapper.cs" />
+    <Compile Include="Editors\IListEditor.cs" />
     <Compile Include="Editors\Definations\DefinationAttribute.cs" />
     <Compile Include="Editors\Definations\EnumDefination.cs" />
     <Compile Include="Editors\Definations\SelectDefination.cs" />
@@ -42,6 +46,7 @@
     <Compile Include="Editors\FilePickerAttribute.cs" />
     <Compile Include="Editors\ICheckboxEditor.cs" />
     <Compile Include="Editors\Definations\IDefinationType.cs" />
+    <Compile Include="IUiBinder.cs" />
     <Compile Include="SizeMode.cs" />
     <Compile Include="Containers\ContainerAppearance.cs" />
     <Compile Include="Containers\IContainer.cs" />

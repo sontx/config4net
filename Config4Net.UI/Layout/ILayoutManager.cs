@@ -11,6 +11,8 @@ namespace Config4Net.UI.Layout
 
         void Register(IComponent component);
 
+        void Unregister(IComponent component);
+
         Size ComputeWholeRegion();
     }
 }

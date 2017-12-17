@@ -6,6 +6,7 @@ using Config4Net.UI.Editors;
 using Config4Net.UI.Editors.Definations;
 using Config4Net.UI.WinForms;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -25,6 +26,7 @@ namespace ExampleApp
 
             new WinFormFlatformLoader().Load();
             ConfigPool.Default.Settings.IgnoreMismatchType = true;
+            ConfigPool.Default.Settings.PreventNullReference = true;
             var person = ConfigPool.Default.Get<Person>();
             var window = UiManager.Default.Build<IWindowContainer>(person);
 
@@ -75,6 +77,9 @@ namespace ExampleApp
             [Showable("First name:", ComponentType = typeof(ITextEditor))]
             [Default("son")]
             public string FirstName { get; set; }
+
+            [Showable(ComponentType = typeof(ITextEditor))]
+            public IList<string> MyFriends { get; set; }
 
             [Showable("Last name:", ComponentType = typeof(ISelectEditor))]
             [Defination(typeof(MySelectDefination))]

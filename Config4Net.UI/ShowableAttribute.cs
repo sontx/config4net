@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reflection;
+using Config4Net.Utils;
 
 namespace Config4Net.UI
 {
@@ -14,6 +16,31 @@ namespace Config4Net.UI
         public ShowableAttribute(string label = null)
         {
             Label = label;
+        }
+    }
+
+    public class ShowableInfo
+    {
+        public string Label { get; set; }
+        public string Description { get; set; }
+        public bool Required { get; set; }
+        public string Condition { get; set; }
+        public Type ComponentType { get; set; }
+
+        public static ShowableInfo From(MemberInfo memberInfo)
+        {
+            var showableAttribute = memberInfo.GetCustomAttribute<ShowableAttribute>();
+            if (showableAttribute == null) return null;
+            return new ShowableInfo
+            {
+                Label = string.IsNullOrEmpty(showableAttribute.Label)
+                    ? StringUtils.ToFriendlyString(memberInfo.Name)
+                    : showableAttribute.Label,
+                Description = showableAttribute.Description,
+                Required = showableAttribute.Required,
+                Condition = showableAttribute.Condition,
+                ComponentType = showableAttribute.ComponentType
+            };
         }
     }
 }

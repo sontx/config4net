@@ -58,6 +58,25 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Containers\Factories\WindowContainerFactory.cs" />
+    <Compile Include="Editors\Factories\ListEditorFactory.cs" />
+    <Compile Include="Editors\Helpers\ListForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Editors\Helpers\ListForm.Designer.cs">
+      <DependentUpon>ListForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Editors\Helpers\ListItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Editors\Helpers\ListItem.Designer.cs">
+      <DependentUpon>ListItem.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Editors\ListEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Editors\ListEditor.Designer.cs">
+      <DependentUpon>ListEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Editors\Factories\FolderPickerEditorFactory.cs" />
     <Compile Include="Editors\Factories\FilePickerEditorFactory.cs" />
     <Compile Include="Editors\FolderPickerEditor.cs">
@@ -157,6 +176,15 @@
     <Compile Include="WinFormFlatformLoader.cs" />
     <EmbeddedResource Include="Containers\ChooserForm.resx">
       <DependentUpon>ChooserForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editors\Helpers\ListForm.resx">
+      <DependentUpon>ListForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editors\Helpers\ListItem.resx">
+      <DependentUpon>ListItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editors\ListEditor.resx">
+      <DependentUpon>ListEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Editors\FolderPickerEditor.resx">
       <DependentUpon>FolderPickerEditor.cs</DependentUpon>

@@ -49,18 +49,26 @@ namespace Config4Net.UI.WinForms.Layout
             Controls.Add(control);
         }
 
+        public void Unregister(IComponent component)
+        {
+            if (component == null) return;
+            Controls.Remove((Control) component);
+        }
+
         public Size ComputeWholeRegion()
         {
             var width = 0;
+            var horizontal = Controls.Count > 0 ? Controls[0].Left : 0;
             var height = 0;
 
             foreach (Control control in Controls)
             {
-                width += control.Width;
+                width = Math.Max(width, control.Width);
                 height += control.Height;
+                horizontal = Math.Max(horizontal, control.Margin.Horizontal);
             }
 
-            width += Measurement.ComputeInnerHorizontalSpace(this);
+            width += Measurement.ComputeInnerHorizontalSpace(this) * 2 + horizontal;
 
             height += Measurement.ComputeInnerVerticalSpace(this) +
                       Measurement.ComputeOuterVerticalSpace(this) * Controls.Count;

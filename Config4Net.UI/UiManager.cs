@@ -1,16 +1,16 @@
 ﻿using Config4Net.UI.Containers;
+using Config4Net.UI.Editors;
 using Config4Net.UI.Editors.Definations;
 using Config4Net.UI.Layout;
 using Config4Net.Utils;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
 namespace Config4Net.UI
 {
-    public sealed class UiManager
+    public sealed class UiManager : IUiBinder
     {
         #region Default Instance
 
@@ -23,9 +23,13 @@ namespace Config4Net.UI
         // componentType - factory
         private readonly Dictionary<Type, object> _registeredComponentFactories;
 
+        #region Properties
+
         public ILayoutManagerFactory LayoutManagerFactory { get; set; }
         public ISettingFactory SettingFactory { get; set; }
         public bool AllowAutoCreateInstanceIfMissing { get; set; } = true;
+
+        #endregion Properties
 
         public T Build<T>(object config) where T : IContainer
         {
@@ -33,13 +37,17 @@ namespace Config4Net.UI
             Precondition.ArgumentHasAttribute(config, typeof(ShowableAttribute), nameof(config));
             Precondition.PropertyNotNull(SettingFactory, nameof(SettingFactory));
 
-            var factory = GetFactoryByComponentType<T>();
             var sizeOptions = SettingFactory.CreateSizeOptions();
 
             // create a container
-            var container = (IContainer)factory.Create();
+            var container = (IContainer)GetFactoryByComponentType<T>().Create();
             var configType = config.GetType();
-            ApplyDescription(container, configType, sizeOptions);
+
+            BindContainer(container, new ContainerBindInfo
+            {
+                ShowableInfo = ShowableInfo.From(configType),
+                SizeOptions = sizeOptions
+            });
 
             foreach (var propertyInfo in configType.GetProperties())
             {
@@ -61,95 +69,28 @@ namespace Config4Net.UI
             _registeredComponentFactories.Add(componentType, factory);
         }
 
-        private IComponent BuildRecursive(object parentInstance, PropertyInfo propertyInfo, SizeOptions sizeOptions)
+        public UiManager()
         {
-            var showableAttribute = propertyInfo.GetCustomAttribute<ShowableAttribute>();
-            if (showableAttribute == null) return null;
-
-            var propertyInfos = propertyInfo.PropertyType.GetProperties();
-            var hasChildrenComponents = propertyInfos.Any(ipropertyInfo =>
-                ipropertyInfo.GetCustomAttribute<ShowableAttribute>() != null);
-
-            // create a container
-            if (hasChildrenComponents)
-            {
-                var factory = GetFactoryByComponentType<IGroupContainer>();
-                var groupContainer = factory.Create();
-                ApplyDescription(groupContainer, propertyInfo, sizeOptions);
-                var currentInstance = propertyInfo.GetValue(parentInstance);
-                if (currentInstance == null && AllowAutoCreateInstanceIfMissing)
-                {
-                    propertyInfo.SetValue(parentInstance,
-                        currentInstance = Activator.CreateInstance(propertyInfo.PropertyType));
-                }
-
-                foreach (var childPropertyInfo in propertyInfos)
-                {
-                    var component = BuildRecursive(currentInstance, childPropertyInfo, sizeOptions);
-                    if (component == null) continue;
-
-                    groupContainer.AddChild(component);
-                }
-
-                return groupContainer;
-            }
-            // create an editor
-            else
-            {
-                if (showableAttribute.ComponentType == null)
-                {
-                    throw new CustomAttributeFormatException(
-                        $"{nameof(showableAttribute.ComponentType)} must be defined.");
-                }
-
-                var factory = _registeredComponentFactories[showableAttribute.ComponentType];
-
-                var component = factory.GetType().GetMethod("Create")?.Invoke(factory, BindingFlags.Instance, null,
-                    null, CultureInfo.CurrentCulture);
-
-                component?.GetType().GetMethod("SetReferenceInfo")?.Invoke(
-                    component,
-                    BindingFlags.Instance,
-                    null,
-                    new[] { parentInstance, propertyInfo },
-                    CultureInfo.CurrentCulture);
-
-                ApplyDescription((IComponent)component, propertyInfo, sizeOptions);
-                return (IComponent)component;
-            }
+            _registeredComponentFactories = new Dictionary<Type, object>();
+            SettingFactory = new DefaultSettingFactory();
         }
 
-        private void ApplyDescription(IComponent component, MemberInfo memberInfo, SizeOptions sizeOptions)
+        #region IUiBinder Implements
+
+        public void BindEditor(IComponent component, EditorBindInfo bindInfo)
         {
-            var showableAttribute = memberInfo.GetCustomAttribute<ShowableAttribute>();
+            BindComponent(component, bindInfo);
 
-            component.Text = string.IsNullOrEmpty(showableAttribute.Label)
-                ? StringUtils.ToFriendlyString(memberInfo.Name)
-                : showableAttribute.Label;
-
-            component.Description = showableAttribute.Description;
-
-            // it's a container
-            if (component is IContainer container)
-            {
-                ApplyDescriptionToContainer(container, sizeOptions);
-            }
-            // it's an editor
-            else
-            {
-                ObjectUtils.SetProperty(component, "Appearance", SettingFactory.CreatEditorAppearance());
-                component.SizeMode = sizeOptions.EditorSizeMode;
-
-                var definationAttribute = memberInfo.GetCustomAttribute<DefinationAttribute>();
-                if (definationAttribute != null)
-                {
-                    ObjectUtils.SetProperty(component, "DefinationType", definationAttribute.Value);
-                }
-            }
+            var editor = EditorWrapper.From(component);
+            editor.Appearance = SettingFactory.CreatEditorAppearance();
+            editor.DefinationType = bindInfo.DefinationInfo?.Value;
+            editor.SetReferenceInfo(bindInfo.ReferenceInfo.Source, bindInfo.ReferenceInfo.PropertyInfo);
         }
 
-        private void ApplyDescriptionToContainer(IContainer container, SizeOptions sizeOptions)
+        public void BindContainer(IContainer container, ContainerBindInfo bindInfo)
         {
+            BindComponent(container, bindInfo);
+
             Precondition.PropertyNotNull(LayoutManagerFactory, nameof(LayoutManagerFactory));
             Precondition.PropertyNotNull(SettingFactory, nameof(SettingFactory));
 
@@ -160,13 +101,113 @@ namespace Config4Net.UI
             container.Appearance = SettingFactory.CreateContainerAppearance();
 
             if (container is IGroupContainer)
+                container.SizeMode = bindInfo.SizeOptions.GroupContainerSizeMode;
+            else
+                container.SizeMode = bindInfo.SizeOptions.WindowContainerSizeMode;
+        }
+
+        #endregion IUiBinder Implements
+
+        #region Helper Methods
+
+        private IComponent BuildRecursive(object parentInstance, PropertyInfo propertyInfo, SizeOptions sizeOptions)
+        {
+            var showableInfo = ShowableInfo.From(propertyInfo);
+            if (showableInfo == null) return null;
+
+            var propertyInfos = propertyInfo.PropertyType.GetProperties();
+            var hasChildrenComponents = propertyInfos.Any(ipropertyInfo =>
+                ipropertyInfo.GetCustomAttribute<ShowableAttribute>() != null);
+
+            return hasChildrenComponents
+                ? BuildContainer(parentInstance, propertyInfo, sizeOptions, propertyInfos)
+                : BuildEditor(parentInstance, propertyInfo, sizeOptions, showableInfo);
+        }
+
+        private IComponent BuildContainer(
+            object parentInstance,
+            PropertyInfo propertyInfo,
+            SizeOptions sizeOptions,
+            PropertyInfo[] propertyInfos)
+        {
+            var groupContainer = GetFactoryByComponentType<IGroupContainer>().Create();
+            BindContainer(groupContainer, new ContainerBindInfo
             {
-                container.SizeMode = sizeOptions.GroupContainerSizeMode;
-            }
-            else // IWindowContainer
+                ShowableInfo = ShowableInfo.From(propertyInfo),
+                SizeOptions = sizeOptions
+            });
+
+            var currentInstance = propertyInfo.GetValue(parentInstance);
+            if (currentInstance == null && AllowAutoCreateInstanceIfMissing)
             {
-                container.SizeMode = sizeOptions.WindowContainerSizeMode;
+                propertyInfo.SetValue(parentInstance,
+                    currentInstance = Activator.CreateInstance(propertyInfo.PropertyType));
             }
+
+            foreach (var childPropertyInfo in propertyInfos)
+            {
+                var component = BuildRecursive(currentInstance, childPropertyInfo, sizeOptions);
+                if (component == null) continue;
+
+                groupContainer.AddChild(component);
+            }
+
+            return groupContainer;
+        }
+
+        private IComponent BuildEditor(
+            object parentInstance,
+            PropertyInfo propertyInfo,
+            SizeOptions sizeOptions,
+            ShowableInfo showableInfo)
+        {
+            if (showableInfo.ComponentType == null)
+            {
+                throw new CustomAttributeFormatException(
+                    $"{nameof(showableInfo.ComponentType)} must be defined.");
+            }
+
+            var component = ObjectUtils.IsGenericList(propertyInfo.PropertyType)
+                ? CreateListEditor(showableInfo.ComponentType)
+                : CreateNormalEditor(showableInfo.ComponentType);
+
+            BindEditor(component, new EditorBindInfo
+            {
+                ShowableInfo = ShowableInfo.From(propertyInfo),
+                DefinationInfo = DefinationInfo.From(propertyInfo),
+                SizeOptions = sizeOptions,
+                ReferenceInfo = new ReferenceInfo { PropertyInfo = propertyInfo, Source = parentInstance }
+            });
+
+            return component;
+        }
+
+        private IComponent CreateNormalEditor(Type componentType)
+        {
+            return ComponentFactoryWrapper.From(_registeredComponentFactories[componentType]).Create();
+        }
+
+        private IComponent CreateListEditor(Type componentType)
+        {
+            var listFactory = ComponentFactoryWrapper.From(_registeredComponentFactories[typeof(IListEditor)]);
+            var listEditor = (IListEditor)listFactory.Create();
+            listEditor.SetUiBinder(this);
+            listEditor.SetItemFactory(ComponentFactoryWrapper.From(_registeredComponentFactories[componentType]).Create);
+            listEditor.SetLayoutManagerFactory(() =>
+            {
+                var layoutManager = LayoutManagerFactory.Create();
+                layoutManager.LayoutOptions = SettingFactory.CreateLayoutOptions();
+                return layoutManager;
+            });
+
+            return listEditor;
+        }
+
+        private void BindComponent(IComponent component, BindInfo bindInfo)
+        {
+            component.Text = bindInfo.ShowableInfo.Label;
+            component.Description = bindInfo.ShowableInfo.Description;
+            component.SizeMode = bindInfo.SizeOptions.EditorSizeMode;
         }
 
         private IComponentFactory<T> GetFactoryByComponentType<T>() where T : IComponent
@@ -175,10 +216,6 @@ namespace Config4Net.UI
             return (IComponentFactory<T>)registeredFactory;
         }
 
-        public UiManager()
-        {
-            _registeredComponentFactories = new Dictionary<Type, object>();
-            SettingFactory = new DefaultSettingFactory();
-        }
+        #endregion Helper Methods
     }
 }

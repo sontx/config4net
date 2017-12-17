@@ -27,7 +27,16 @@ namespace Config4Net.UI.WinForms.Editors
                 _value = value;
                 _editorHelper.ChangeValue(
                     value,
-                    () => { cmbContent.SelectedItem = value; },
+                    () =>
+                    {
+                        foreach (Select.Option item in cmbContent.Items)
+                        {
+                            if (ObjectUtils.DeepEquals(item.Value, value))
+                            {
+                                cmbContent.SelectedItem = item;
+                            }
+                        }
+                    },
                     ValueChanging,
                     ValueChanged);
             }

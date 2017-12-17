@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using Config4Net.UI.Editors.Definations;
 
 namespace Config4Net.UI.Editors
 {

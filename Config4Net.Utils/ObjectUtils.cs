@@ -1,5 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
@@ -9,7 +12,16 @@ namespace Config4Net.Utils
     {
         public static void SetProperty(object source, string name, object value)
         {
-            source.GetType().GetProperty(name)?.SetValue(source, value);
+            var propertyInfo = source.GetType().GetProperty(name);
+            if (propertyInfo == null) return;
+
+            var convertedValue = ChangeType(value, propertyInfo.PropertyType);
+            propertyInfo.SetValue(source, convertedValue);
+        }
+
+        public static object GetProperty(object source, string name)
+        {
+            return source.GetType().GetProperty(name)?.GetValue(source);
         }
 
         public static bool DeepEquals(object obj1, object obj2, bool ignoreCase = false)
@@ -64,6 +76,65 @@ namespace Config4Net.Utils
                     propertyInfo.SetValue(source, propertyValue);
                 }
             }
+        }
+
+        public static object ExecuteMethod(object source, string methodName, params object[] paramsObjects)
+        {
+            Precondition.ArgumentNotNull(source, nameof(source));
+            Precondition.ArgumentNotNull(methodName, nameof(methodName));
+
+            return source.GetType().GetMethod(methodName)?.Invoke(
+                source,
+                BindingFlags.Instance,
+                null,
+                paramsObjects,
+                CultureInfo.CurrentCulture);
+        }
+
+        public static object CreateGenericList(Type underlyingType, Type listType)
+        {
+            var constructedListType = listType.MakeGenericType(underlyingType);
+            return Activator.CreateInstance(constructedListType);
+        }
+
+        public static object CreateGenericList(Type underlyingType)
+        {
+            return CreateGenericList(underlyingType, typeof(List<>));
+        }
+
+        public static void CopyToGenericList(object genericListDest, Type itemType, IEnumerable enumerableSrc)
+        {
+            ExecuteMethod(genericListDest, "Clear");
+
+            foreach (var item in enumerableSrc)
+            {
+                ExecuteMethod(genericListDest, "Add", Convert.ChangeType(item, itemType));
+            }
+        }
+
+        public static object ChangeType(object value, Type destType)
+        {
+            if (!IsGenericList(destType) || !IsGenericList(value.GetType()))
+                return value is IConvertible ? Convert.ChangeType(value, destType) : value;
+
+            return ChangeGenericListType(value, destType);
+        }
+
+        public static object ChangeGenericListType(object value, Type destType)
+        {
+            var destItemType = destType.GenericTypeArguments[0];
+            var srcItemType = value.GetType().GenericTypeArguments[0];
+            if (destItemType == srcItemType)
+                return value;
+
+            var destList = CreateGenericList(destItemType);
+            CopyToGenericList(destList, destItemType, (IEnumerable) value);
+            return destList;
+        }
+
+        public static bool IsGenericList(Type type)
+        {
+            return type.IsGenericType && (type.GetGenericTypeDefinition() == typeof(IList<>) || type.GetInterface("IList") == typeof(IList));
         }
     }
 }
