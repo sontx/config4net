@@ -41,6 +41,7 @@
             // 
             this.pckContent.BackColor = System.Drawing.Color.Black;
             this.pckContent.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pckContent.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pckContent.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pckContent.ForeColor = System.Drawing.Color.White;
             this.pckContent.Location = new System.Drawing.Point(0, 0);
