@@ -116,6 +116,7 @@ namespace ExampleApp
             public string City { get; set; }
 
             [Showable(ComponentType = typeof(INumberEditor))]
+            [Number(Max = 500)]
             public int FaxCode { get; set; }
 
             public string InvisibleField { get; set; }

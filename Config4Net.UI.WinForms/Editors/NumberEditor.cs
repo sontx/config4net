@@ -38,6 +38,14 @@ namespace Config4Net.UI.WinForms.Editors
 
         public void SetReferenceInfo(object source, PropertyInfo propertyInfo)
         {
+            var numberAttribute = propertyInfo.GetCustomAttribute<NumberAttribute>();
+            if (numberAttribute != null)
+            {
+                numContent.Maximum = (decimal) numberAttribute.Max;
+                numContent.Minimum = (decimal) numberAttribute.Min;
+                numContent.DecimalPlaces = numberAttribute.DecimalPlaces;
+            }
+
             _editorHelper.SetReferenceInfo(source, propertyInfo);
         }
 
