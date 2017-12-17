@@ -102,9 +102,6 @@
     <Compile Include="Editors\TimeEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Editors\TimeEditor.Designer.cs">
-      <DependentUpon>TimeEditor.cs</DependentUpon>
-    </Compile>
     <Compile Include="Editors\Factories\DateEditorFactory.cs" />
     <Compile Include="Editors\Factories\EnumEditorFactory.cs" />
     <Compile Include="Editors\Factories\SelectEditorFactory.cs" />
@@ -150,9 +147,6 @@
     <Compile Include="Editors\DateEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Editors\DateEditor.Designer.cs">
-      <DependentUpon>DateEditor.cs</DependentUpon>
-    </Compile>
     <Compile Include="Editors\TextEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -195,9 +189,6 @@
     <EmbeddedResource Include="Editors\DateTimeEditor.resx">
       <DependentUpon>DateTimeEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Editors\TimeEditor.resx">
-      <DependentUpon>TimeEditor.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Editors\EnumEditor.resx">
       <DependentUpon>EnumEditor.cs</DependentUpon>
     </EmbeddedResource>
@@ -215,9 +206,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Editors\CheckboxEditor.resx">
       <DependentUpon>CheckboxEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editors\DateEditor.resx">
-      <DependentUpon>DateEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Editors\TextEditor.resx">
       <DependentUpon>TextEditor.cs</DependentUpon>

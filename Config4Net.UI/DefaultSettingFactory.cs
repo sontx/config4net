@@ -41,5 +41,15 @@ namespace Config4Net.UI
                 GroupContainerSizeMode = SizeMode.Default
             };
         }
+
+        public virtual DateTimeOptions CreateDateTimeOptions()
+        {
+            return new DateTimeOptions
+            {
+                DefaultDateFormat = "dd/MM/yyyy",
+                DefaultTimeFormat = "HH:mm:ss",
+                DefaultDateTimeFormat = "HH:mm:ss - dd/MM/yyyy"
+            };
+        }
     }
 }

@@ -1,9 +1,6 @@
-﻿using System;
-
-namespace Config4Net.UI.Editors
+﻿namespace Config4Net.UI.Editors
 {
-    public interface IDateEditor : IEditor<DateTime>
+    public interface IDateEditor : IDateTimeEditor
     {
-        string DateFormat { get; set; }
     }
 }

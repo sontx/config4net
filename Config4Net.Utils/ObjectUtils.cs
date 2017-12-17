@@ -114,6 +114,8 @@ namespace Config4Net.Utils
 
         public static object ChangeType(object value, Type destType)
         {
+            if (value == null) return null;
+
             if (!IsGenericList(destType) || !IsGenericList(value.GetType()))
                 return value is IConvertible ? Convert.ChangeType(value, destType) : value;
 

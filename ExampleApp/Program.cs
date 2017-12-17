@@ -86,6 +86,7 @@ namespace ExampleApp
             public MyValue LastName { get; set; }
 
             [Showable(ComponentType = typeof(IDateEditor))]
+            [DateTime(DefaultDateTime = "03/03/1993", MinDateTime = "03/03/1992", MaxDateTime = "03/03/2018")]
             public DateTime Birth { get; set; }
 
             [Showable(ComponentType = typeof(IFilePickerEditor))]

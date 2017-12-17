@@ -13,5 +13,7 @@ namespace Config4Net.UI
         ContainerAppearance CreateContainerAppearance();
 
         SizeOptions CreateSizeOptions();
+
+        DateTimeOptions CreateDateTimeOptions();
     }
 }

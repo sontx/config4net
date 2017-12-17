@@ -85,6 +85,9 @@ namespace Config4Net.UI
             editor.Appearance = SettingFactory.CreatEditorAppearance();
             editor.DefinationType = bindInfo.DefinationInfo?.Value;
             editor.SetReferenceInfo(bindInfo.ReferenceInfo.Source, bindInfo.ReferenceInfo.PropertyInfo);
+
+            if (component is IDateTimeEditor dateTimeEditor)
+                dateTimeEditor.DateTimeOptions = SettingFactory.CreateDateTimeOptions();
         }
 
         public void BindContainer(IContainer container, ContainerBindInfo bindInfo)
