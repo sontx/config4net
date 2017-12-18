@@ -40,7 +40,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="CollectionUtils.cs" />
     <Compile Include="ObjectUtils.cs" />
     <Compile Include="PropertyBinder.cs" />
     <Compile Include="FileWriter.cs" />

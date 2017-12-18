@@ -37,6 +37,7 @@
     <Compile Include="AppearanceBase.cs" />
     <Compile Include="BindInfo.cs" />
     <Compile Include="ComponentFactoryWrapper.cs" />
+    <Compile Include="ComponentManager.cs" />
     <Compile Include="DateTimeOptions.cs" />
     <Compile Include="Editors\DateTimeAttribute.cs" />
     <Compile Include="Editors\EditorWrapper.cs" />
@@ -49,6 +50,7 @@
     <Compile Include="Editors\ICheckboxEditor.cs" />
     <Compile Include="Editors\Definations\IDefinationType.cs" />
     <Compile Include="Editors\NumberAttribute.cs" />
+    <Compile Include="FlatformLoader.cs" />
     <Compile Include="IUiBinder.cs" />
     <Compile Include="SizeMode.cs" />
     <Compile Include="Containers\ContainerAppearance.cs" />

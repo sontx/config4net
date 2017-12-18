@@ -74,8 +74,7 @@ namespace ExampleApp
         [Config]
         private class Person
         {
-            [Showable("First name:", ComponentType = typeof(ITextEditor))]
-            [Default("son")]
+            [Showable("First name:")]
             public string FirstName { get; set; }
 
             [Showable(ComponentType = typeof(ITextEditor))]
@@ -97,10 +96,10 @@ namespace ExampleApp
             [FolderPicker(TextEditable = false, ShowFolderName = true)]
             public string DocumentFolder { get; set; }
 
-            [Showable(ComponentType = typeof(IColorEditor))]
+            [Showable]
             public Color SkinColor { get; set; }
 
-            [Showable("Sex:", ComponentType = typeof(IEnumEditor))]
+            [Showable]
             [Defination(typeof(MyEnumDefination))]
             public Gender Male { get; set; }
 

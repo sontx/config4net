@@ -4,7 +4,6 @@ using Config4Net.UI.Editors.Definations;
 using Config4Net.UI.Layout;
 using Config4Net.Utils;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -20,8 +19,7 @@ namespace Config4Net.UI
 
         #endregion Default Instance
 
-        // componentType - factory
-        private readonly Dictionary<Type, object> _registeredComponentFactories;
+        private readonly ComponentManager _componentManager;
 
         #region Properties
 
@@ -40,7 +38,7 @@ namespace Config4Net.UI
             var sizeOptions = SettingFactory.CreateSizeOptions();
 
             // create a container
-            var container = (IContainer)GetFactoryByComponentType<T>().Create();
+            var container = _componentManager.CreateComponentFromComponentType<IContainer>(typeof(T));
             var configType = config.GetType();
 
             BindContainer(container, new ContainerBindInfo
@@ -57,21 +55,22 @@ namespace Config4Net.UI
                 container.AddChild(component);
             }
 
-            return (T)container;
+            return (T) container;
         }
 
-        public void RegisterFactory(Type componentType, object factory)
+        public void RegisterComponentFactory(Type componentType, object factory)
         {
-            Precondition.ArgumentNotNull(componentType, nameof(componentType));
-            Precondition.ArgumentNotNull(factory, nameof(factory));
-            Precondition.ArgumentCompatibleType(componentType, typeof(IComponent), nameof(componentType));
+            _componentManager.RegisterComponentFactory(componentType, factory);
+        }
 
-            _registeredComponentFactories.Add(componentType, factory);
+        public void RegisterDefaultComponentType(Type propertyType, Type componentType)
+        {
+            _componentManager.RegisterDefaultComponentType(propertyType, componentType);
         }
 
         public UiManager()
         {
-            _registeredComponentFactories = new Dictionary<Type, object>();
+            _componentManager = new ComponentManager();
             SettingFactory = new DefaultSettingFactory();
         }
 
@@ -133,7 +132,7 @@ namespace Config4Net.UI
             SizeOptions sizeOptions,
             PropertyInfo[] propertyInfos)
         {
-            var groupContainer = GetFactoryByComponentType<IGroupContainer>().Create();
+            var groupContainer = _componentManager.CreateComponentFromComponentType<IGroupContainer>();
             BindContainer(groupContainer, new ContainerBindInfo
             {
                 ShowableInfo = ShowableInfo.From(propertyInfo),
@@ -164,38 +163,37 @@ namespace Config4Net.UI
             SizeOptions sizeOptions,
             ShowableInfo showableInfo)
         {
-            if (showableInfo.ComponentType == null)
-            {
-                throw new CustomAttributeFormatException(
-                    $"{nameof(showableInfo.ComponentType)} must be defined.");
-            }
-
             var component = ObjectUtils.IsGenericList(propertyInfo.PropertyType)
-                ? CreateListEditor(showableInfo.ComponentType)
-                : CreateNormalEditor(showableInfo.ComponentType);
+                ? CreateListEditor(showableInfo.ComponentType, propertyInfo.PropertyType)
+                : CreateNormalEditor(showableInfo.ComponentType, propertyInfo.PropertyType);
 
             BindEditor(component, new EditorBindInfo
             {
                 ShowableInfo = ShowableInfo.From(propertyInfo),
                 DefinationInfo = DefinationInfo.From(propertyInfo),
                 SizeOptions = sizeOptions,
-                ReferenceInfo = new ReferenceInfo { PropertyInfo = propertyInfo, Source = parentInstance }
+                ReferenceInfo = new ReferenceInfo
+                {
+                    PropertyInfo = propertyInfo,
+                    Source = parentInstance
+                }
             });
 
             return component;
         }
 
-        private IComponent CreateNormalEditor(Type componentType)
+        private IComponent CreateNormalEditor(Type componentType, Type propertyType)
         {
-            return ComponentFactoryWrapper.From(_registeredComponentFactories[componentType]).Create();
+            return componentType != null
+                ? _componentManager.CreateComponentFromComponentType<IComponent>(componentType)
+                : _componentManager.CreateComponentFromPropertyType<IComponent>(propertyType);
         }
 
-        private IComponent CreateListEditor(Type componentType)
+        private IComponent CreateListEditor(Type componentType, Type propertyType)
         {
-            var listFactory = ComponentFactoryWrapper.From(_registeredComponentFactories[typeof(IListEditor)]);
-            var listEditor = (IListEditor)listFactory.Create();
+            var listEditor = _componentManager.CreateComponentFromComponentType<IListEditor>();
             listEditor.SetUiBinder(this);
-            listEditor.SetItemFactory(ComponentFactoryWrapper.From(_registeredComponentFactories[componentType]).Create);
+            listEditor.SetItemFactory(() => CreateNormalEditor(componentType, propertyType));
             listEditor.SetLayoutManagerFactory(() =>
             {
                 var layoutManager = LayoutManagerFactory.Create();
@@ -211,12 +209,6 @@ namespace Config4Net.UI
             component.Text = bindInfo.ShowableInfo.Label;
             component.Description = bindInfo.ShowableInfo.Description;
             component.SizeMode = bindInfo.SizeOptions.EditorSizeMode;
-        }
-
-        private IComponentFactory<T> GetFactoryByComponentType<T>() where T : IComponent
-        {
-            var registeredFactory = _registeredComponentFactories[typeof(T)];
-            return (IComponentFactory<T>)registeredFactory;
         }
 
         #endregion Helper Methods

@@ -6,25 +6,28 @@ using Config4Net.UI.WinForms.Layout;
 
 namespace Config4Net.UI.WinForms
 {
-    public sealed class WinFormFlatformLoader : IFlatformLoader
+    public sealed class WinFormFlatformLoader : FlatformLoader
     {
-        public void Load()
+        public override void Load()
         {
-            UiManager.Default.LayoutManagerFactory = new LayoutManagerFactory();
-            UiManager.Default.RegisterFactory(typeof(IGroupContainer), new GroupContainerFactory());
-            UiManager.Default.RegisterFactory(typeof(IWindowContainer), new WindowContainerFactory());
-            UiManager.Default.RegisterFactory(typeof(INumberEditor), new NumberEditorFactory());
-            UiManager.Default.RegisterFactory(typeof(ITextEditor), new TextEditorFactory());
-            UiManager.Default.RegisterFactory(typeof(ICheckboxEditor), new CheckboxEditorFactory());
-            UiManager.Default.RegisterFactory(typeof(IColorEditor), new ColorEditorFactory());
-            UiManager.Default.RegisterFactory(typeof(ISelectEditor), new SelectEditorFactory());
-            UiManager.Default.RegisterFactory(typeof(IEnumEditor), new EnumEditorFactory());
-            UiManager.Default.RegisterFactory(typeof(IDateEditor), new DateEditorFactory());
-            UiManager.Default.RegisterFactory(typeof(ITimeEditor), new TimeEditorFactory());
-            UiManager.Default.RegisterFactory(typeof(IDateTimeEditor), new DateTimeEditorFactory());
-            UiManager.Default.RegisterFactory(typeof(IFilePickerEditor), new FilePickerEditorFactory());
-            UiManager.Default.RegisterFactory(typeof(IFolderPickerEditor), new FolderPickerEditorFactory());
-            UiManager.Default.RegisterFactory(typeof(IListEditor), new ListEditorFactory());
+            base.Load();
+
+            var uiManager = UiManager;
+            uiManager.LayoutManagerFactory = new LayoutManagerFactory();
+            uiManager.RegisterComponentFactory(typeof(IGroupContainer), new GroupContainerFactory());
+            uiManager.RegisterComponentFactory(typeof(IWindowContainer), new WindowContainerFactory());
+            uiManager.RegisterComponentFactory(typeof(INumberEditor), new NumberEditorFactory());
+            uiManager.RegisterComponentFactory(typeof(ITextEditor), new TextEditorFactory());
+            uiManager.RegisterComponentFactory(typeof(ICheckboxEditor), new CheckboxEditorFactory());
+            uiManager.RegisterComponentFactory(typeof(IColorEditor), new ColorEditorFactory());
+            uiManager.RegisterComponentFactory(typeof(ISelectEditor), new SelectEditorFactory());
+            uiManager.RegisterComponentFactory(typeof(IEnumEditor), new EnumEditorFactory());
+            uiManager.RegisterComponentFactory(typeof(IDateEditor), new DateEditorFactory());
+            uiManager.RegisterComponentFactory(typeof(ITimeEditor), new TimeEditorFactory());
+            uiManager.RegisterComponentFactory(typeof(IDateTimeEditor), new DateTimeEditorFactory());
+            uiManager.RegisterComponentFactory(typeof(IFilePickerEditor), new FilePickerEditorFactory());
+            uiManager.RegisterComponentFactory(typeof(IFolderPickerEditor), new FolderPickerEditorFactory());
+            uiManager.RegisterComponentFactory(typeof(IListEditor), new ListEditorFactory());
         }
     }
 }
