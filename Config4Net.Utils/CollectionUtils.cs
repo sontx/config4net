@@ -8,6 +8,7 @@ namespace Config4Net.Utils
             Dictionary<TKey, TValue> sourceDictionary,
             Dictionary<TKey, TValue> destinationDictionary)
         {
+            destinationDictionary.Clear();
             foreach (var node in sourceDictionary)
             {
                 destinationDictionary.Add(node.Key, node.Value);

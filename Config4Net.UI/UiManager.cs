@@ -9,13 +9,18 @@ using System.Reflection;
 
 namespace Config4Net.UI
 {
-    public sealed class UiManager : IUiBinder
+    public sealed class UiManager : IUiBinder, ICopyable<UiManager>
     {
         #region Default Instance
 
         private static UiManager _defaultInstance;
 
-        public static UiManager Default => _defaultInstance ?? (_defaultInstance = new UiManager());
+        public static UiManager Default => _defaultInstance ?? (_defaultInstance = Create());
+
+        public static UiManager Create()
+        {
+            return new UiManager();
+        }
 
         #endregion Default Instance
 
@@ -68,7 +73,16 @@ namespace Config4Net.UI
             _componentManager.RegisterDefaultComponentType(propertyType, componentType);
         }
 
-        public UiManager()
+        public void Copy(UiManager source)
+        {
+            Precondition.ArgumentNotNull(source, nameof(source));
+            LayoutManagerFactory = source.LayoutManagerFactory;
+            SettingFactory = source.SettingFactory;
+            AllowAutoCreateInstanceIfMissing = source.AllowAutoCreateInstanceIfMissing;
+            _componentManager.Copy(source._componentManager);
+        }
+
+        private UiManager()
         {
             _componentManager = new ComponentManager();
             SettingFactory = new DefaultSettingFactory();

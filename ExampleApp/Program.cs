@@ -28,7 +28,9 @@ namespace ExampleApp
             ConfigPool.Default.Settings.IgnoreMismatchType = true;
             ConfigPool.Default.Settings.PreventNullReference = true;
             var person = ConfigPool.Default.Get<Person>();
-            var window = UiManager.Default.Build<IWindowContainer>(person);
+            var uiManager = UiManager.Create();
+            uiManager.Copy(UiManager.Default);
+            var window = uiManager.Build<IWindowContainer>(person);
 
             Application.Run((Form)window);
         }

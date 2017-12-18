@@ -51,6 +51,7 @@
     <Compile Include="Editors\Definations\IDefinationType.cs" />
     <Compile Include="Editors\NumberAttribute.cs" />
     <Compile Include="FlatformLoader.cs" />
+    <Compile Include="ICopyable.cs" />
     <Compile Include="IUiBinder.cs" />
     <Compile Include="SizeMode.cs" />
     <Compile Include="Containers\ContainerAppearance.cs" />
