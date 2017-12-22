@@ -37,7 +37,6 @@ namespace Config4Net.UI
         public T Build<T>(object config) where T : IContainer
         {
             Precondition.ArgumentNotNull(config, nameof(config));
-            Precondition.ArgumentHasAttribute(config, typeof(ShowableAttribute), nameof(config));
             Precondition.PropertyNotNull(SettingFactory, nameof(SettingFactory));
 
             var sizeOptions = SettingFactory.CreateSizeOptions();
@@ -45,12 +44,9 @@ namespace Config4Net.UI
             // create a container
             var container = _componentManager.CreateComponentFromComponentType<IContainer>(typeof(T));
             var configType = config.GetType();
+            var bindInfo = CreateDefaultBindInfo(configType, sizeOptions);
 
-            BindContainer(container, new ContainerBindInfo
-            {
-                ShowableInfo = ShowableInfo.From(configType),
-                SizeOptions = sizeOptions
-            });
+            BindContainer(container, bindInfo);
 
             foreach (var propertyInfo in configType.GetProperties())
             {
@@ -168,6 +164,31 @@ namespace Config4Net.UI
             return groupContainer;
         }
 
+        private static ContainerBindInfo CreateDefaultBindInfo(Type configType, SizeOptions sizeOptions)
+        {
+            var showableInfo = ShowableInfo.From(configType);
+
+            if (showableInfo == null)
+            {
+                showableInfo = new ShowableInfo
+                {
+                    Name = configType.Name,
+                    Label = StringUtils.ToFriendlyString(configType.Name)
+                };
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(showableInfo.Name))
+                    showableInfo.Name = configType.Name;
+            }
+
+            return new ContainerBindInfo
+            {
+                ShowableInfo = showableInfo,
+                SizeOptions = sizeOptions
+            };
+        }
+
         private static ContainerBindInfo CreateContainerBinderInfo(PropertyInfo propertyInfo, SizeOptions sizeOptions)
         {
             var showableInfo = ShowableInfo.From(propertyInfo);
@@ -194,7 +215,7 @@ namespace Config4Net.UI
             return component;
         }
 
-        private EditorBindInfo CreateEditorBinderInfo(
+        private static EditorBindInfo CreateEditorBinderInfo(
             object parentInstance,
             PropertyInfo propertyInfo,
             SizeOptions sizeOptions)
