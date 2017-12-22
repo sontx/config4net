@@ -1,149 +1,95 @@
-﻿using Config4Net.Core;
-using Config4Net.Types;
-using Config4Net.UI;
-using Config4Net.UI.Containers;
-using Config4Net.UI.Editors;
+﻿using Config4Net.Types;
 using Config4Net.UI.Editors.Definations;
 using Config4Net.UI.WinForms;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
+using Config4Net.Core;
+using Config4Net.UI;
+using Config4Net.UI.Containers;
+using Config4Net.UI.Editors;
 
 namespace ExampleApp
 {
     internal static class Program
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
         [STAThread]
         private static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new MainForm());
 
+            // Load winform implementation
             new WinFormFlatformLoader().Load();
-            ConfigPool.Default.Settings.IgnoreMismatchType = true;
-            ConfigPool.Default.Settings.PreventNullReference = true;
-            var person = ConfigPool.Default.Get<Person>();
-            var uiManager = UiManager.Create();
-            uiManager.Copy(UiManager.Default);
-            var window = uiManager.Build<IWindowContainer>(person);
-            var cityEditor = window.LookupByName<ITextEditor>("someName");
-            cityEditor.ValueChanged += (s, e) =>
-            {
-                MessageBox.Show(e.NewValue.ToString());
-            };
-            Application.Run((Form)window);
+            // Load config from file or memory
+            var girlfriend = ConfigPool.Default.Get<GirlfriendSettings>();
+            // Build UI from config instance
+            var window = UiManager.Default.Build<IWindowContainer>(girlfriend);
+
+            Application.Run((Form) window);
         }
 
-        private enum Gender
+        [Config]
+        private class GirlfriendSettings
         {
-            Male,
-            Female,
-            Unkown
+            [Showable]
+            public string Name { get; set; }
+            [Showable]
+            public int Age { get; set; }
+            [Showable]
+            public Color HairColor { get; set; }
+            [Showable]
+            public Contact Contact { get; set; }
+            [Showable]
+            public Note Note { get; set; }
         }
 
-        private class MyEnumDefination: EnumDefination
+        private class Contact
         {
-            public MyEnumDefination() : base(typeof(Gender))
-            {
-            }
+            [Showable]
+            public string Address { get; set; }
+            [Showable]
+            public string Phone { get; set; }
         }
 
-        private class MyValue
+        private class Note
         {
-            public string Value1 { get; set; }
-            public int Value2 { get; set; }
+            [Showable(ComponentType = typeof(IFilePickerEditor))]
+            public string Avatar { get; set; }
+            [Showable(ComponentType = typeof(ISelectEditor))]
+            [Defination(typeof(FavoriteDefination))]
+            public Favorite FavoriteType { get; set; }
+            [Showable]
+            public bool DoesSheComplainEveryday { get; set; }
+            [Showable]
+            public bool IsSheLazy { get; set; }
+            [Showable(ComponentType = typeof(ITextEditor))]
+            public IList<string> Hate { get; set; }
+        }
+
+        private class Favorite
+        {
+            public string Name { get; set; }
+            public string Note { get; set; }
 
             public override string ToString()
             {
-                return Value1;
+                return Name;
             }
         }
 
-        private class MySelectDefination : SelectDefination
+        private class FavoriteDefination : SelectDefination
         {
             protected override Select GetSelect()
             {
-                return new Select.Builder()
-                    .AddOption("Last name 1", new MyValue { Value1 = "value 1", Value2 = 1 })
-                    .AddOption("Last name 2", new MyValue { Value1 = "value 2", Value2 = 2 })
-                    .AddOption("Last name 3", new MyValue { Value1 = "value 3", Value2 = 3 })
+                return new Select.Builder<Favorite>()
+                    .AddOption(new Favorite {Name = "Makeup", Note = "Always compliment her beautiful"})
+                    .AddOption(new Favorite {Name = "Eating", Note = "Remember all the sidewalk cafes"})
+                    .AddOption(new Favorite {Name = "Sport", Note = "Take her to the gym every day"})
+                    .AddOption(new Favorite {Name = "Shopping", Note = "Hummmn!!! What should I do?"})
                     .Build();
             }
-        }
-
-        [Showable("Your personal information")]
-        [Config]
-        private class Person
-        {
-            [Showable("First name:")]
-            public string FirstName { get; set; }
-
-            [Showable(ComponentType = typeof(ITextEditor))]
-            public IList<string> MyFriends { get; set; }
-
-            [Showable("Last name:", ComponentType = typeof(ISelectEditor))]
-            [Defination(typeof(MySelectDefination))]
-            public MyValue LastName { get; set; }
-
-            [Showable(ComponentType = typeof(IDateEditor))]
-            [DateTime(DefaultDateTime = "03/03/1993", MinDateTime = "03/03/1992", MaxDateTime = "03/03/2018")]
-            public DateTime Birth { get; set; }
-
-            [Showable(ComponentType = typeof(IFilePickerEditor))]
-            [FilePicker(TextEditable = false, ShowFileName = true, FileFilter = "Jpg files|*.jpg")]
-            public string Avatar { get; set; }
-
-            [Showable(ComponentType = typeof(IFolderPickerEditor), Description = "Where are your documents?")]
-            [FolderPicker(TextEditable = false, ShowFolderName = true)]
-            public string DocumentFolder { get; set; }
-
-            [Showable]
-            public Color SkinColor { get; set; }
-
-            [Showable]
-            [Defination(typeof(MyEnumDefination))]
-            public Gender Male { get; set; }
-
-            [Showable("Where are you now:")]
-            public Address Address { get; set; }
-
-            [Showable("Your job:")]
-            public Job Job { get; set; }
-        }
-
-        private class Address
-        {
-            [Showable(ComponentType = typeof(ITextEditor), Name = "someName")]
-            public string City { get; set; }
-
-            [Showable(ComponentType = typeof(INumberEditor))]
-            [Number(Max = 500)]
-            public int FaxCode { get; set; }
-
-            public string InvisibleField { get; set; }
-        }
-
-        private class Job
-        {
-            [Showable(ComponentType = typeof(ITextEditor))]
-            public string Company { get; set; }
-
-            [Showable(ComponentType = typeof(ITextEditor))]
-            public string Position { get; set; }
-
-            [Showable(ComponentType = typeof(ITimeEditor))]
-            public DateTime WorkTime { get; set; }
-
-            [Showable(ComponentType = typeof(IDateTimeEditor))]
-            public DateTime SomeDateTime { get; set; }
-
-            public int Salary { get; set; }
         }
     }
 }

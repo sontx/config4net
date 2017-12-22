@@ -44,38 +44,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppConfig.cs" />
-    <Compile Include="CustomConfigForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CustomConfigForm.Designer.cs">
-      <DependentUpon>CustomConfigForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ConfigObjectFactory.cs" />
-    <Compile Include="AppConfigForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AppConfigForm.Designer.cs">
-      <DependentUpon>AppConfigForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CustomConfig.cs" />
-    <Compile Include="MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="CustomConfigForm.resx">
-      <DependentUpon>CustomConfigForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AppConfigForm.resx">
-      <DependentUpon>AppConfigForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
