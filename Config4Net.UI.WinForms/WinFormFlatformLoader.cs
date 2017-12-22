@@ -8,11 +8,10 @@ namespace Config4Net.UI.WinForms
 {
     public sealed class WinFormFlatformLoader : FlatformLoader
     {
-        public override void Load()
+        public override void Load(UiManager uiManager)
         {
-            base.Load();
-
-            var uiManager = UiManager;
+            base.Load(uiManager);
+            
             uiManager.LayoutManagerFactory = new LayoutManagerFactory();
             uiManager.RegisterComponentFactory(typeof(IGroupContainer), new GroupContainerFactory());
             uiManager.RegisterComponentFactory(typeof(IWindowContainer), new WindowContainerFactory());

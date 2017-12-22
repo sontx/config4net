@@ -8,19 +8,18 @@ namespace Config4Net.UI
     {
         protected UiManager UiManager => UiManager.Default;
 
-        public virtual void Load()
+        public void Load()
         {
-            LoadDefaultComponentTypes();
+            Load(UiManager.Default);
         }
 
-        protected FlatformLoader()
+        public virtual void Load(UiManager uiManager)
         {
-            LoadDefaultComponentTypes();
+            LoadDefaultComponentTypes(uiManager);
         }
 
-        private void LoadDefaultComponentTypes()
+        private void LoadDefaultComponentTypes(UiManager uiManager)
         {
-            var uiManager = UiManager;
             uiManager.RegisterDefaultComponentType(typeof(string), typeof(ITextEditor));
             uiManager.RegisterDefaultComponentType(typeof(int), typeof(INumberEditor));
             uiManager.RegisterDefaultComponentType(typeof(long), typeof(INumberEditor));

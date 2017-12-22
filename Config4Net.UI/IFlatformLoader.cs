@@ -3,5 +3,6 @@
     public interface IFlatformLoader
     {
         void Load();
+        void Load(UiManager uiManager);
     }
 }
