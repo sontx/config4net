@@ -83,7 +83,9 @@ namespace Config4Net.UI.WinForms.Editors.Helpers
             if (_layoutManager == null) return;
             
             var item = new ListItem();
-            item.SetEditor((DefaultEditor)_itemContentFactory(value));
+            var editor = (DefaultEditor) _itemContentFactory(value);
+            editor.SizeMode = SizeMode.Absolute;
+            item.SetEditor(editor);
             item.Removed += Item_Removed;
             _layoutManager.Controls.Add(item);
 
