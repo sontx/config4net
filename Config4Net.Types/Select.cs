@@ -17,7 +17,7 @@ namespace Config4Net.Types
             }
         }
 
-        public class Builder
+        public class Builder<T>
         {
             private readonly Select _select;
 
@@ -26,9 +26,15 @@ namespace Config4Net.Types
                 _select = new Select { Options = new List<Option>() };
             }
 
-            public Builder AddOption(string displayText, object value)
+            public Builder<T> AddOption(string displayText, T value)
             {
                 _select.Options.Add(new Option { DisplayText = displayText, Value = value });
+                return this;
+            }
+
+            public Builder<T> AddOption(T value)
+            {
+                _select.Options.Add(new Option { DisplayText = value.ToString(), Value = value });
                 return this;
             }
 
