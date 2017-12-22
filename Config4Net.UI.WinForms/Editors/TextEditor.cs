@@ -1,6 +1,7 @@
 ﻿using Config4Net.UI.Editors;
 using System.Reflection;
 using System.Text;
+using System.Windows.Forms;
 
 namespace Config4Net.UI.WinForms.Editors
 {
@@ -9,6 +10,7 @@ namespace Config4Net.UI.WinForms.Editors
         private readonly EditorHelper<string> _editorHelper;
         
         private bool _readOnly;
+        private string _value;
 
         public event ValueChangedEventHandler ValueChanged;
 
@@ -16,12 +18,16 @@ namespace Config4Net.UI.WinForms.Editors
 
         public string Value
         {
-            get => txtContent.Text;
+            get => _value;
             set
             {
                 _editorHelper.ChangeValue(
                     value,
-                    () => { txtContent.Text = value; },
+                    () =>
+                    {
+                        txtContent.Text = value;
+                        _value = value;
+                    },
                     ValueChanging,
                     ValueChanged);
             }
@@ -62,6 +68,23 @@ namespace Config4Net.UI.WinForms.Editors
         {
             InitializeComponent();
             _editorHelper = new EditorHelper<string>(this);
+        }
+
+        private void txtContent_Leave(object sender, System.EventArgs e)
+        {
+            ChangeValueIfNecessary();
+        }
+
+        private void txtContent_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                ChangeValueIfNecessary();
+        }
+
+        private void ChangeValueIfNecessary()
+        {
+            if (_value != txtContent.Text)
+                Value = txtContent.Text;
         }
     }
 }

@@ -9,6 +9,7 @@ namespace Config4Net.UI.WinForms.Editors
         private readonly EditorHelper<Color> _editorHelper;
 
         private bool _readOnly;
+        private Color _value;
 
         public event ValueChangedEventHandler ValueChanged;
 
@@ -16,12 +17,16 @@ namespace Config4Net.UI.WinForms.Editors
 
         public Color Value
         {
-            get => pckContent.Color;
+            get => _value;
             set
             {
                 _editorHelper.ChangeValue(
                     value,
-                    () => { pckContent.Color = value; },
+                    () =>
+                    {
+                        _value = value;
+                        pckContent.Color = value;
+                    },
                     ValueChanging,
                     ValueChanged);
             }
@@ -62,6 +67,12 @@ namespace Config4Net.UI.WinForms.Editors
         {
             InitializeComponent();
             _editorHelper = new EditorHelper<Color>(this);
+        }
+
+        private void pckContent_ColorChanged(object sender, System.EventArgs e)
+        {
+            if (_value != pckContent.Color)
+                Value = pckContent.Color;
         }
     }
 }

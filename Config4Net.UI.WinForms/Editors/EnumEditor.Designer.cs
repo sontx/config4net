@@ -46,12 +46,13 @@
             this.cmbContent.Name = "cmbContent";
             this.cmbContent.Size = new System.Drawing.Size(244, 24);
             this.cmbContent.TabIndex = 0;
+            this.cmbContent.SelectedIndexChanged += new System.EventHandler(this.cmbContent_SelectedIndexChanged);
             // 
-            // SelectEditor
+            // EnumEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Name = "SelectEditor";
+            this.Name = "EnumEditor";
             this.PreferHeight = 22;
             this.Size = new System.Drawing.Size(300, 23);
             this.pnlWorkingArea.ResumeLayout(false);

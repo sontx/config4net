@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Config4Net.UI.Editors;
 using System.Reflection;
 using System.Windows.Forms;
@@ -97,7 +98,21 @@ namespace Config4Net.UI.WinForms.Editors
             if (folderBrowserDialog1.ShowDialog(FindForm()) == DialogResult.OK)
             {
                 Value = folderBrowserDialog1.SelectedPath;
+                ChangeValueIfNecessary();
             }
+        }
+
+        private void ChangeValueIfNecessary()
+        {
+            if (string.Compare(txtContent.Text, _value, StringComparison.InvariantCultureIgnoreCase) != 0)
+            {
+                Value = txtContent.Text;
+            }
+        }
+
+        private void txtContent_Leave(object sender, EventArgs e)
+        {
+            ChangeValueIfNecessary();
         }
     }
 }

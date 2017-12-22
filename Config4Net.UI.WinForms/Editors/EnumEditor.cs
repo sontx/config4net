@@ -13,7 +13,7 @@ namespace Config4Net.UI.WinForms.Editors
 
         private bool _readOnly;
         private Type _definationType;
-        private object _value;
+        private Enum _value;
 
         public event ValueChangedEventHandler ValueChanged;
 
@@ -21,13 +21,16 @@ namespace Config4Net.UI.WinForms.Editors
 
         public Enum Value
         {
-            get => cmbContent.SelectedItem as Enum;
+            get => _value;
             set
             {
-                _value = value;
                 _editorHelper.ChangeValue(
                     value,
-                    () => { cmbContent.SelectedItem = value; },
+                    () => 
+                    {
+                        _value = value;
+                        cmbContent.SelectedItem = value;
+                    },
                     ValueChanging,
                     ValueChanged);
             }
@@ -96,6 +99,12 @@ namespace Config4Net.UI.WinForms.Editors
         {
             InitializeComponent();
             _editorHelper = new EditorHelper<Enum>(this);
+        }
+
+        private void cmbContent_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!Equals(_value, cmbContent.SelectedItem))
+                Value = cmbContent.SelectedItem as Enum;
         }
     }
 }

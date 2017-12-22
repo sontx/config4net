@@ -14,6 +14,7 @@ namespace Config4Net.UI.WinForms.Editors
         private DateTimeAttribute _dateTimeAttribute;
         private string _defaultDateTimeFormat;
         private DateTimeOptions _dateTimeOptions;
+        private DateTime _value;
 
         public event ValueChangedEventHandler ValueChanged;
 
@@ -45,15 +46,16 @@ namespace Config4Net.UI.WinForms.Editors
 
         public DateTime Value
         {
-            get => dtContent.Value;
+            get => _value;
             set
             {
                 _editorHelper.ChangeValue(
                     value,
                     () =>
                     {
-                        if (value >= dtContent.MinDate && value <= dtContent.MaxDate)
-                            dtContent.Value = value;
+                        if (value < dtContent.MinDate || value > dtContent.MaxDate) return;
+                        _value = value;
+                        dtContent.Value = value;
                     },
                     ValueChanging,
                     ValueChanged);
@@ -119,6 +121,12 @@ namespace Config4Net.UI.WinForms.Editors
         {
             InitializeComponent();
             _editorHelper = new EditorHelper<DateTime>(this);
+        }
+
+        private void dtContent_ValueChanged(object sender, EventArgs e)
+        {
+            if (_value != dtContent.Value)
+                Value = dtContent.Value;
         }
     }
 }

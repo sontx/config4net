@@ -44,6 +44,8 @@
             this.txtContent.Name = "txtContent";
             this.txtContent.Size = new System.Drawing.Size(244, 22);
             this.txtContent.TabIndex = 0;
+            this.txtContent.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtContent_KeyDown);
+            this.txtContent.Leave += new System.EventHandler(this.txtContent_Leave);
             // 
             // TextEditor
             // 

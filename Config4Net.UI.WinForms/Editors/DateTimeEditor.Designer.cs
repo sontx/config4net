@@ -46,6 +46,7 @@
             this.dtContent.Name = "dtContent";
             this.dtContent.Size = new System.Drawing.Size(244, 22);
             this.dtContent.TabIndex = 0;
+            this.dtContent.ValueChanged += new System.EventHandler(this.dtContent_ValueChanged);
             // 
             // DateTimeEditor
             // 

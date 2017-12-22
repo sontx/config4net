@@ -8,6 +8,7 @@ namespace Config4Net.UI.WinForms.Editors
         private readonly EditorHelper<decimal> _editorHelper;
         
         private bool _readOnly;
+        private decimal _value;
 
         public event ValueChangedEventHandler ValueChanged;
 
@@ -15,12 +16,16 @@ namespace Config4Net.UI.WinForms.Editors
 
         public decimal Value
         {
-            get => numContent.Value;
+            get => _value;
             set
             {
                 _editorHelper.ChangeValue(
                     value,
-                    () => { numContent.Value = value; },
+                    () =>
+                    {
+                        _value = value;
+                        numContent.Value = value;
+                    },
                     ValueChanging,
                     ValueChanged);
             }
@@ -69,6 +74,12 @@ namespace Config4Net.UI.WinForms.Editors
         {
             InitializeComponent();
             _editorHelper = new EditorHelper<decimal>(this);
+        }
+
+        private void numContent_ValueChanged(object sender, System.EventArgs e)
+        {
+            if (_value != numContent.Value)
+                Value = numContent.Value;
         }
     }
 }

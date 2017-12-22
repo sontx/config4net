@@ -10,6 +10,7 @@ namespace Config4Net.UI.WinForms.Editors
         
         private bool _readOnly;
         private string _description;
+        private bool _value;
 
         public event ValueChangedEventHandler ValueChanged;
 
@@ -27,12 +28,16 @@ namespace Config4Net.UI.WinForms.Editors
 
         public bool Value
         {
-            get => chkContent.Checked;
+            get => _value;
             set
             {
                 _editorHelper.ChangeValue(
                     value,
-                    () => { chkContent.Checked = value; },
+                    () =>
+                    {
+                        _value = value;
+                        chkContent.Checked = value;
+                    },
                     ValueChanging,
                     ValueChanged);
             }
@@ -73,6 +78,12 @@ namespace Config4Net.UI.WinForms.Editors
         {
             InitializeComponent();
             _editorHelper = new EditorHelper<bool>(this);
+        }
+
+        private void chkContent_CheckedChanged(object sender, System.EventArgs e)
+        {
+            if (_value != chkContent.Checked)
+                Value = chkContent.Checked;
         }
     }
 }

@@ -36,16 +36,16 @@
             // pnlWorkingArea
             // 
             this.pnlWorkingArea.Controls.Add(this.numContent);
-            this.pnlWorkingArea.Location = new System.Drawing.Point(155, 5);
-            this.pnlWorkingArea.Size = new System.Drawing.Size(140, 23);
+            this.pnlWorkingArea.Size = new System.Drawing.Size(244, 33);
             // 
             // numContent
             // 
             this.numContent.Dock = System.Windows.Forms.DockStyle.Fill;
             this.numContent.Location = new System.Drawing.Point(0, 0);
             this.numContent.Name = "numContent";
-            this.numContent.Size = new System.Drawing.Size(140, 22);
+            this.numContent.Size = new System.Drawing.Size(244, 22);
             this.numContent.TabIndex = 0;
+            this.numContent.ValueChanged += new System.EventHandler(this.numContent_ValueChanged);
             // 
             // NumberEditor
             // 

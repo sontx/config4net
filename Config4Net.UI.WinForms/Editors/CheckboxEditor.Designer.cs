@@ -48,6 +48,7 @@
             this.chkContent.TabIndex = 0;
             this.chkContent.UseCompatibleTextRendering = true;
             this.chkContent.UseVisualStyleBackColor = false;
+            this.chkContent.CheckedChanged += new System.EventHandler(this.chkContent_CheckedChanged);
             // 
             // CheckboxEditor
             // 

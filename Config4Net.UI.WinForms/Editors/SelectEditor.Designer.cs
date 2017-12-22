@@ -46,6 +46,7 @@
             this.cmbContent.Name = "cmbContent";
             this.cmbContent.Size = new System.Drawing.Size(244, 24);
             this.cmbContent.TabIndex = 0;
+            this.cmbContent.SelectedIndexChanged += new System.EventHandler(this.cmbContent_SelectedIndexChanged);
             // 
             // SelectEditor
             // 

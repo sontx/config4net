@@ -47,6 +47,7 @@
             this.txtContent.Name = "txtContent";
             this.txtContent.Size = new System.Drawing.Size(205, 22);
             this.txtContent.TabIndex = 0;
+            this.txtContent.Leave += new System.EventHandler(this.txtContent_Leave);
             // 
             // btnBrowse
             // 

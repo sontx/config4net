@@ -24,7 +24,6 @@ namespace Config4Net.UI.WinForms.Editors
             get => ((Select.Option)cmbContent.SelectedItem)?.Value;
             set
             {
-                _value = value;
                 _editorHelper.ChangeValue(
                     value,
                     () =>
@@ -33,7 +32,9 @@ namespace Config4Net.UI.WinForms.Editors
                         {
                             if (ObjectUtils.DeepEquals(item.Value, value))
                             {
+                                _value = value;
                                 cmbContent.SelectedItem = item;
+                                break;
                             }
                         }
                     },
@@ -105,6 +106,14 @@ namespace Config4Net.UI.WinForms.Editors
         {
             InitializeComponent();
             _editorHelper = new EditorHelper<object>(this);
+        }
+
+        private void cmbContent_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_value != cmbContent.SelectedItem)
+            {
+                Value = cmbContent.SelectedItem;
+            }
         }
     }
 }

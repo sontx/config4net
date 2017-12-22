@@ -53,6 +53,7 @@
             this.pckContent.Text = "Black";
             this.pckContent.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.pckContent.UnknownColorAsHex = true;
+            this.pckContent.ColorChanged += new System.EventHandler(this.pckContent_ColorChanged);
             // 
             // ColorEditor
             // 
