@@ -32,8 +32,8 @@ namespace ExampleApp
             var uiManager = UiManager.Create();
             uiManager.Copy(UiManager.Default);
             var window = uiManager.Build<IWindowContainer>(person);
-            var firstNameEditor = window.LookupByName<ITextEditor>(nameof(Person.FirstName));
-            firstNameEditor.ValueChanged += (s, e) =>
+            var cityEditor = window.LookupByName<ITextEditor>("someName");
+            cityEditor.ValueChanged += (s, e) =>
             {
                 MessageBox.Show(e.NewValue.ToString());
             };
@@ -119,7 +119,7 @@ namespace ExampleApp
 
         private class Address
         {
-            [Showable(ComponentType = typeof(ITextEditor))]
+            [Showable(ComponentType = typeof(ITextEditor), Name = "someName")]
             public string City { get; set; }
 
             [Showable(ComponentType = typeof(INumberEditor))]

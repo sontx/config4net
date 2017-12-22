@@ -7,6 +7,7 @@ namespace Config4Net.UI
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class)]
     public class ShowableAttribute : Attribute
     {
+        public string Name { get; set; }
         public string Label { get; set; }
         public string Description { get; set; }
         public bool Required { get; set; }
@@ -21,6 +22,7 @@ namespace Config4Net.UI
 
     public class ShowableInfo
     {
+        public string Name { get; set; }
         public string Label { get; set; }
         public string Description { get; set; }
         public bool Required { get; set; }
@@ -33,6 +35,7 @@ namespace Config4Net.UI
             if (showableAttribute == null) return null;
             return new ShowableInfo
             {
+                Name = showableAttribute.Name,
                 Label = string.IsNullOrEmpty(showableAttribute.Label)
                     ? StringUtils.ToFriendlyString(memberInfo.Name)
                     : showableAttribute.Label,

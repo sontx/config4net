@@ -128,8 +128,8 @@ namespace Config4Net.UI
 
         private IComponent BuildRecursive(object parentInstance, PropertyInfo propertyInfo, SizeOptions sizeOptions)
         {
-            var showableInfo = ShowableInfo.From(propertyInfo);
-            if (showableInfo == null) return null;
+            var binderInfo = CreateEditorBinderInfo(parentInstance, propertyInfo, sizeOptions);
+            if (binderInfo == null) return null;
 
             var propertyInfos = propertyInfo.PropertyType.GetProperties();
             var hasChildrenComponents = propertyInfos.Any(ipropertyInfo =>
@@ -137,7 +137,7 @@ namespace Config4Net.UI
 
             return hasChildrenComponents
                 ? BuildContainer(parentInstance, propertyInfo, sizeOptions, propertyInfos)
-                : BuildEditor(parentInstance, propertyInfo, sizeOptions, showableInfo);
+                : BuildEditor(propertyInfo, binderInfo);
         }
 
         private IComponent BuildContainer(
@@ -147,12 +147,8 @@ namespace Config4Net.UI
             PropertyInfo[] propertyInfos)
         {
             var groupContainer = _componentManager.CreateComponentFromComponentType<IGroupContainer>();
-            BindContainer(groupContainer, new ContainerBindInfo
-            {
-                Name = propertyInfo.Name,
-                ShowableInfo = ShowableInfo.From(propertyInfo),
-                SizeOptions = sizeOptions
-            });
+
+            BindContainer(groupContainer, CreateContainerBinderInfo(propertyInfo, sizeOptions));
 
             var currentInstance = propertyInfo.GetValue(parentInstance);
             if (currentInstance == null && AllowAutoCreateInstanceIfMissing)
@@ -172,20 +168,46 @@ namespace Config4Net.UI
             return groupContainer;
         }
 
-        private IComponent BuildEditor(
-            object parentInstance,
-            PropertyInfo propertyInfo,
-            SizeOptions sizeOptions,
-            ShowableInfo showableInfo)
+        private static ContainerBindInfo CreateContainerBinderInfo(PropertyInfo propertyInfo, SizeOptions sizeOptions)
         {
+            var showableInfo = ShowableInfo.From(propertyInfo);
+
+            if (string.IsNullOrWhiteSpace(showableInfo.Name))
+                showableInfo.Name = propertyInfo.Name;
+            var binderInfo = new ContainerBindInfo
+            {
+                ShowableInfo = showableInfo,
+                SizeOptions = sizeOptions
+            };
+            return binderInfo;
+        }
+
+        private IComponent BuildEditor(PropertyInfo propertyInfo, EditorBindInfo bindInfo)
+        {
+            var showableInfo = bindInfo.ShowableInfo;
             var component = ObjectUtils.IsGenericList(propertyInfo.PropertyType)
                 ? CreateListEditor(showableInfo.ComponentType, propertyInfo.PropertyType)
                 : CreateNormalEditor(showableInfo.ComponentType, propertyInfo.PropertyType);
 
-            BindEditor(component, new EditorBindInfo
+            BindEditor(component, bindInfo);
+
+            return component;
+        }
+
+        private EditorBindInfo CreateEditorBinderInfo(
+            object parentInstance,
+            PropertyInfo propertyInfo,
+            SizeOptions sizeOptions)
+        {
+            var showableInfo = ShowableInfo.From(propertyInfo);
+            if (showableInfo == null) return null;
+
+            if (string.IsNullOrWhiteSpace(showableInfo.Name))
+                showableInfo.Name = propertyInfo.Name;
+
+            return new EditorBindInfo
             {
-                Name = propertyInfo.Name,
-                ShowableInfo = ShowableInfo.From(propertyInfo),
+                ShowableInfo = showableInfo,
                 DefinationInfo = DefinationInfo.From(propertyInfo),
                 SizeOptions = sizeOptions,
                 ReferenceInfo = new ReferenceInfo
@@ -193,9 +215,7 @@ namespace Config4Net.UI
                     PropertyInfo = propertyInfo,
                     Source = parentInstance
                 }
-            });
-
-            return component;
+            };
         }
 
         private IComponent CreateNormalEditor(Type componentType, Type propertyType)
@@ -225,7 +245,7 @@ namespace Config4Net.UI
             component.Text = bindInfo.ShowableInfo.Label;
             component.Description = bindInfo.ShowableInfo.Description;
             component.SizeMode = bindInfo.SizeOptions.EditorSizeMode;
-            component.Name = bindInfo.Name;
+            component.Name = bindInfo.ShowableInfo.Name;
         }
 
         #endregion Helper Methods
