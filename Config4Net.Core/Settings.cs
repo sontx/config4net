@@ -61,6 +61,11 @@ namespace Config4Net.Core
         /// </summary>
         public int WriteFileTimeout { get; set; }
 
+        /// <summary>
+        /// Ignore load file that is failed.
+        /// </summary>
+        public bool IgnoreLoadFailure { get; set; }
+
         internal void SetOnApplicationClosing(Action onApplicationClosing)
         {
             _applicationClosingEventWrapper.OnApplicationClosing = onApplicationClosing;

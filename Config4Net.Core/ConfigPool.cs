@@ -375,10 +375,18 @@ namespace Config4Net.Core
 
                 foreach (var configFile in configFiles)
                 {
-                    var configWrapper = LoadFromFile(configFile);
-                    if (configWrapper == null) continue;
-                    var configKey = GetKeyFromFile(configFile);
-                    _configMap.Add(configKey, configWrapper);
+                    try
+                    {
+                        var configWrapper = LoadFromFile(configFile);
+                        if (configWrapper == null) continue;
+                        var configKey = GetKeyFromFile(configFile);
+                        _configMap.Add(configKey, configWrapper);
+                    }
+                    catch (Exception ex) when (ex is IOException || ex is TypeLoadException)
+                    {
+                        if (!Settings.IgnoreLoadFailure)
+                            throw;
+                    }
                 }
             }
 

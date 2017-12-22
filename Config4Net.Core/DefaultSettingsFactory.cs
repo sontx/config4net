@@ -12,6 +12,7 @@ namespace Config4Net.Core
                 AutoSaveWhenApplicationClosing = true,
                 IgnoreMismatchType = true,
                 PreventNullReference = false,
+                IgnoreLoadFailure = true,
                 ConfigDir = Environment.CurrentDirectory,
                 AppConfigKey = "app",
                 ConfigFileExtension = "json",
