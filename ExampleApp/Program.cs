@@ -8,6 +8,7 @@ using Config4Net.UI.WinForms;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace ExampleApp
@@ -31,7 +32,11 @@ namespace ExampleApp
             var uiManager = UiManager.Create();
             uiManager.Copy(UiManager.Default);
             var window = uiManager.Build<IWindowContainer>(person);
-
+            var firstNameEditor = window.LookupByName<ITextEditor>(nameof(Person.FirstName));
+            firstNameEditor.ValueChanged += (s, e) =>
+            {
+                MessageBox.Show(e.NewValue.ToString());
+            };
             Application.Run((Form)window);
         }
 

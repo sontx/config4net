@@ -149,6 +149,7 @@ namespace Config4Net.UI
             var groupContainer = _componentManager.CreateComponentFromComponentType<IGroupContainer>();
             BindContainer(groupContainer, new ContainerBindInfo
             {
+                Name = propertyInfo.Name,
                 ShowableInfo = ShowableInfo.From(propertyInfo),
                 SizeOptions = sizeOptions
             });
@@ -183,6 +184,7 @@ namespace Config4Net.UI
 
             BindEditor(component, new EditorBindInfo
             {
+                Name = propertyInfo.Name,
                 ShowableInfo = ShowableInfo.From(propertyInfo),
                 DefinationInfo = DefinationInfo.From(propertyInfo),
                 SizeOptions = sizeOptions,
@@ -223,6 +225,7 @@ namespace Config4Net.UI
             component.Text = bindInfo.ShowableInfo.Label;
             component.Description = bindInfo.ShowableInfo.Description;
             component.SizeMode = bindInfo.SizeOptions.EditorSizeMode;
+            component.Name = bindInfo.Name;
         }
 
         #endregion Helper Methods

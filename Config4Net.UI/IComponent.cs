@@ -2,6 +2,8 @@
 {
     public interface IComponent
     {
+        string Name { get; set; }
+
         string Text { get; set; }
 
         string Description { get; set; }

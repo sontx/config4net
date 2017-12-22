@@ -11,6 +11,7 @@ namespace Config4Net.UI
 
     public abstract class BindInfo
     {
+        public string Name { get; set; }
         public SizeOptions SizeOptions { get; set; }
         public ShowableInfo ShowableInfo { get; set; }
     }
