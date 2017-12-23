@@ -50,6 +50,7 @@
     <Compile Include="Editors\ICheckboxEditor.cs" />
     <Compile Include="Editors\Definations\IDefinationType.cs" />
     <Compile Include="Editors\NumberAttribute.cs" />
+    <Compile Include="Editors\MemoAttribute.cs" />
     <Compile Include="FlatformLoader.cs" />
     <Compile Include="ICopyable.cs" />
     <Compile Include="IUiBinder.cs" />

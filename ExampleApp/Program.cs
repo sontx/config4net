@@ -48,6 +48,7 @@ namespace ExampleApp
         private class Contact
         {
             [Showable]
+            [Memo(VerticalScroll = true)]
             public string Address { get; set; }
             [Showable]
             public string Phone { get; set; }
