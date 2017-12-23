@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Config4Net.Core")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Config4Net manages user settings that will be saved when app's exiting and load these data again when the app starts.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("sontx.blogspot.com")]
+[assembly: AssemblyCompany("Code4Bugs.com")]
 [assembly: AssemblyProduct("Config4Net.Core")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
