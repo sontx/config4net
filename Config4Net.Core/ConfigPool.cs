@@ -331,8 +331,10 @@ namespace Config4Net.Core
 
         private void Load(string configDir)
         {
+            Precondition.PropertyNotNull(Settings.StoreService, nameof(Settings.StoreService));
+            var storeService = Settings.StoreService;
             configDir = EnsureConfigDir(configDir);
-            var configFiles = Directory.GetFiles(configDir, $@"*.{Settings.ConfigFileExtension}");
+            var configFiles = storeService.GetEntriesAsync(configDir, $@"*.{Settings.ConfigFileExtension}").Result;
 
             lock (_configMap)
             {

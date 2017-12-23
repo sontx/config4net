@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace Config4Net.Core
 {
-    public sealed class PlainTextStoreService : IStoreService
+    public sealed class PlainTextStoreService : FileStoreService
     {
-        public Task SaveAsync(string filePath, string content)
+        public override Task SaveAsync(string filePath, string content)
         {
             return Task.Run(() =>
             {
@@ -14,7 +14,7 @@ namespace Config4Net.Core
             });
         }
 
-        public Task<string> LoadAsync(string filePath)
+        public override Task<string> LoadAsync(string filePath)
         {
             return Task.Run(() => File.ReadAllText(filePath, Encoding.UTF8));
         }
