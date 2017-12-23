@@ -30,8 +30,10 @@ namespace Config4Net.UI.WinForms.Editors
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labLabel = new Config4Net.UI.WinForms.Editors.Helpers.NoPaddingLabel();
             this.pnlWorkingArea = new System.Windows.Forms.Panel();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // labLabel
@@ -73,5 +75,6 @@ namespace Config4Net.UI.WinForms.Editors
 
         private NoPaddingLabel labLabel;
         protected System.Windows.Forms.Panel pnlWorkingArea;
+        private System.Windows.Forms.ToolTip toolTip;
     }
 }

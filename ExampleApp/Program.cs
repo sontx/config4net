@@ -50,7 +50,7 @@ namespace ExampleApp
             [Showable]
             [Memo(VerticalScroll = true)]
             public string Address { get; set; }
-            [Showable]
+            [Showable(Description = "Don't forget it!!")]
             public string Phone { get; set; }
         }
 

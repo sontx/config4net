@@ -13,6 +13,7 @@ namespace Config4Net.UI.WinForms.Editors
         private string _text;
         private EditorAppearance _appearance;
         private SizeMode _sizeMode;
+        private string _description;
 
         public EditorAppearance Appearance
         {
@@ -36,7 +37,21 @@ namespace Config4Net.UI.WinForms.Editors
 
         public virtual Type DefinationType { get; set; }
 
-        public virtual string Description { get; set; }
+        public virtual string Description
+        {
+            get => _description;
+            set
+            {
+                _description = value;
+                if (pnlWorkingArea.Controls.Count == 0) return;
+                {
+                    if (string.IsNullOrEmpty(value))
+                        toolTip.RemoveAll();
+                    else
+                        toolTip.SetToolTip(pnlWorkingArea.Controls[0], value);
+                }
+            }
+        }
 
         public override string Text
         {
