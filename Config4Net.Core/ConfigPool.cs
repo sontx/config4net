@@ -68,7 +68,7 @@ namespace Config4Net.Core
 
             HandleJsonError();
         }
-        
+
         /// <summary>
         /// Load configuration files from <see cref="Core.Settings.ConfigDir"/>"/>.
         /// </summary>
@@ -95,7 +95,7 @@ namespace Config4Net.Core
         /// </summary>
         public Task SaveAsync()
         {
-            return SaveAsync(null, true);
+            return SaveAsync(null);
         }
 
         /// <summary>
@@ -107,42 +107,7 @@ namespace Config4Net.Core
         /// </param>
         public Task SaveAsync(string configDir)
         {
-            return SaveAsync(configDir, true);
-        }
-
-        /// <summary>
-        /// Save configuration data to files, the directory that will contain these files
-        /// is specified by <see cref="Core.Settings.ConfigDir"/>.
-        /// </summary>
-        /// <param name="isPersistent">
-        /// If it's true, the library will make sure that all
-        /// configuration data will be saved (ex: the other instance of this library and current
-        /// instance are reading/writing a same configuration file, so it's make sure that configuration
-        /// data will be saved after some tries) otherwise the library just save and doesn't care
-        /// about the saving is successful or not.
-        /// </param>
-        public Task SaveAsync(bool isPersistent)
-        {
-            return SaveAsync(null, true);
-        }
-
-        /// <summary>
-        /// Save configuration data to files with a specify config directory.
-        /// </summary>
-        /// <param name="configDir">
-        /// If it's null or empty, the library will
-        /// use <see cref="Core.Settings.ConfigDir"/> instead otherwise use this param.
-        /// </param>
-        /// <param name="isPersistent">
-        /// If it's true, the library will make sure that all
-        /// configuration data will be saved (ex: the other instance of this library and current
-        /// instance are reading/writing a same configuration file, so it's make sure that configuration
-        /// data will be saved after some tries) otherwise the library just save and doesn't care
-        /// about the saving is successful or not.
-        /// </param>
-        public Task SaveAsync(string configDir, bool isPersistent)
-        {
-            return Task.Run(() => { Save(configDir, isPersistent); });
+            return Task.Run(() => { SaveToDir(configDir); });
         }
 
         /// <summary>
@@ -395,9 +360,11 @@ namespace Config4Net.Core
 
         private ConfigWrapper LoadFromFile(string configFile)
         {
-            var json = File.ReadAllText(configFile);
+            Precondition.PropertyNotNull(Settings.StoreService, nameof(Settings.StoreService));
 
-            if (string.IsNullOrEmpty(json)) return null;
+            var json = Settings.StoreService.LoadAsync(configFile).Result;
+
+            if (string.IsNullOrWhiteSpace(json)) return null;
 
             var jsonObject = JObject.Parse(json);
             var typeIdentify = (string) jsonObject.GetValue(nameof(ConfigWrapper.TypeIdentify));
@@ -478,45 +445,23 @@ namespace Config4Net.Core
             return moduleKey;
         }
 
-        private void Save(string configDir, bool isPersistent)
+        private void SaveToDir(string configDir)
         {
+            Precondition.PropertyNotNull(Settings.StoreService, nameof(Settings.StoreService));
+
             configDir = EnsureConfigDir(configDir);
             lock (_configMap)
             {
+                var storeService = Settings.StoreService;
                 foreach (var configWrapper in _configMap)
                 {
                     var configKey = configWrapper.Key;
                     var configFileName = $@"{configKey}.{Settings.ConfigFileExtension}";
                     var configFile = Path.Combine(configDir, configFileName);
                     var jsonObject = JObject.FromObject(configWrapper.Value);
-
-                    SaveToFile(isPersistent, configFile, jsonObject);
+                    storeService.SaveAsync(configFile, jsonObject.ToString()).Wait();
                 }
             }
-        }
-
-        private void SaveToFile(bool isPersistent, string configFile, JObject jsonObject)
-        {
-            FileWriter fileWriter;
-
-            if (isPersistent)
-                fileWriter = new FileWriter
-                {
-                    Timeout = Settings.WriteFileTimeout,
-                    FilePath = configFile,
-                    ThrowIfFail = true,
-                    Content = jsonObject.ToString()
-                };
-            else
-                fileWriter = new FileWriter
-                {
-                    Timeout = 0,
-                    FilePath = configFile,
-                    ThrowIfFail = false,
-                    Content = jsonObject.ToString()
-                };
-
-            fileWriter.SaveAsync().Wait();
         }
 
         private void OnApplicationClosing()

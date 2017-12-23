@@ -39,7 +39,6 @@
   <ItemGroup>
     <Compile Include="AssertEx.cs" />
     <Compile Include="ConfigPoolTest.cs" />
-    <Compile Include="FileWriterTest.cs" />
     <Compile Include="FileUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

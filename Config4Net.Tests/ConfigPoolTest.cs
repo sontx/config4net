@@ -2,12 +2,9 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Config4Net.Tests
 {
@@ -100,7 +97,7 @@ namespace Config4Net.Tests
             var config = configPool.RegisterConfigType<MyConfig>();
             Assert.IsInstanceOf<MyConfig>(config);
         }
-        
+
         [Test]
         public void register_config_type_should_ignore_the_one_that_already_exists()
         {
@@ -144,7 +141,8 @@ namespace Config4Net.Tests
         }
 
         [Test]
-        public void register_config_type_should_auto_detect_key_by_calling_assembly_when_Key_and_IsAppConfig_attributes_are_blank()
+        public void
+            register_config_type_should_auto_detect_key_by_calling_assembly_when_Key_and_IsAppConfig_attributes_are_blank()
         {
             var configPool = ConfigPool.Create();
             configPool.Settings.AutoRegisterConfigType = false;
@@ -174,7 +172,8 @@ namespace Config4Net.Tests
             var configDir = ConfigDir;
 
             var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{configPool.Settings.ConfigFileExtension}");
-            var appConfigFilePath = Path.Combine(configDir, $@"{configPool.Settings.AppConfigKey}.{configPool.Settings.ConfigFileExtension}");
+            var appConfigFilePath = Path.Combine(configDir,
+                $@"{configPool.Settings.AppConfigKey}.{configPool.Settings.ConfigFileExtension}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
             FileUtils.EnsureDelete(appConfigFilePath);
@@ -200,7 +199,8 @@ namespace Config4Net.Tests
 
             var currentDir = Environment.CurrentDirectory;
             var subConfig1FilePath = Path.Combine(currentDir, $@"subConfig1.{configPool.Settings.ConfigFileExtension}");
-            var appConfigFilePath = Path.Combine(currentDir, $@"{configPool.Settings.AppConfigKey}.{configPool.Settings.ConfigFileExtension}");
+            var appConfigFilePath = Path.Combine(currentDir,
+                $@"{configPool.Settings.AppConfigKey}.{configPool.Settings.ConfigFileExtension}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
             FileUtils.EnsureDelete(appConfigFilePath);
@@ -222,7 +222,7 @@ namespace Config4Net.Tests
         }
 
         [Test]
-        public void save_config_files_should_be_successful_if_not_over_timeout()
+        public void save_config_files_should_be_successful()
         {
             var configPool = ConfigPool.Create();
             var configDir = ConfigDir;
@@ -232,81 +232,11 @@ namespace Config4Net.Tests
             FileUtils.EnsureDelete(subConfig1FilePath);
             configPool.LoadAsync(configDir).Wait();
 
-            var task = Task.Run(async () =>
-            {
-                using (var fs = new FileStream(subConfig1FilePath, FileMode.Create))
-                {
-                    await Task.Delay(1500);
-                }
-            });
-
-            Thread.Sleep(200);
-
             configPool.RegisterConfigType<MySubConfig1>();
-            configPool.SaveAsync(configDir, true).Wait();
+            configPool.SaveAsync(configDir).Wait();
 
             Assert.That(File.Exists(subConfig1FilePath), Is.True);
             Assert.Greater(File.ReadAllText(subConfig1FilePath).Length, 0);
-
-            task.Wait();
-
-            FileUtils.EnsureDelete(subConfig1FilePath);
-        }
-
-        [Test]
-        public void save_config_files_should_throw_exception_if_over_timeout_in_persistant_mode()
-        {
-            var configPool = ConfigPool.Create();
-            var configDir = ConfigDir;
-
-            var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{configPool.Settings.ConfigFileExtension}");
-
-            FileUtils.EnsureDelete(subConfig1FilePath);
-            configPool.LoadAsync(configDir).Wait();
-
-            var task = Task.Run(async () =>
-            {
-                using (var fs = new FileStream(subConfig1FilePath, FileMode.Create))
-                {
-                    await Task.Delay(configPool.Settings.WriteFileTimeout + 1000);
-                }
-            });
-
-            Thread.Sleep(200);
-
-            configPool.RegisterConfigType<MySubConfig1>();
-            Assert.Throws(Is.InstanceOf<Exception>(), () => configPool.SaveAsync(configDir, true).Wait());
-
-            task.Wait();
-
-            FileUtils.EnsureDelete(subConfig1FilePath);
-        }
-
-        [Test]
-        public void save_config_files_should_not_throw_exception_if_over_timeout_in_normal_mode()
-        {
-            var configPool = ConfigPool.Create();
-            var configDir = ConfigDir;
-
-            var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{configPool.Settings.ConfigFileExtension}");
-
-            FileUtils.EnsureDelete(subConfig1FilePath);
-            configPool.LoadAsync(configDir).Wait();
-
-            var task = Task.Run(async () =>
-            {
-                using (var fs = new FileStream(subConfig1FilePath, FileMode.Create))
-                {
-                    await Task.Delay(configPool.Settings.WriteFileTimeout + 1000);
-                }
-            });
-
-            Thread.Sleep(200);
-
-            configPool.RegisterConfigType<MySubConfig1>();
-            Assert.DoesNotThrow(() => configPool.SaveAsync(configDir, false).Wait());
-
-            task.Wait();
 
             FileUtils.EnsureDelete(subConfig1FilePath);
         }
@@ -318,7 +248,8 @@ namespace Config4Net.Tests
             var configDir = ConfigDir;
 
             var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{configPool.Settings.ConfigFileExtension}");
-            var appConfigFilePath = Path.Combine(configDir, $@"{configPool.Settings.AppConfigKey}.{configPool.Settings.ConfigFileExtension}");
+            var appConfigFilePath = Path.Combine(configDir,
+                $@"{configPool.Settings.AppConfigKey}.{configPool.Settings.ConfigFileExtension}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
             FileUtils.EnsureDelete(appConfigFilePath);
@@ -349,7 +280,8 @@ namespace Config4Net.Tests
             var configDir = ConfigDir;
 
             var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{configPool.Settings.ConfigFileExtension}");
-            var appConfigFilePath = Path.Combine(configDir, $@"{configPool.Settings.AppConfigKey}.{configPool.Settings.ConfigFileExtension}");
+            var appConfigFilePath = Path.Combine(configDir,
+                $@"{configPool.Settings.AppConfigKey}.{configPool.Settings.ConfigFileExtension}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
             FileUtils.EnsureDelete(appConfigFilePath);
@@ -392,7 +324,8 @@ namespace Config4Net.Tests
             var configDir = Environment.CurrentDirectory;
 
             var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{configPool.Settings.ConfigFileExtension}");
-            var appConfigFilePath = Path.Combine(configDir, $@"{configPool.Settings.AppConfigKey}.{configPool.Settings.ConfigFileExtension}");
+            var appConfigFilePath = Path.Combine(configDir,
+                $@"{configPool.Settings.AppConfigKey}.{configPool.Settings.ConfigFileExtension}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
             FileUtils.EnsureDelete(appConfigFilePath);

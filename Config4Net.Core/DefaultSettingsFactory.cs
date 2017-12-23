@@ -17,7 +17,8 @@ namespace Config4Net.Core
                 AppConfigKey = "app",
                 ConfigFileExtension = "json",
                 WriteFileTimeout = 5000,
-                ApplicationClosingEvent = new DefaultApplicationClosingEvent()
+                ApplicationClosingEvent = new DefaultApplicationClosingEvent(),
+                StoreService = new PlainTextStoreService()
             };
         }
     }

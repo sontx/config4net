@@ -17,6 +17,11 @@ namespace Config4Net.Core
         }
 
         /// <summary>
+        /// The store service that manages how the files are saved/loaded.
+        /// </summary>
+        public IStoreService StoreService { get; set; }
+
+        /// <summary>
         /// Auto register type whenever there have a request configuration data from an unkown type.
         /// </summary>
         public bool AutoRegisterConfigType { get; set; }
