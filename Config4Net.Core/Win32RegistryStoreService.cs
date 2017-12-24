@@ -13,7 +13,7 @@ namespace Config4Net.Core
 
         public bool IsUseAppName { get; set; }
 
-        public Task<string[]> GetEntriesAsync(string configDir, string searchPattern)
+        public Task<string[]> GetEntriesAsync(string configDir, string fileExtension)
         {
             return Task.Run(() =>
             {

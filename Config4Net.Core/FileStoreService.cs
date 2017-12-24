@@ -5,9 +5,9 @@ namespace Config4Net.Core
 {
     public abstract class FileStoreService : IStoreService
     {
-        public Task<string[]> GetEntriesAsync(string configDir, string searchPattern)
+        public Task<string[]> GetEntriesAsync(string configDir, string fileExtension)
         {
-            return Task.Run(() => Directory.GetFiles(configDir, searchPattern));
+            return Task.Run(() => Directory.GetFiles(configDir, $@"*.{fileExtension}"));
         }
 
         public abstract Task SaveAsync(string filePath, string content);

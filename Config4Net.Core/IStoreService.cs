@@ -4,7 +4,7 @@ namespace Config4Net.Core
 {
     public interface IStoreService
     {
-        Task<string[]> GetEntriesAsync(string configDir, string searchPattern);
+        Task<string[]> GetEntriesAsync(string configDir, string fileExtension);
 
         Task SaveAsync(string filePath, string content);
 
