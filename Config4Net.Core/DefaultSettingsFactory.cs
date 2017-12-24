@@ -2,8 +2,13 @@
 
 namespace Config4Net.Core
 {
+    /// <summary>
+    /// Default implementation for <see cref="ISettingsFactory"/> that creates a default
+    /// <see cref="Settings"/> instance each request.
+    /// </summary>
     public sealed class DefaultSettingsFactory : ISettingsFactory
     {
+        /// <inheritdoc />
         public Settings Create()
         {
             return new Settings

@@ -7,12 +7,19 @@ using System.Threading.Tasks;
 
 namespace Config4Net.Core
 {
+    /// <summary>
+    /// Save and load config data from win32 registry.
+    /// </summary>
     public sealed class Win32RegistryStoreService : IStoreService
     {
         private const string RootKeyName = "Software";
 
+        /// <summary>
+        /// Uses app name instead of resolving from config directory.
+        /// </summary>
         public bool IsUseAppName { get; set; }
 
+        /// <inheritdoc />
         public Task<string[]> GetEntriesAsync(string configDir, string fileExtension)
         {
             return Task.Run(() =>
@@ -26,6 +33,7 @@ namespace Config4Net.Core
             });
         }
 
+        /// <inheritdoc />
         public Task SaveAsync(string filePath, string content)
         {
             return Task.Run(() =>
@@ -72,6 +80,7 @@ namespace Config4Net.Core
             return Path.GetFileName(Path.GetDirectoryName(filePath));
         }
 
+        /// <inheritdoc />
         public Task<string> LoadAsync(string filePath)
         {
             return Task.Run(() =>

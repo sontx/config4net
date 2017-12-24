@@ -28,13 +28,25 @@ namespace Config4Net.Core
     /// </summary>
     public sealed class ConfigPool
     {
+        /// <summary>
+        /// Default <see cref="ConfigPool"/> instance that uses default <see cref="Settings"/> from <see cref="DefaultSettingsFactory"/>.
+        /// </summary>
         public static ConfigPool Default { get; } = Create();
 
+        /// <summary>
+        /// Create an <see cref="ConfigPool"/> instance that uses default <see cref="Settings"/> from <see cref="DefaultSettingsFactory"/>.
+        /// </summary>
+        /// <returns>New <see cref="ConfigPool"/> instance.</returns>
         public static ConfigPool Create()
         {
             return new ConfigPool(new DefaultSettingsFactory().Create());
         }
 
+        /// <summary>
+        /// Create an <see cref="ConfigPool"/> that uses a specific <see cref="Core.Settings"/>.
+        /// </summary>
+        /// <param name="settings"><see cref="Settings"/> that will be assigned to new <see cref="ConfigPool"/> instance.</param>
+        /// <returns>New <see cref="ConfigPool"/> instance.</returns>
         public static ConfigPool Create(Settings settings)
         {
             return new ConfigPool(settings);
@@ -46,6 +58,10 @@ namespace Config4Net.Core
         private JsonSerializerSettings _jsonSerializerSettings;
         private Settings _settings;
 
+        /// <summary>
+        /// <see cref="ConfigPool"/> settings, it can not be null.
+        /// <seealso cref="Core.Settings"/>
+        /// </summary>
         public Settings Settings
         {
             get => _settings;

@@ -4,8 +4,12 @@ using System.Threading.Tasks;
 
 namespace Config4Net.Core
 {
+    /// <summary>
+    /// Save and load config data from plain text files.
+    /// </summary>
     public sealed class PlainTextStoreService : FileStoreService
     {
+        /// <inheritdoc />
         public override Task SaveAsync(string filePath, string content)
         {
             return Task.Run(() =>
@@ -14,6 +18,7 @@ namespace Config4Net.Core
             });
         }
 
+        /// <inheritdoc />
         public override Task<string> LoadAsync(string filePath)
         {
             return Task.Run(() => File.ReadAllText(filePath, Encoding.UTF8));

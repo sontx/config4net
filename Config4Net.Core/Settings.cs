@@ -2,6 +2,9 @@
 
 namespace Config4Net.Core
 {
+    /// <summary>
+    /// Settings for <see cref="ConfigPool"/>.
+    /// </summary>
     public class Settings
     {
         private readonly ApplicationClosingEventWrapper _applicationClosingEventWrapper = new ApplicationClosingEventWrapper();
