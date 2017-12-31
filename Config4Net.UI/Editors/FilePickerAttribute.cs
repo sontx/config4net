@@ -2,6 +2,9 @@
 
 namespace Config4Net.UI.Editors
 {
+    /// <summary>
+    /// Addition info for <see cref="IFilePickerEditor"/>.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     public class FilePickerAttribute : Attribute
     {

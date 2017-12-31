@@ -1,7 +1,8 @@
-﻿using Config4Net.Types;
-
-namespace Config4Net.UI.Editors
+﻿namespace Config4Net.UI.Editors
 {
+    /// <summary>
+    /// The folder picker.
+    /// </summary>
     public interface IFolderPickerEditor : IEditor<string>
     {
     }

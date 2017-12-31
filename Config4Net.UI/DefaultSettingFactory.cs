@@ -4,8 +4,12 @@ using LayoutOptions = Config4Net.UI.Layout.LayoutOptions;
 
 namespace Config4Net.UI
 {
+    /// <summary>
+    /// Default implementation for <see cref="ISettingFactory"/>.
+    /// </summary>
     public class DefaultSettingFactory : ISettingFactory
     {
+        /// <inheritdoc />
         public virtual LayoutOptions CreateLayoutOptions()
         {
             return new LayoutOptions
@@ -15,6 +19,7 @@ namespace Config4Net.UI
             };
         }
 
+        /// <inheritdoc />
         public virtual EditorAppearance CreatEditorAppearance()
         {
             return new EditorAppearance
@@ -24,6 +29,7 @@ namespace Config4Net.UI
             };
         }
 
+        /// <inheritdoc />
         public virtual ContainerAppearance CreateContainerAppearance()
         {
             return new ContainerAppearance
@@ -32,6 +38,7 @@ namespace Config4Net.UI
             };
         }
 
+        /// <inheritdoc />
         public virtual SizeOptions CreateSizeOptions()
         {
             return new SizeOptions
@@ -42,6 +49,7 @@ namespace Config4Net.UI
             };
         }
 
+        /// <inheritdoc />
         public virtual DateTimeOptions CreateDateTimeOptions()
         {
             return new DateTimeOptions

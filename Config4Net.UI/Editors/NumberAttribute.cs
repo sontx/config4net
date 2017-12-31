@@ -2,6 +2,9 @@
 
 namespace Config4Net.UI.Editors
 {
+    /// <summary>
+    /// Addition info for <see cref="INumberEditor"/>.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     public class NumberAttribute : Attribute
     {

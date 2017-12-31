@@ -9,14 +9,24 @@ using System.Reflection;
 
 namespace Config4Net.UI
 {
+    /// <summary>
+    /// Builds and manages UI from a giving config data.
+    /// </summary>
     public sealed class UiManager : IUiBinder, ICopyable<UiManager>
     {
         #region Default Instance
 
         private static UiManager _defaultInstance;
 
+        /// <summary>
+        /// Default instance of <see cref="UiManager"/> with default settings.
+        /// </summary>
         public static UiManager Default => _defaultInstance ?? (_defaultInstance = Create());
 
+        /// <summary>
+        /// Create new <see cref="UiManager"/> instance.
+        /// </summary>
+        /// <returns>New <see cref="UiManager"/> instance.</returns>
         public static UiManager Create()
         {
             return new UiManager();
@@ -28,12 +38,35 @@ namespace Config4Net.UI
 
         #region Properties
 
+        /// <summary>
+        /// Gets or sets <see cref="ILayoutManagerFactory"/>.
+        /// </summary>
         public ILayoutManagerFactory LayoutManagerFactory { get; set; }
+
+        /// <summary>
+        /// Gets or sets <see cref="ISettingFactory"/>.
+        /// </summary>
         public ISettingFactory SettingFactory { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether to create new property instance if it's null.
+        /// Default is true.
+        /// </summary>
         public bool AllowAutoCreateInstanceIfMissing { get; set; } = true;
 
         #endregion Properties
 
+        /// <summary>
+        /// Builds a UI from config data and binds its properties to this the UI.
+        /// </summary>
+        /// <param name="config">
+        /// The config data that will be used to determine the UI structure and binds
+        /// its properties to the UI.
+        /// </param>
+        /// <typeparam name="T">
+        /// Type of the UI which is an <see cref="IContainer"/>.
+        /// </typeparam>
+        /// <returns>The UI instance that is created from the config data.</returns>
         public T Build<T>(object config) where T : IContainer
         {
             Precondition.ArgumentNotNull(config, nameof(config));
@@ -59,16 +92,37 @@ namespace Config4Net.UI
             return (T) container;
         }
 
+        /// <summary>
+        /// Registers an <see cref="IComponentFactory{T}"/>.
+        /// </summary>
+        /// <param name="componentType">
+        /// Type of an <see cref="IComponent"/> that will be used to map with the giving factory.
+        /// </param>
+        /// <param name="factory">
+        /// An <see cref="IComponentFactory{T}"/> that will be used to create an <see cref="IComponent"/>
+        /// corresponds to the giving component type.
+        /// </param>
         public void RegisterComponentFactory(Type componentType, object factory)
         {
             _componentManager.RegisterComponentFactory(componentType, factory);
         }
 
+        /// <summary>
+        /// Registers a default component type that will be used create the UI <see cref="IComponent"/>
+        /// if the config property does not supply this info.
+        /// Each data type just has one default component.
+        /// </summary>
+        /// <param name="propertyType">The property type (aka data type) that will use this component type as default.</param>
+        /// <param name="componentType">The default component type.</param>
         public void RegisterDefaultComponentType(Type propertyType, Type componentType)
         {
             _componentManager.RegisterDefaultComponentType(propertyType, componentType);
         }
 
+        /// <summary>
+        /// Copy whole settings from current instance of <see cref="UiManager"/> to the giving source.
+        /// </summary>
+        /// <param name="source">Copy from current instance to this source</param>
         public void Copy(UiManager source)
         {
             Precondition.ArgumentNotNull(source, nameof(source));
@@ -86,6 +140,7 @@ namespace Config4Net.UI
 
         #region IUiBinder Implements
 
+        /// <inheritdoc />
         public void BindEditor(IComponent component, EditorBindInfo bindInfo)
         {
             BindComponent(component, bindInfo);
@@ -99,6 +154,7 @@ namespace Config4Net.UI
                 dateTimeEditor.DateTimeOptions = SettingFactory.CreateDateTimeOptions();
         }
 
+        /// <inheritdoc />
         public void BindContainer(IContainer container, ContainerBindInfo bindInfo)
         {
             BindComponent(container, bindInfo);

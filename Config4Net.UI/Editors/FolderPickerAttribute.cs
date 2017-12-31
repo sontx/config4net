@@ -2,6 +2,9 @@
 
 namespace Config4Net.UI.Editors
 {
+    /// <summary>
+    /// Addition info for <see cref="IFolderPickerEditor"/>.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     public class FolderPickerAttribute : Attribute
     {

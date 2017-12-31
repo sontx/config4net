@@ -1,18 +1,24 @@
-﻿using System;
+﻿using Config4Net.UI.Editors;
+using System;
 using System.Drawing;
-using Config4Net.UI.Editors;
 
 namespace Config4Net.UI
 {
+    /// <inheritdoc />
     public abstract class FlatformLoader : IFlatformLoader
     {
+        /// <summary>
+        ///
+        /// </summary>
         protected UiManager UiManager => UiManager.Default;
 
+        /// <inheritdoc />
         public void Load()
         {
             Load(UiManager.Default);
         }
 
+        /// <inheritdoc />
         public virtual void Load(UiManager uiManager)
         {
             LoadDefaultComponentTypes(uiManager);

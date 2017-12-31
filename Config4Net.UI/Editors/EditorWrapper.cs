@@ -4,6 +4,9 @@ using Config4Net.Utils;
 
 namespace Config4Net.UI.Editors
 {
+    /// <summary>
+    /// Helper class that helps to work with <see cref="IEditor{T}"/>.
+    /// </summary>
     public sealed class EditorWrapper
     {
         private readonly object _genericEditor;
@@ -12,6 +15,9 @@ namespace Config4Net.UI.Editors
         private Type _definationType;
         private object _value;
 
+        /// <summary>
+        /// Creates an <see cref="EditorWrapper"/> from an <see cref="IEditorFactory{T}"/>.
+        /// </summary>
         public static EditorWrapper From(object genericEditor)
         {
             return new EditorWrapper(genericEditor);
@@ -23,6 +29,9 @@ namespace Config4Net.UI.Editors
             _genericEditor = genericEditor;
         }
 
+        /// <summary>
+        /// <see cref="IEditor{T}.DefinationType"/>.
+        /// </summary>
         public Type DefinationType
         {
             get => _definationType;
@@ -33,6 +42,9 @@ namespace Config4Net.UI.Editors
             }
         }
 
+        /// <summary>
+        /// <see cref="IEditor{T}.Value"/>.
+        /// </summary>
         public object Value
         {
             get => _value;
@@ -43,6 +55,9 @@ namespace Config4Net.UI.Editors
             }
         }
 
+        /// <summary>
+        /// <see cref="IEditor{T}.Appearance"/>.
+        /// </summary>
         public EditorAppearance Appearance
         {
             get => _appearance;
@@ -53,6 +68,9 @@ namespace Config4Net.UI.Editors
             }
         }
 
+        /// <summary>
+        /// <see cref="IEditor{T}.ReadOnly"/>.
+        /// </summary>
         public bool ReadOnly
         {
             get => _readOnly;
@@ -63,6 +81,9 @@ namespace Config4Net.UI.Editors
             }
         }
 
+        /// <summary>
+        /// <see cref="IEditor{T}.SetReferenceInfo"/>.
+        /// </summary>
         public void SetReferenceInfo(object source, PropertyInfo propertyInfo)
         {
             ObjectUtils.ExecuteMethod(_genericEditor, "SetReferenceInfo", source, propertyInfo);

@@ -2,6 +2,9 @@
 
 namespace Config4Net.UI.Editors
 {
+    /// <summary>
+    /// Addition info for <see cref="IDateTimeEditor"/>, <see cref="ITimeEditor"/> and <see cref="IDateEditor"/>.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     public class DateTimeAttribute : Attribute
     {
