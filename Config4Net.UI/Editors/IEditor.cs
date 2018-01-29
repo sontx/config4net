@@ -1,5 +1,4 @@
-﻿using Config4Net.UI.Editors.Definations;
-using System;
+﻿using System;
 
 namespace Config4Net.UI.Editors
 {

@@ -44,4 +44,9 @@ namespace Config4Net.Types
             }
         }
     }
+
+    public interface ISelectFactory
+    {
+        Select Create();
+    }
 }

@@ -1,6 +1,5 @@
 ﻿using Config4Net.Types;
 using Config4Net.UI.Editors;
-using Config4Net.UI.Editors.Definations;
 using Config4Net.Utils;
 using System;
 
@@ -24,18 +23,7 @@ namespace Config4Net.UI.WinForms.Editors
             {
                 _editorHelper.ChangeValue(
                     value,
-                    () =>
-                    {
-                        foreach (Select.Option item in cmbContent.Items)
-                        {
-                            if (ObjectUtils.DeepEquals(item.Value, value))
-                            {
-                                _value = value;
-                                cmbContent.SelectedItem = item;
-                                break;
-                            }
-                        }
-                    },
+                    () => { SetDirectValue(value); },
                     ValueChanging,
                     ValueChanged);
             }
@@ -51,14 +39,19 @@ namespace Config4Net.UI.WinForms.Editors
             }
         }
 
-        public DisplayMode DisplayMode { get; set; }
-
-        private void SetDefinationType(Type definationType)
+        public void SetReferenceInfo(ReferenceInfo referenceInfo)
         {
-            Precondition.ArgumentCompatibleType(definationType, typeof(SelectDefination), nameof(definationType));
-            var defination = ((IDefinationType)Activator.CreateInstance(definationType)).GetDefination();
+            _editorHelper.SetReferenceInfo(referenceInfo);
+        }
 
-            var select = (Select)defination;
+        public override void SetSettings(Settings settings)
+        {
+            base.SetSettings(settings);
+
+            var selectAttribute = settings.Get<SelectAttribute>();
+            if (selectAttribute == null) return;
+            var selectFactory = (ISelectFactory)Activator.CreateInstance(selectAttribute.SelectFactoryType);
+            var select = selectFactory.Create();
             cmbContent.BeginUpdate();
             cmbContent.Items.Clear();
             foreach (var selectOption in select.Options)
@@ -70,19 +63,20 @@ namespace Config4Net.UI.WinForms.Editors
                 }
             }
             cmbContent.EndUpdate();
+            SetDirectValue(_editorHelper.GetValue());
         }
 
-        public void SetReferenceInfo(ReferenceInfo referenceInfo)
+        private void SetDirectValue(object value)
         {
-            _editorHelper.SetReferenceInfo(referenceInfo);
-        }
-
-        public override void SetSettings(Settings settings)
-        {
-            base.SetSettings(settings);
-            var definationAttribute = settings.Get<DefinationAttribute>();
-            if (definationAttribute != null && definationAttribute.Value != null)
-                SetDefinationType(definationAttribute.Value);
+            foreach (Select.Option item in cmbContent.Items)
+            {
+                if (ObjectUtils.DeepEquals(item.Value, value))
+                {
+                    _value = value;
+                    cmbContent.SelectedItem = item;
+                    break;
+                }
+            }
         }
 
         public void Bind()

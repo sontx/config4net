@@ -48,6 +48,15 @@ namespace Config4Net.UI
         }
 
         /// <summary>
+        /// Gets the property's value.
+        /// </summary>
+        /// <returns></returns>
+        public T GetValue()
+        {
+            return _binder.Value;
+        }
+
+        /// <summary>
         /// Changes the UI value.
         /// </summary>
         /// <param name="newValue">New value.</param>
