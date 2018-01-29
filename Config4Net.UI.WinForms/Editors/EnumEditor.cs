@@ -41,6 +41,9 @@ namespace Config4Net.UI.WinForms.Editors
         public void SetReferenceInfo(ReferenceInfo referenceInfo)
         {
             _editorHelper.SetReferenceInfo(referenceInfo);
+            var propertyType = referenceInfo.PropertyInfo.PropertyType;
+            if (propertyType.IsEnum)
+                InitializeEnumItems(propertyType);
         }
 
         public override void SetSettings(Settings settings)
@@ -48,8 +51,13 @@ namespace Config4Net.UI.WinForms.Editors
             base.SetSettings(settings);
 
             var enumAttribute = settings.Get<EnumAttribute>();
-            if (enumAttribute == null) return;
-            var enumValues = Enum.GetValues(enumAttribute.EnumType);
+            if (enumAttribute == null || enumAttribute.EnumType == null) return;
+            InitializeEnumItems(enumAttribute.EnumType);
+        }
+
+        private void InitializeEnumItems(Type enumType)
+        {
+            var enumValues = Enum.GetValues(enumType);
             var enumerator = WrapperUtils.GetEnumerable<Enum>(enumValues.GetEnumerator());
             cmbContent.BeginUpdate();
             cmbContent.Items.Clear();
