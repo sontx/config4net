@@ -1,6 +1,7 @@
 ﻿using Config4Net.UI.Layout;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Config4Net.UI.Editors
 {
@@ -17,13 +18,14 @@ namespace Config4Net.UI.Editors
         void SetItemFactory(Func<IComponent> itemFactory);
 
         /// <summary>
-        /// Sets layout factory that will be used to create the layout of <see cref="IListEditor"/>.
+        /// Sets binder that helper to bind <see cref="Settings"/> to each list editor item.
         /// </summary>
-        void SetLayoutManagerFactory(Func<ILayoutManager> layoutManagerFactory);
+        void SetSettingBinder(ISettingBinder binder);
 
         /// <summary>
-        /// Sets binder that helper to bind <see cref="BindInfo"/> to each list editor item.
+        /// Sets settings factory that will be used to create the <see cref="Settings"/>.
         /// </summary>
-        void SetUiBinder(IUiBinder binder);
+        /// <param name="settingFactory"></param>
+        void SetSettingFactory(Func<object, PropertyInfo, Settings> settingFactory);
     }
 }

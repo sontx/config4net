@@ -1,6 +1,5 @@
 ﻿using Config4Net.UI.Containers;
 using Config4Net.UI.Editors;
-using Config4Net.UI.Editors.Definations;
 using Config4Net.UI.Layout;
 using Config4Net.Utils;
 using System;
@@ -9,10 +8,11 @@ using System.Reflection;
 
 namespace Config4Net.UI
 {
+    /// <inheritdoc />
     /// <summary>
     /// Builds and manages UI from a giving config data.
     /// </summary>
-    public sealed class UiManager : IUiBinder, ICopyable<UiManager>
+    public sealed class UiManager : ICopyable<UiManager>
     {
         #region Default Instance
 
@@ -35,8 +35,16 @@ namespace Config4Net.UI
         #endregion Default Instance
 
         private readonly ComponentManager _componentManager;
+        private SettingBinder _settingBinder;
 
         #region Properties
+
+        /// <summary>
+        /// Gets or sets <see cref="ISettingBinder"/>.
+        /// </summary>
+        public ISettingBinder SettingBinder { get; set; }
+
+        #region Factories
 
         /// <summary>
         /// Gets or sets <see cref="ILayoutManagerFactory"/>.
@@ -44,9 +52,31 @@ namespace Config4Net.UI
         public ILayoutManagerFactory LayoutManagerFactory { get; set; }
 
         /// <summary>
-        /// Gets or sets <see cref="ISettingFactory"/>.
+        /// Gets or sets <see cref="ILayoutOptionsFactory"/>.
         /// </summary>
-        public ISettingFactory SettingFactory { get; set; }
+        public ILayoutOptionsFactory LayoutOptionsFactory { get; set; }
+
+        /// <summary>
+        /// Gets or sets <see cref="ISizeOptionsFactory"/>.
+        /// </summary>
+        public ISizeOptionsFactory SizeOptionsFactory { get; set; }
+
+        /// <summary>
+        /// Gets or sets <see cref="IDateTimeOptionsFactory"/>
+        /// </summary>
+        public IDateTimeOptionsFactory DateTimeOptionsFactory { get; set; }
+
+        /// <summary>
+        /// Gets or sets <see cref="IContainerAppearanceFactory"/>.
+        /// </summary>
+        public IContainerAppearanceFactory ContainerAppearanceFactory { get; set; }
+
+        /// <summary>
+        /// Gets or sets <see cref="IEditorAppearanceFactory"/>.
+        /// </summary>
+        public IEditorAppearanceFactory EditorAppearanceFactory { get; set; }
+
+        #endregion Factories
 
         /// <summary>
         /// Gets or sets whether to create new property instance if it's null.
@@ -55,6 +85,19 @@ namespace Config4Net.UI
         public bool AllowAutoCreateInstanceIfMissing { get; set; } = true;
 
         #endregion Properties
+
+        private UiManager()
+        {
+            _componentManager = new ComponentManager();
+            _settingBinder = new SettingBinder();
+
+            SettingBinder = new SettingBinder();
+            LayoutOptionsFactory = new DefaultLayoutOptionsFactory();
+            SizeOptionsFactory = new DefaultSizeOptionsFactory();
+            DateTimeOptionsFactory = new DefaultDateTimeOptionsFactory();
+            ContainerAppearanceFactory = new DefaultContainerAppearanceFactory();
+            EditorAppearanceFactory = new DefaultEditorAppearanceFactory();
+        }
 
         /// <summary>
         /// Builds a UI from config data and binds its properties to this the UI.
@@ -70,26 +113,129 @@ namespace Config4Net.UI
         public T Build<T>(object config) where T : IContainer
         {
             Precondition.ArgumentNotNull(config, nameof(config));
-            Precondition.PropertyNotNull(SettingFactory, nameof(SettingFactory));
+            Precondition.PropertyNotNull(SettingBinder, nameof(SettingBinder));
+            CheckFactories();
 
-            var sizeOptions = SettingFactory.CreateSizeOptions();
-
-            // create a container
             var container = _componentManager.CreateComponentFromComponentType<IContainer>(typeof(T));
             var configType = config.GetType();
-            var bindInfo = CreateDefaultBindInfo(configType, sizeOptions);
 
-            BindContainer(container, bindInfo);
+            var settings = CreateSettingBuilder(configType).Build();
+            SettingBinder.BindContainer(container, configType, settings);
 
             foreach (var propertyInfo in configType.GetProperties())
             {
-                var component = BuildRecursive(config, propertyInfo, sizeOptions);
+                var component = BuildRecursive(config, propertyInfo);
                 if (component == null) continue;
 
                 container.AddChild(component);
             }
 
-            return (T) container;
+            return (T)container;
+        }
+
+        private IComponent BuildRecursive(object parentInstance, PropertyInfo propertyInfo)
+        {
+            if (propertyInfo.GetCustomAttribute<ShowableAttribute>() == null) return null;
+
+            var childrenPropertyInfos = propertyInfo.PropertyType.GetProperties();
+            var hasChildrenComponents = childrenPropertyInfos.Any(ipropertyInfo =>
+                ipropertyInfo.GetCustomAttribute<ShowableAttribute>() != null);
+
+            return hasChildrenComponents
+                ? BuildContainer(parentInstance, propertyInfo, childrenPropertyInfos)
+                : BuildEditor(parentInstance, propertyInfo);
+        }
+
+        private IComponent BuildContainer(object parentInstance, PropertyInfo propertyInfo, PropertyInfo[] propertyInfos)
+        {
+            var groupContainer = _componentManager.CreateComponentFromComponentType<IGroupContainer>();
+
+            var settings = CreateSettingBuilder(propertyInfo).Build();
+            SettingBinder.BindContainer(groupContainer, propertyInfo, settings);
+
+            var currentInstance = propertyInfo.GetValue(parentInstance);
+            if (currentInstance == null && AllowAutoCreateInstanceIfMissing)
+            {
+                propertyInfo.SetValue(
+                    parentInstance,
+                    currentInstance = Activator.CreateInstance(propertyInfo.PropertyType));
+            }
+
+            foreach (var childPropertyInfo in propertyInfos)
+            {
+                var component = BuildRecursive(currentInstance, childPropertyInfo);
+                if (component == null) continue;
+
+                groupContainer.AddChild(component);
+            }
+
+            return groupContainer;
+        }
+
+        private IComponent BuildEditor(object parentInstance, PropertyInfo propertyInfo)
+        {
+            var settings = CreateSettingBuilder(propertyInfo)
+                .SetReferenceInfo(new ReferenceInfo
+                {
+                    PropertyInfo = propertyInfo,
+                    Source = parentInstance
+                })
+                .Build();
+
+            var componentType = settings.Get<Type>("componentType");
+            var component = ObjectUtils.IsGenericList(propertyInfo.PropertyType)
+                ? CreateListEditor(componentType, propertyInfo.PropertyType)
+                : CreateNormalEditor(componentType, propertyInfo.PropertyType);
+
+            SettingBinder.BindEditor(component, propertyInfo, settings);
+
+            return component;
+        }
+
+        private IComponent CreateNormalEditor(Type componentType, Type propertyType)
+        {
+            return componentType != null
+                ? _componentManager.CreateComponentFromComponentType<IComponent>(componentType)
+                : _componentManager.CreateComponentFromPropertyType<IComponent>(propertyType);
+        }
+
+        private IComponent CreateListEditor(Type componentType, Type propertyType)
+        {
+            var listEditor = _componentManager.CreateComponentFromComponentType<IListEditor>();
+            listEditor.SetSettingBinder(SettingBinder);
+            listEditor.SetItemFactory(() => CreateNormalEditor(componentType, propertyType));
+            listEditor.SetSettingFactory((parentInstance, propertyInfo) =>
+            {
+                var settingBuilder = CreateSettingBuilder(propertyInfo)
+                    .SetReferenceInfo(new ReferenceInfo
+                    {
+                        PropertyInfo = propertyInfo,
+                        Source = parentInstance
+                    });
+                return settingBuilder.Build();
+            });
+            return listEditor;
+        }
+
+        private SettingBuilder CreateSettingBuilder(MemberInfo configMemeber)
+        {
+            return new SettingBuilder()
+                .SetConfigMemberInfo(configMemeber)
+                .SetContainerAppearanceFactory(ContainerAppearanceFactory)
+                .SetEditorAppearanceFactory(EditorAppearanceFactory)
+                .SetLayoutManagerFactory(LayoutManagerFactory)
+                .SetLayoutOptionsFactory(LayoutOptionsFactory)
+                .SetDateTimeOptionsFactory(DateTimeOptionsFactory)
+                .SetSizeOptionsFactory(SizeOptionsFactory);
+        }
+
+        private void CheckFactories()
+        {
+            Precondition.PropertyNotNull(LayoutManagerFactory, nameof(LayoutManagerFactory));
+            Precondition.PropertyNotNull(SizeOptionsFactory, nameof(SizeOptionsFactory));
+            Precondition.PropertyNotNull(DateTimeOptionsFactory, nameof(DateTimeOptionsFactory));
+            Precondition.PropertyNotNull(ContainerAppearanceFactory, nameof(ContainerAppearanceFactory));
+            Precondition.PropertyNotNull(EditorAppearanceFactory, nameof(EditorAppearanceFactory));
         }
 
         /// <summary>
@@ -120,211 +266,25 @@ namespace Config4Net.UI
         }
 
         /// <summary>
-        /// Copy whole settings from current instance of <see cref="UiManager"/> to the giving source.
+        /// Copy whole settings from source to this instance.
         /// </summary>
-        /// <param name="source">Copy from current instance to this source</param>
         public void Copy(UiManager source)
         {
             Precondition.ArgumentNotNull(source, nameof(source));
-            LayoutManagerFactory = source.LayoutManagerFactory;
-            SettingFactory = source.SettingFactory;
-            AllowAutoCreateInstanceIfMissing = source.AllowAutoCreateInstanceIfMissing;
+
             _componentManager.Copy(source._componentManager);
+            _settingBinder = source._settingBinder;
+
+            SettingBinder = source.SettingBinder;
+
+            LayoutManagerFactory = source.LayoutManagerFactory;
+            LayoutOptionsFactory = source.LayoutOptionsFactory;
+            SizeOptionsFactory = source.SizeOptionsFactory;
+            DateTimeOptionsFactory = source.DateTimeOptionsFactory;
+            ContainerAppearanceFactory = source.ContainerAppearanceFactory;
+            EditorAppearanceFactory = source.EditorAppearanceFactory;
+
+            AllowAutoCreateInstanceIfMissing = source.AllowAutoCreateInstanceIfMissing;
         }
-
-        private UiManager()
-        {
-            _componentManager = new ComponentManager();
-            SettingFactory = new DefaultSettingFactory();
-        }
-
-        #region IUiBinder Implements
-
-        /// <inheritdoc />
-        public void BindEditor(IComponent component, EditorBindInfo bindInfo)
-        {
-            BindComponent(component, bindInfo);
-
-            var editor = EditorWrapper.From(component);
-            editor.Appearance = SettingFactory.CreatEditorAppearance();
-            editor.DefinationType = bindInfo.DefinationInfo?.Value;
-            editor.SetReferenceInfo(bindInfo.ReferenceInfo.Source, bindInfo.ReferenceInfo.PropertyInfo);
-
-            if (component is IDateTimeEditor dateTimeEditor)
-                dateTimeEditor.DateTimeOptions = SettingFactory.CreateDateTimeOptions();
-        }
-
-        /// <inheritdoc />
-        public void BindContainer(IContainer container, ContainerBindInfo bindInfo)
-        {
-            BindComponent(container, bindInfo);
-
-            Precondition.PropertyNotNull(LayoutManagerFactory, nameof(LayoutManagerFactory));
-            Precondition.PropertyNotNull(SettingFactory, nameof(SettingFactory));
-
-            var layoutManager = LayoutManagerFactory.Create();
-            layoutManager.LayoutOptions = SettingFactory.CreateLayoutOptions();
-
-            container.LayoutManager = layoutManager;
-            container.Appearance = SettingFactory.CreateContainerAppearance();
-
-            if (container is IGroupContainer)
-                container.SizeMode = bindInfo.SizeOptions.GroupContainerSizeMode;
-            else
-                container.SizeMode = bindInfo.SizeOptions.WindowContainerSizeMode;
-        }
-
-        #endregion IUiBinder Implements
-
-        #region Helper Methods
-
-        private IComponent BuildRecursive(object parentInstance, PropertyInfo propertyInfo, SizeOptions sizeOptions)
-        {
-            var binderInfo = CreateEditorBinderInfo(parentInstance, propertyInfo, sizeOptions);
-            if (binderInfo == null) return null;
-
-            var propertyInfos = propertyInfo.PropertyType.GetProperties();
-            var hasChildrenComponents = propertyInfos.Any(ipropertyInfo =>
-                ipropertyInfo.GetCustomAttribute<ShowableAttribute>() != null);
-
-            return hasChildrenComponents
-                ? BuildContainer(parentInstance, propertyInfo, sizeOptions, propertyInfos)
-                : BuildEditor(propertyInfo, binderInfo);
-        }
-
-        private IComponent BuildContainer(
-            object parentInstance,
-            PropertyInfo propertyInfo,
-            SizeOptions sizeOptions,
-            PropertyInfo[] propertyInfos)
-        {
-            var groupContainer = _componentManager.CreateComponentFromComponentType<IGroupContainer>();
-
-            BindContainer(groupContainer, CreateContainerBinderInfo(propertyInfo, sizeOptions));
-
-            var currentInstance = propertyInfo.GetValue(parentInstance);
-            if (currentInstance == null && AllowAutoCreateInstanceIfMissing)
-            {
-                propertyInfo.SetValue(parentInstance,
-                    currentInstance = Activator.CreateInstance(propertyInfo.PropertyType));
-            }
-
-            foreach (var childPropertyInfo in propertyInfos)
-            {
-                var component = BuildRecursive(currentInstance, childPropertyInfo, sizeOptions);
-                if (component == null) continue;
-
-                groupContainer.AddChild(component);
-            }
-
-            return groupContainer;
-        }
-
-        private static ContainerBindInfo CreateDefaultBindInfo(Type configType, SizeOptions sizeOptions)
-        {
-            var showableInfo = ShowableInfo.From(configType);
-
-            if (showableInfo == null)
-            {
-                showableInfo = new ShowableInfo
-                {
-                    Name = configType.Name,
-                    Label = StringUtils.ToFriendlyString(configType.Name)
-                };
-            }
-            else
-            {
-                if (string.IsNullOrWhiteSpace(showableInfo.Name))
-                    showableInfo.Name = configType.Name;
-            }
-
-            return new ContainerBindInfo
-            {
-                ShowableInfo = showableInfo,
-                SizeOptions = sizeOptions
-            };
-        }
-
-        private static ContainerBindInfo CreateContainerBinderInfo(PropertyInfo propertyInfo, SizeOptions sizeOptions)
-        {
-            var showableInfo = ShowableInfo.From(propertyInfo);
-
-            if (string.IsNullOrWhiteSpace(showableInfo.Name))
-                showableInfo.Name = propertyInfo.Name;
-            var binderInfo = new ContainerBindInfo
-            {
-                ShowableInfo = showableInfo,
-                SizeOptions = sizeOptions
-            };
-            return binderInfo;
-        }
-
-        private IComponent BuildEditor(PropertyInfo propertyInfo, EditorBindInfo bindInfo)
-        {
-            var showableInfo = bindInfo.ShowableInfo;
-            var component = ObjectUtils.IsGenericList(propertyInfo.PropertyType)
-                ? CreateListEditor(showableInfo.ComponentType, propertyInfo.PropertyType)
-                : CreateNormalEditor(showableInfo.ComponentType, propertyInfo.PropertyType);
-
-            BindEditor(component, bindInfo);
-
-            return component;
-        }
-
-        private static EditorBindInfo CreateEditorBinderInfo(
-            object parentInstance,
-            PropertyInfo propertyInfo,
-            SizeOptions sizeOptions)
-        {
-            var showableInfo = ShowableInfo.From(propertyInfo);
-            if (showableInfo == null) return null;
-
-            if (string.IsNullOrWhiteSpace(showableInfo.Name))
-                showableInfo.Name = propertyInfo.Name;
-
-            return new EditorBindInfo
-            {
-                ShowableInfo = showableInfo,
-                DefinationInfo = DefinationInfo.From(propertyInfo),
-                SizeOptions = sizeOptions,
-                ReferenceInfo = new ReferenceInfo
-                {
-                    PropertyInfo = propertyInfo,
-                    Source = parentInstance
-                }
-            };
-        }
-
-        private IComponent CreateNormalEditor(Type componentType, Type propertyType)
-        {
-            return componentType != null
-                ? _componentManager.CreateComponentFromComponentType<IComponent>(componentType)
-                : _componentManager.CreateComponentFromPropertyType<IComponent>(propertyType);
-        }
-
-        private IComponent CreateListEditor(Type componentType, Type propertyType)
-        {
-            var listEditor = _componentManager.CreateComponentFromComponentType<IListEditor>();
-            listEditor.SetUiBinder(this);
-            listEditor.SetItemFactory(() => CreateNormalEditor(componentType, propertyType));
-            listEditor.SetLayoutManagerFactory(() =>
-            {
-                var layoutManager = LayoutManagerFactory.Create();
-                layoutManager.LayoutOptions = SettingFactory.CreateLayoutOptions();
-                return layoutManager;
-            });
-
-            return listEditor;
-        }
-
-        private void BindComponent(IComponent component, BindInfo bindInfo)
-        {
-            component.Text = bindInfo.ShowableInfo.Label;
-            component.Description = bindInfo.ShowableInfo.Description;
-            component.SizeMode = bindInfo.SizeOptions.EditorSizeMode;
-            component.Name = bindInfo.ShowableInfo.Name;
-        }
-
-        #endregion Helper Methods
     }
 }

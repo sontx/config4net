@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
-using Config4Net.UI.Editors.Definations;
 
 namespace Config4Net.UI.WinForms.Editors
 {
@@ -17,8 +16,8 @@ namespace Config4Net.UI.WinForms.Editors
         private bool _readOnly;
         private IList<object> _value;
         private Func<IComponent> _itemFactory;
-        private Func<ILayoutManager> _layoutManagerFactory;
-        private IUiBinder _uiBinder;
+        private Func<object, PropertyInfo, Settings> _settingFactory;
+        private ISettingBinder _settingBinder;
 
         public event ValueChangedEventHandler ValueChanged;
 
@@ -51,9 +50,9 @@ namespace Config4Net.UI.WinForms.Editors
             }
         }
 
-        public void SetReferenceInfo(object source, PropertyInfo propertyInfo)
+        public void SetReferenceInfo(ReferenceInfo referenceInfo)
         {
-            _editorHelper.SetReferenceInfo(source, propertyInfo);
+            _editorHelper.SetReferenceInfo(referenceInfo);
         }
 
         public void Bind()
@@ -66,21 +65,20 @@ namespace Config4Net.UI.WinForms.Editors
             _editorHelper?.Reset();
         }
 
-        public void SetUiBinder(IUiBinder binder)
-        {
-            _uiBinder = binder;
-        }
-        
         public void SetItemFactory(Func<IComponent> itemFactory)
         {
             Precondition.ArgumentNotNull(itemFactory, nameof(itemFactory));
             _itemFactory = itemFactory;
         }
 
-        public void SetLayoutManagerFactory(Func<ILayoutManager> layoutManagerFactory)
+        public void SetSettingBinder(ISettingBinder binder)
         {
-            Precondition.ArgumentNotNull(layoutManagerFactory, nameof(layoutManagerFactory));
-            _layoutManagerFactory = layoutManagerFactory;
+            _settingBinder = binder;
+        }
+
+        public void SetSettingFactory(Func<object, PropertyInfo, Settings> settingFactory)
+        {
+            _settingFactory = settingFactory;
         }
 
         public override int PreferHeight
@@ -97,12 +95,12 @@ namespace Config4Net.UI.WinForms.Editors
 
         private void labContent_Click(object sender, EventArgs e)
         {
-            if (_itemFactory == null || _uiBinder == null) return;
+            if (_itemFactory == null || _settingBinder == null) return;
 
-            var listForm = new ListForm {Text = Text};
-
+            var listForm = new ListForm { Text = Text };
+            var layoutManagerFactory = GetSettings().Get<ILayoutManagerFactory>();
             listForm.SetItemFactory(CreateItem);
-            listForm.SetLayoutManager((FlowLayoutManager)_layoutManagerFactory());
+            listForm.SetLayoutManager((FlowLayoutManager)layoutManagerFactory.Create());
             listForm.InitializeList(Value);
 
             if (listForm.ShowDialog(this) == DialogResult.OK)
@@ -113,32 +111,17 @@ namespace Config4Net.UI.WinForms.Editors
 
         private Control CreateItem(object initValue)
         {
-            var item = _itemFactory();
-            _uiBinder.BindEditor(item, new EditorBindInfo
-            {
-                ShowableInfo = new ShowableInfo
-                {
-                    Label = Text,
-                    Description = Description
-                },
-                DefinationInfo = new DefinationInfo
-                {
-                    Value = DefinationType
-                },
-                SizeOptions = new SizeOptions
-                {
-                    EditorSizeMode = SizeMode
-                },
-                ReferenceInfo = new ReferenceInfo
-                {
-                    Source = new Dummy(),
-                    PropertyInfo = typeof(Dummy).GetProperty("Value")
-                }
-            });
+            var memberInfo = typeof(Dummy).GetProperty("Value");
+            var settings = _settingFactory(new Dummy(), memberInfo);
+            settings.Put("text", Text);
+            settings.Put("description", Description);
 
+            var item = _itemFactory();
+            _settingBinder.BindEditor(item, memberInfo, settings);
+            item.SizeMode = SizeMode;
             EditorWrapper.From(item).Value = initValue;
 
-            return (Control) item;
+            return (Control)item;
         }
 
         private class Dummy

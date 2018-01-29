@@ -1,6 +1,5 @@
-﻿using System;
-using System.Reflection;
-using Config4Net.UI.Editors.Definations;
+﻿using Config4Net.UI.Editors.Definations;
+using System;
 
 namespace Config4Net.UI.Editors
 {
@@ -30,14 +29,6 @@ namespace Config4Net.UI.Editors
         T Value { get; set; }
 
         /// <summary>
-        /// The type of an implementation from <see cref="IDefinationType"/> that defines an extra
-        /// data for this editor.
-        /// <seealso cref="IDefinationType"/>
-        /// <seealso cref="DefinationAttribute"/>
-        /// </summary>
-        Type DefinationType { get; set; }
-
-        /// <summary>
         /// Settings for this editor.
         /// </summary>
         EditorAppearance Appearance { get; set; }
@@ -48,11 +39,9 @@ namespace Config4Net.UI.Editors
         bool ReadOnly { get; set; }
 
         /// <summary>
-        /// Set the config property that will be bound to this editor.
+        /// Sets the config property that will be bound to this editor.
         /// </summary>
-        /// <param name="source">An object instance that owns this property.</param>
-        /// <param name="propertyInfo">A property type of config property.</param>
-        void SetReferenceInfo(object source, PropertyInfo propertyInfo);
+        void SetReferenceInfo(ReferenceInfo referenceInfo);
 
         /// <summary>
         /// Reset the editor's <see cref="Value"/> to origin value that is retrived from config property.

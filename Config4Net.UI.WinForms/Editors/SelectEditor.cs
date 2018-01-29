@@ -3,7 +3,6 @@ using Config4Net.UI.Editors;
 using Config4Net.UI.Editors.Definations;
 using Config4Net.Utils;
 using System;
-using System.Reflection;
 
 namespace Config4Net.UI.WinForms.Editors
 {
@@ -12,7 +11,6 @@ namespace Config4Net.UI.WinForms.Editors
         private readonly EditorHelper<object> _editorHelper;
 
         private bool _readOnly;
-        private Type _definationType;
         private object _value;
 
         public event ValueChangedEventHandler ValueChanged;
@@ -55,35 +53,36 @@ namespace Config4Net.UI.WinForms.Editors
 
         public DisplayMode DisplayMode { get; set; }
 
-        public override Type DefinationType
+        private void SetDefinationType(Type definationType)
         {
-            get => _definationType;
-            set
+            Precondition.ArgumentCompatibleType(definationType, typeof(SelectDefination), nameof(definationType));
+            var defination = ((IDefinationType)Activator.CreateInstance(definationType)).GetDefination();
+
+            var select = (Select)defination;
+            cmbContent.BeginUpdate();
+            cmbContent.Items.Clear();
+            foreach (var selectOption in select.Options)
             {
-                Precondition.PropertyNotNull(value, nameof(DefinationType));
-                _definationType = value;
-
-                Precondition.ArgumentCompatibleType(value, typeof(SelectDefination), nameof(DefinationType));
-                var defination = ((IDefinationType)Activator.CreateInstance(value)).GetDefination();
-
-                var select = (Select)defination;
-                cmbContent.BeginUpdate();
-                cmbContent.Items.Clear();
-                foreach (var selectOption in select.Options)
+                cmbContent.Items.Add(selectOption);
+                if (ObjectUtils.DeepEquals(selectOption.Value, _value))
                 {
-                    cmbContent.Items.Add(selectOption);
-                    if (ObjectUtils.DeepEquals(selectOption.Value, _value))
-                    {
-                        cmbContent.SelectedItem = selectOption;
-                    }
+                    cmbContent.SelectedItem = selectOption;
                 }
-                cmbContent.EndUpdate();
             }
+            cmbContent.EndUpdate();
         }
 
-        public void SetReferenceInfo(object source, PropertyInfo propertyInfo)
+        public void SetReferenceInfo(ReferenceInfo referenceInfo)
         {
-            _editorHelper.SetReferenceInfo(source, propertyInfo);
+            _editorHelper.SetReferenceInfo(referenceInfo);
+        }
+
+        public override void SetSettings(Settings settings)
+        {
+            base.SetSettings(settings);
+            var definationAttribute = settings.Get<DefinationAttribute>();
+            if (definationAttribute != null && definationAttribute.Value != null)
+                SetDefinationType(definationAttribute.Value);
         }
 
         public void Bind()

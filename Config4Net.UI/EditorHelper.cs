@@ -1,7 +1,6 @@
-﻿using System;
-using System.Reflection;
-using Config4Net.UI.Editors;
+﻿using Config4Net.UI.Editors;
 using Config4Net.Utils;
+using System;
 
 namespace Config4Net.UI
 {
@@ -26,11 +25,9 @@ namespace Config4Net.UI
         /// <summary>
         /// Sets underlying data that will be synchronized with the editor.
         /// </summary>
-        /// <param name="source">The owner of the giving property info.</param>
-        /// <param name="propertyInfo">The property info that will be synchronized with the editor.</param>
-        public void SetReferenceInfo(object source, PropertyInfo propertyInfo)
+        public void SetReferenceInfo(ReferenceInfo referenceInfo)
         {
-            _binder = new PropertyBinder<T>(source, propertyInfo);
+            _binder = new PropertyBinder<T>(referenceInfo.Source, referenceInfo.PropertyInfo);
             _editor.Value = _binder.Value;
         }
 
@@ -58,8 +55,8 @@ namespace Config4Net.UI
         /// <param name="onValueChanging">Trigger value changing event.</param>
         /// <param name="onValueChanged">Trigger value changed event.</param>
         public void ChangeValue(
-            T newValue, 
-            Action doChaningValue, 
+            T newValue,
+            Action doChaningValue,
             ValueChangingEventHandler onValueChanging,
             ValueChangedEventHandler onValueChanged)
         {

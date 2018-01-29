@@ -1,13 +1,11 @@
 ﻿using Config4Net.UI.Editors;
-using System.Reflection;
-using System.Text;
 
 namespace Config4Net.UI.WinForms.Editors
 {
     public partial class CheckboxEditor : DefaultEditor, ICheckboxEditor
     {
         private readonly EditorHelper<bool> _editorHelper;
-        
+
         private bool _readOnly;
         private string _description;
         private bool _value;
@@ -53,9 +51,9 @@ namespace Config4Net.UI.WinForms.Editors
             }
         }
 
-        public void SetReferenceInfo(object source, PropertyInfo propertyInfo)
+        public void SetReferenceInfo(ReferenceInfo referenceInfo)
         {
-            _editorHelper.SetReferenceInfo(source, propertyInfo);
+            _editorHelper.SetReferenceInfo(referenceInfo);
         }
 
         public void Bind()

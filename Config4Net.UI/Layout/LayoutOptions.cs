@@ -20,4 +20,29 @@
         /// </summary>
         public Padding Margin { get; set; }
     }
+
+    /// <summary>
+    /// Create <see cref="LayoutOptions"/> instance.
+    /// </summary>
+    public interface ILayoutOptionsFactory
+    {
+        /// <summary>
+        /// Create <see cref="LayoutOptions"/> instance.
+        /// </summary>
+        LayoutOptions Create();
+    }
+
+    /// <inheritdoc />
+    public class DefaultLayoutOptionsFactory : ILayoutOptionsFactory
+    {
+        /// <inheritdoc />
+        public LayoutOptions Create()
+        {
+            return new LayoutOptions
+            {
+                Padding = new Padding(6),
+                Margin = new Padding(0)
+            };
+        }
+    }
 }

@@ -14,6 +14,7 @@ namespace Config4Net.UI.WinForms.Editors
         private EditorAppearance _appearance;
         private SizeMode _sizeMode;
         private string _description;
+        private Settings _settings;
 
         public EditorAppearance Appearance
         {
@@ -34,9 +35,7 @@ namespace Config4Net.UI.WinForms.Editors
                 ComputeSize();
             }
         }
-
-        public virtual Type DefinationType { get; set; }
-
+        
         public virtual string Description
         {
             get => _description;
@@ -71,6 +70,16 @@ namespace Config4Net.UI.WinForms.Editors
                 _sizeMode = value;
                 ComputeSize();
             }
+        }
+
+        protected Settings GetSettings()
+        {
+            return _settings;
+        }
+
+        public virtual void SetSettings(Settings settings)
+        {
+            _settings = settings;
         }
 
         [Category("Appearance")]

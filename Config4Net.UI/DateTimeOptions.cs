@@ -23,4 +23,30 @@
         /// </summary>
         public string DefaultDateTimeFormat { get; set; }
     }
+
+    /// <summary>
+    /// Create <see cref="DateTimeOptions"/> instance.
+    /// </summary>
+    public interface IDateTimeOptionsFactory
+    {
+        /// <summary>
+        /// Create <see cref="DateTimeOptions"/> instance.
+        /// </summary>
+        DateTimeOptions Create();
+    }
+
+    /// <inheritdoc />
+    public class DefaultDateTimeOptionsFactory : IDateTimeOptionsFactory
+    {
+        /// <inheritdoc />
+        public DateTimeOptions Create()
+        {
+            return new DateTimeOptions
+            {
+                DefaultDateFormat = "dd/MM/yyyy",
+                DefaultTimeFormat = "HH:mm:ss",
+                DefaultDateTimeFormat = "HH:mm:ss - dd/MM/yyyy"
+            };
+        }
+    }
 }

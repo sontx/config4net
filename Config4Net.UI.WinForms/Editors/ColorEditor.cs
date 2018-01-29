@@ -1,6 +1,5 @@
 ﻿using Config4Net.UI.Editors;
 using System.Drawing;
-using System.Reflection;
 
 namespace Config4Net.UI.WinForms.Editors
 {
@@ -42,9 +41,9 @@ namespace Config4Net.UI.WinForms.Editors
             }
         }
 
-        public void SetReferenceInfo(object source, PropertyInfo propertyInfo)
+        public void SetReferenceInfo(ReferenceInfo referenceInfo)
         {
-            _editorHelper.SetReferenceInfo(source, propertyInfo);
+            _editorHelper.SetReferenceInfo(referenceInfo);
         }
 
         public void Bind()

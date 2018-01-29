@@ -8,9 +8,5 @@ namespace Config4Net.UI.Editors
     /// </summary>
     public interface ISelectEditor : IEditor<object>
     {
-        /// <summary>
-        /// Gets or sets the <see cref="ISelectEditor"/> display mode.
-        /// </summary>
-        DisplayMode DisplayMode { get; set; }
     }
 }

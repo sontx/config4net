@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Config4Net.UI.Editors;
+using System;
 using System.IO;
-using Config4Net.UI.Editors;
-using System.Reflection;
 using System.Windows.Forms;
 
 namespace Config4Net.UI.WinForms.Editors
@@ -52,18 +51,19 @@ namespace Config4Net.UI.WinForms.Editors
             }
         }
 
-        public void SetReferenceInfo(object source, PropertyInfo propertyInfo)
+        public void SetReferenceInfo(ReferenceInfo referenceInfo)
         {
-            _editorHelper.SetReferenceInfo(source, propertyInfo);
+            _editorHelper.SetReferenceInfo(referenceInfo);
+        }
 
-            var folderPickerAttribute = propertyInfo.GetCustomAttribute<FolderPickerAttribute>();
+        public override void SetSettings(Settings settings)
+        {
+            var folderPickerAttribute = settings.Get<FolderPickerAttribute>();
 
             if (folderPickerAttribute == null) return;
 
             txtContent.ReadOnly = !folderPickerAttribute.TextEditable;
             _folderPickerAttribute = folderPickerAttribute;
-
-            Value = _value;
         }
 
         public void Bind()

@@ -1,8 +1,7 @@
 ﻿using Config4Net.UI.Editors;
+using Config4Net.Utils;
 using System;
 using System.Globalization;
-using System.Reflection;
-using Config4Net.Utils;
 
 namespace Config4Net.UI.WinForms.Editors
 {
@@ -33,7 +32,7 @@ namespace Config4Net.UI.WinForms.Editors
             }
         }
 
-        public virtual DateTimeOptions DateTimeOptions
+        protected virtual DateTimeOptions DateTimeOptions
         {
             get => _dateTimeOptions;
             set
@@ -72,9 +71,15 @@ namespace Config4Net.UI.WinForms.Editors
             }
         }
 
-        public void SetReferenceInfo(object source, PropertyInfo propertyInfo)
+        public void SetReferenceInfo(ReferenceInfo referenceInfo)
         {
-            _dateTimeAttribute = propertyInfo.GetCustomAttribute<DateTimeAttribute>();
+            _editorHelper.SetReferenceInfo(referenceInfo);
+        }
+
+        public override void SetSettings(Settings settings)
+        {
+            base.SetSettings(settings);
+            _dateTimeAttribute = settings.Get<DateTimeAttribute>();
             if (_dateTimeAttribute != null)
             {
                 dtContent.CustomFormat = string.IsNullOrWhiteSpace(_dateTimeAttribute.Format)
@@ -86,7 +91,9 @@ namespace Config4Net.UI.WinForms.Editors
                 dtContent.Value = GetDateTime(_dateTimeAttribute.DefaultDateTime, DateTime.Now);
             }
 
-            _editorHelper.SetReferenceInfo(source, propertyInfo);
+            var dateTimeOptionsFactory = settings.Get<IDateTimeOptionsFactory>();
+            if (dateTimeOptionsFactory != null)
+                DateTimeOptions = dateTimeOptionsFactory.Create();
         }
 
         private DateTime GetDateTime(string dateTimeAsString, DateTime defaultValue)

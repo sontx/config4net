@@ -35,7 +35,7 @@ namespace Config4Net.UI.WinForms.Editors.Helpers
             _layoutManager.Dock = DockStyle.Fill;
             _layoutManager.AutoSize = false;
             _layoutManager.AutoScroll = true;
-            _layoutManager.WrapContents = false;
+            _layoutManager.WrapContents = true;
             _layoutManager.BringToFront();
 
             UpdateWidth();

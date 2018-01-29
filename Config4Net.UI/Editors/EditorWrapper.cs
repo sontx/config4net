@@ -1,6 +1,4 @@
-﻿using System;
-using System.Reflection;
-using Config4Net.Utils;
+﻿using Config4Net.Utils;
 
 namespace Config4Net.UI.Editors
 {
@@ -12,7 +10,6 @@ namespace Config4Net.UI.Editors
         private readonly object _genericEditor;
         private bool _readOnly;
         private EditorAppearance _appearance;
-        private Type _definationType;
         private object _value;
 
         /// <summary>
@@ -30,19 +27,6 @@ namespace Config4Net.UI.Editors
         }
 
         /// <summary>
-        /// <see cref="IEditor{T}.DefinationType"/>.
-        /// </summary>
-        public Type DefinationType
-        {
-            get => _definationType;
-            set
-            {
-                _definationType = value; 
-                ObjectUtils.SetProperty(_genericEditor, "DefinationType", value);
-            }
-        }
-
-        /// <summary>
         /// <see cref="IEditor{T}.Value"/>.
         /// </summary>
         public object Value
@@ -50,8 +34,8 @@ namespace Config4Net.UI.Editors
             get => _value;
             set
             {
-                _value = value; 
-                ObjectUtils.SetProperty(_genericEditor, "Value", value);
+                _value = value;
+                ObjectUtils.SetProperty(_genericEditor, nameof(Value), value);
             }
         }
 
@@ -63,8 +47,8 @@ namespace Config4Net.UI.Editors
             get => _appearance;
             set
             {
-                _appearance = value; 
-                ObjectUtils.SetProperty(_genericEditor, "Appearance", value);
+                _appearance = value;
+                ObjectUtils.SetProperty(_genericEditor, nameof(Appearance), value);
             }
         }
 
@@ -76,17 +60,17 @@ namespace Config4Net.UI.Editors
             get => _readOnly;
             set
             {
-                _readOnly = value; 
-                ObjectUtils.SetProperty(_genericEditor, "ReadOnly", value);
+                _readOnly = value;
+                ObjectUtils.SetProperty(_genericEditor, nameof(ReadOnly), value);
             }
         }
 
         /// <summary>
-        /// <see cref="IEditor{T}.SetReferenceInfo"/>.
+        /// See <see cref="IEditor{T}.SetReferenceInfo"/>
         /// </summary>
-        public void SetReferenceInfo(object source, PropertyInfo propertyInfo)
+        public void SetReferenceInfo(ReferenceInfo referenceInfo)
         {
-            ObjectUtils.ExecuteMethod(_genericEditor, "SetReferenceInfo", source, propertyInfo);
+            ObjectUtils.ExecuteMethod(_genericEditor, nameof(SetReferenceInfo), referenceInfo);
         }
     }
 }

@@ -1,19 +1,15 @@
 ﻿using Config4Net.UI.Editors;
-using Config4Net.Utils;
 
 namespace Config4Net.UI.WinForms.Editors
 {
     public class TimeEditor : DateTimeEditor, ITimeEditor
     {
-        private DateTimeOptions _dateTimeOptions;
-
-        public override DateTimeOptions DateTimeOptions
+        protected override DateTimeOptions DateTimeOptions
         {
-            get => _dateTimeOptions;
+            get => base.DateTimeOptions;
             set
             {
-                Precondition.ArgumentNotNull(value, nameof(DateTimeOptions));
-                _dateTimeOptions = value;
+                base.DateTimeOptions = value;
                 DefaultDateTimeFormat = value.DefaultTimeFormat;
             }
         }

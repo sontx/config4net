@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Config4Net.UI
 {
-    internal sealed class ComponentManager:ICopyable<ComponentManager>
+    internal sealed class ComponentManager : ICopyable<ComponentManager>
     {
         // component type - factory
         private readonly Dictionary<Type, object> _registeredComponentFactories;
@@ -72,7 +72,7 @@ namespace Config4Net.UI
             _registeredComponentFactories = new Dictionary<Type, object>();
             _defaultComponenTypeForPropertyTypes = new Dictionary<Type, Type>();
         }
-        
+
         public void Copy(ComponentManager source)
         {
             CollectionUtils.CopyDictionary(source._registeredComponentFactories, _registeredComponentFactories);

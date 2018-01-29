@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Config4Net.UI.Editors;
+using System;
 using System.IO;
-using Config4Net.UI.Editors;
-using System.Reflection;
 using System.Windows.Forms;
 
 namespace Config4Net.UI.WinForms.Editors
@@ -52,19 +51,22 @@ namespace Config4Net.UI.WinForms.Editors
             }
         }
 
-        public void SetReferenceInfo(object source, PropertyInfo propertyInfo)
+        public void SetReferenceInfo(ReferenceInfo referenceInfo)
         {
-            _editorHelper.SetReferenceInfo(source, propertyInfo);
+            _editorHelper.SetReferenceInfo(referenceInfo);
+        }
 
-            var filePickerAttribute = propertyInfo.GetCustomAttribute<FilePickerAttribute>();
+        public override void SetSettings(Settings settings)
+        {
+            base.SetSettings(settings);
+
+            var filePickerAttribute = settings.Get<FilePickerAttribute>();
 
             if (filePickerAttribute == null) return;
 
             txtContent.ReadOnly = !filePickerAttribute.TextEditable;
             openFileDialog1.Filter = filePickerAttribute.FileFilter;
             _filePickerAttribute = filePickerAttribute;
-
-            Value = _value;
         }
 
         public void Bind()

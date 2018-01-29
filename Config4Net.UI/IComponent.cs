@@ -29,5 +29,10 @@
         /// Binds the component value to underlying value.
         /// </summary>
         void Bind();
+
+        /// <summary>
+        /// Set <see cref="Settings"/>.
+        /// </summary>
+        void SetSettings(Settings settings);
     }
 }

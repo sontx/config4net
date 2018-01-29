@@ -84,6 +84,10 @@ namespace Config4Net.UI.WinForms.Containers
             }
         }
 
+        public void SetSettings(Settings settings)
+        {
+        }
+
         private void UpdateHeightByContent()
         {
             var wholeRegion = _layoutManager.ComputeWholeRegion();

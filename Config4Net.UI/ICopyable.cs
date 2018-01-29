@@ -1,15 +1,15 @@
 ﻿namespace Config4Net.UI
 {
     /// <summary>
-    /// Can copy from current instance to a giving source.
+    /// Can copy from souce to instance.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public interface ICopyable<in T>
     {
         /// <summary>
-        /// Copy from current instance to a giving source.
+        /// Copy from souce to current instance.
         /// </summary>
-        /// <param name="source">Copy to this source.</param>
+        /// <param name="source">Copy from this source.</param>
         void Copy(T source);
     }
 }

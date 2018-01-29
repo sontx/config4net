@@ -101,6 +101,10 @@ namespace Config4Net.UI.WinForms.Containers
             }
         }
 
+        public void SetSettings(Settings settings)
+        {
+        }
+
         protected override void OnAccept()
         {
             Bind();
@@ -152,7 +156,6 @@ namespace Config4Net.UI.WinForms.Containers
         private void ComputeSizeMatchParent()
         {
             ComputeSizeWrapContent();
-        }
-        
+        }   
     }
 }

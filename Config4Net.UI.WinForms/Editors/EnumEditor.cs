@@ -3,7 +3,6 @@ using Config4Net.UI.Editors.Definations;
 using Config4Net.Utils;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 
 namespace Config4Net.UI.WinForms.Editors
 {
@@ -12,7 +11,6 @@ namespace Config4Net.UI.WinForms.Editors
         private readonly EditorHelper<Enum> _editorHelper;
 
         private bool _readOnly;
-        private Type _definationType;
         private Enum _value;
 
         public event ValueChangedEventHandler ValueChanged;
@@ -26,7 +24,7 @@ namespace Config4Net.UI.WinForms.Editors
             {
                 _editorHelper.ChangeValue(
                     value,
-                    () => 
+                    () =>
                     {
                         _value = value;
                         cmbContent.SelectedItem = value;
@@ -48,35 +46,36 @@ namespace Config4Net.UI.WinForms.Editors
 
         public DisplayMode DisplayMode { get; set; }
 
-        public override Type DefinationType
+        private void SetDefinationType(Type definationType)
         {
-            get => _definationType;
-            set
+            Precondition.ArgumentCompatibleType(definationType, typeof(EnumDefination), nameof(definationType));
+            var defination = ((IDefinationType)Activator.CreateInstance(definationType)).GetDefination();
+
+            var enumerator = (IEnumerable<Enum>)defination;
+            cmbContent.BeginUpdate();
+            cmbContent.Items.Clear();
+            foreach (var @enum in enumerator)
             {
-                Precondition.PropertyNotNull(value, nameof(DefinationType));
-                _definationType = value;
-
-                Precondition.ArgumentCompatibleType(value, typeof(EnumDefination), nameof(DefinationType));
-                var defination = ((IDefinationType)Activator.CreateInstance(value)).GetDefination();
-
-                var enumerator = (IEnumerable<Enum>)defination;
-                cmbContent.BeginUpdate();
-                cmbContent.Items.Clear();
-                foreach (var @enum in enumerator)
+                cmbContent.Items.Add(@enum);
+                if (@enum.Equals(_value))
                 {
-                    cmbContent.Items.Add(@enum);
-                    if (@enum.Equals(_value))
-                    {
-                        cmbContent.SelectedItem = @enum;
-                    }
+                    cmbContent.SelectedItem = @enum;
                 }
-                cmbContent.EndUpdate();
             }
+            cmbContent.EndUpdate();
         }
 
-        public void SetReferenceInfo(object source, PropertyInfo propertyInfo)
+        public void SetReferenceInfo(ReferenceInfo referenceInfo)
         {
-            _editorHelper.SetReferenceInfo(source, propertyInfo);
+            _editorHelper.SetReferenceInfo(referenceInfo);
+        }
+
+        public override void SetSettings(Settings settings)
+        {
+            base.SetSettings(settings);
+            var definationAttribute = settings.Get<DefinationAttribute>();
+            if (definationAttribute != null && definationAttribute.Value != null)
+                SetDefinationType(definationAttribute.Value);
         }
 
         public void Bind()

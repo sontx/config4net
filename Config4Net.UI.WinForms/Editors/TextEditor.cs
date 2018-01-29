@@ -1,7 +1,6 @@
 ﻿using System;
 using Config4Net.UI.Editors;
 using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Config4Net.UI.WinForms.Editors
@@ -45,15 +44,15 @@ namespace Config4Net.UI.WinForms.Editors
             }
         }
 
-        public void SetReferenceInfo(object source, PropertyInfo propertyInfo)
+        public void SetReferenceInfo(ReferenceInfo referenceInfo)
         {
-            ApplyMemoAttribute(propertyInfo);
-            _editorHelper.SetReferenceInfo(source, propertyInfo);
+            _editorHelper.SetReferenceInfo(referenceInfo);
         }
 
-        private void ApplyMemoAttribute(PropertyInfo propertyInfo)
+        public override void SetSettings(Settings settings)
         {
-            var memoAttribute = propertyInfo.GetCustomAttribute<MemoAttribute>();
+            base.SetSettings(settings);
+            var memoAttribute = settings.Get<MemoAttribute>();
             if (memoAttribute == null) return;
 
             txtContent.Multiline = true;
@@ -112,9 +111,8 @@ namespace Config4Net.UI.WinForms.Editors
         private int GetDefaultMemoHeight()
         {
             var checkText = string.IsNullOrEmpty(txtContent.Text) ? "abc" : txtContent.Text;
-            var size = TextRenderer.MeasureText(checkText, txtContent.Font);
-            return size.Height * 6;
+            var size = TextRenderer.MeasureText(checkText + $"{Environment.NewLine}", txtContent.Font);
+            return size.Height;
         }
-        
     }
 }

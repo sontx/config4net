@@ -1,12 +1,11 @@
 ﻿using Config4Net.UI.Editors;
-using System.Reflection;
 
 namespace Config4Net.UI.WinForms.Editors
 {
     public partial class NumberEditor : DefaultEditor, INumberEditor
     {
         private readonly EditorHelper<decimal> _editorHelper;
-        
+
         private bool _readOnly;
         private decimal _value;
 
@@ -41,17 +40,19 @@ namespace Config4Net.UI.WinForms.Editors
             }
         }
 
-        public void SetReferenceInfo(object source, PropertyInfo propertyInfo)
+        public void SetReferenceInfo(ReferenceInfo referenceInfo)
         {
-            var numberAttribute = propertyInfo.GetCustomAttribute<NumberAttribute>();
-            if (numberAttribute != null)
-            {
-                numContent.Maximum = (decimal) numberAttribute.Max;
-                numContent.Minimum = (decimal) numberAttribute.Min;
-                numContent.DecimalPlaces = numberAttribute.DecimalPlaces;
-            }
+            _editorHelper.SetReferenceInfo(referenceInfo);
+        }
 
-            _editorHelper.SetReferenceInfo(source, propertyInfo);
+        public override void SetSettings(Settings settings)
+        {
+            base.SetSettings(settings);
+            var numberAttribute = settings.Get<NumberAttribute>();
+            if (numberAttribute == null) return;
+            numContent.Maximum = (decimal)numberAttribute.Max;
+            numContent.Minimum = (decimal)numberAttribute.Min;
+            numContent.DecimalPlaces = numberAttribute.DecimalPlaces;
         }
 
         public void Bind()
