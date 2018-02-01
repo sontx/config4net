@@ -32,25 +32,7 @@ namespace Config4Net.Tests
                 Directory.Delete(dir, true);
             }
         }
-
-        [Test]
-        public void get_app_config_that_already_exists_should_return_config_object()
-        {
-            var configPool = ConfigPool.Create();
-            configPool.RegisterConfigType<MyConfig>();
-            var config = configPool.App<MyConfig>();
-            Assert.IsInstanceOf<MyConfig>(config);
-        }
-
-        [Test]
-        public void get_calling_config_that_already_exists_should_return_config_object()
-        {
-            var configPool = ConfigPool.Create();
-            configPool.RegisterConfigType<MyConfig>();
-            var config = configPool.Calling<MyConfig>();
-            Assert.IsInstanceOf<MyConfig>(config);
-        }
-
+        
         [Test]
         public void get_config_by_key_that_already_exists_should_return_config_object()
         {
@@ -68,27 +50,7 @@ namespace Config4Net.Tests
             var config = configPool.Get<MySubConfig1>();
             Assert.IsInstanceOf<MySubConfig1>(config);
         }
-
-        [Test]
-        public void get_config_that_does_not_exist_should_return_null_if_AutoRegisterConfigType_is_false()
-        {
-            var configPool = ConfigPool.Create();
-            configPool.Settings.AutoRegisterConfigType = false;
-            configPool.UnregisterConfigType<MyConfig>();
-            var config = configPool.App<MyConfig>();
-            Assert.IsNull(config);
-        }
-
-        [Test]
-        public void get_config_that_does_not_exist_should_return_config_object_if_AutoRegisterConfigType_is_true()
-        {
-            var configPool = ConfigPool.Create();
-            configPool.Settings.AutoRegisterConfigType = true;
-            configPool.UnregisterConfigType<MyConfig>();
-            var config = configPool.App<MyConfig>();
-            Assert.IsInstanceOf<MyConfig>(config);
-        }
-
+        
         [Test]
         public void register_config_type_should_return_config_object_if_success()
         {
@@ -117,18 +79,7 @@ namespace Config4Net.Tests
             var config = configPool.Get<MyConfig>();
             Assert.IsInstanceOf<MyConfig>(config);
         }
-
-        [Test]
-        public void register_config_type_with_IsAppConfig_attribute_should_ignore_Key_attribute()
-        {
-            var configPool = ConfigPool.Create();
-            configPool.Settings.AutoRegisterConfigType = false;
-            configPool.UnregisterConfigType<MyConfig>();
-            configPool.RegisterConfigType<MyConfig>();
-            var config = configPool.Get<MyConfig>("myConfig");
-            Assert.IsNull(config);
-        }
-
+        
         [Test]
         public void register_config_type_should_take_Key_attribute_as_config_key()
         {
@@ -173,7 +124,7 @@ namespace Config4Net.Tests
 
             var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{configPool.Settings.ConfigFileExtension}");
             var appConfigFilePath = Path.Combine(configDir,
-                $@"{configPool.Settings.AppConfigKey}.{configPool.Settings.ConfigFileExtension}");
+                $@"myConfig.{configPool.Settings.ConfigFileExtension}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
             FileUtils.EnsureDelete(appConfigFilePath);
@@ -200,7 +151,7 @@ namespace Config4Net.Tests
             var currentDir = Environment.CurrentDirectory;
             var subConfig1FilePath = Path.Combine(currentDir, $@"subConfig1.{configPool.Settings.ConfigFileExtension}");
             var appConfigFilePath = Path.Combine(currentDir,
-                $@"{configPool.Settings.AppConfigKey}.{configPool.Settings.ConfigFileExtension}");
+                $@"myConfig.{configPool.Settings.ConfigFileExtension}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
             FileUtils.EnsureDelete(appConfigFilePath);
@@ -249,7 +200,7 @@ namespace Config4Net.Tests
 
             var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{configPool.Settings.ConfigFileExtension}");
             var appConfigFilePath = Path.Combine(configDir,
-                $@"{configPool.Settings.AppConfigKey}.{configPool.Settings.ConfigFileExtension}");
+                $@"myConfig.{configPool.Settings.ConfigFileExtension}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
             FileUtils.EnsureDelete(appConfigFilePath);
@@ -281,7 +232,7 @@ namespace Config4Net.Tests
 
             var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{configPool.Settings.ConfigFileExtension}");
             var appConfigFilePath = Path.Combine(configDir,
-                $@"{configPool.Settings.AppConfigKey}.{configPool.Settings.ConfigFileExtension}");
+                $@"myConfig.{configPool.Settings.ConfigFileExtension}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
             FileUtils.EnsureDelete(appConfigFilePath);
@@ -325,7 +276,7 @@ namespace Config4Net.Tests
 
             var subConfig1FilePath = Path.Combine(configDir, $@"subConfig1.{configPool.Settings.ConfigFileExtension}");
             var appConfigFilePath = Path.Combine(configDir,
-                $@"{configPool.Settings.AppConfigKey}.{configPool.Settings.ConfigFileExtension}");
+                $@"myConfig.{configPool.Settings.ConfigFileExtension}");
 
             FileUtils.EnsureDelete(subConfig1FilePath);
             FileUtils.EnsureDelete(appConfigFilePath);
@@ -423,7 +374,7 @@ namespace Config4Net.Tests
         public string Value { get; set; }
     }
 
-    [Config(IsAppConfig = true, Key = "myConfig")]
+    [Config(Key = "myConfig")]
     public class MyConfig
     {
         public MySubConfig1 MySubConfig1 { get; set; }

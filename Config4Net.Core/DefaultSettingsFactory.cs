@@ -19,7 +19,6 @@ namespace Config4Net.Core
                 PreventNullReference = false,
                 IgnoreLoadFailure = true,
                 ConfigDir = Environment.CurrentDirectory,
-                AppConfigKey = "app",
                 ConfigFileExtension = "json",
                 WriteFileTimeout = 5000,
                 ApplicationClosingEvent = new DefaultApplicationClosingEvent(),

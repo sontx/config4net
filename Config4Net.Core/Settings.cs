@@ -57,13 +57,7 @@ namespace Config4Net.Core
         /// will be placed in <see cref="ConfigDir"/>
         /// </summary>
         public string ConfigFileExtension { get; set; }
-
-        /// <summary>
-        /// The special key for each application. That key belongs to application config which
-        /// contains configuration data for whole application.
-        /// </summary>
-        public string AppConfigKey { get; set; }
-
+        
         /// <summary>
         /// The write file timeout in milliseconds.
         /// </summary>

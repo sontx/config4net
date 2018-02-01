@@ -14,10 +14,5 @@ namespace Config4Net.Core
         /// the library will set a key automatically.
         /// </summary>
         public string Key { get; set; }
-
-        /// <summary>
-        /// Determine the class is a app config or not.
-        /// </summary>
-        public bool IsAppConfig { get; set; }
     }
 }

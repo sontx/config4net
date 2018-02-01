@@ -79,7 +79,7 @@ namespace Config4Net.Core
             Settings = settings;
 
             _configMap = new Dictionary<string, ConfigWrapper>();
-            _configObjectFactoryList = new List<IConfigObjectFactory> {new DefaultConfigObjectFactory()};
+            _configObjectFactoryList = new List<IConfigObjectFactory> { new DefaultConfigObjectFactory() };
             _loaded = false;
 
             HandleJsonError();
@@ -127,19 +127,6 @@ namespace Config4Net.Core
         }
 
         /// <summary>
-        /// Get app config. Each instance of this library just hold only one app config, it means
-        /// each application just has an app config data.
-        /// </summary>
-        /// <typeparam name="T">
-        /// App config type.
-        /// </typeparam>
-        /// <returns></returns>
-        public T App<T>() where T : class
-        {
-            return Get<T>(Settings.AppConfigKey);
-        }
-
-        /// <summary>
         /// Get config by specify type.
         /// </summary>
         /// <typeparam name="T">
@@ -163,30 +150,6 @@ namespace Config4Net.Core
         public T Get<T>(string key) where T : class
         {
             return GetConfig<T>(key);
-        }
-
-        /// <summary>
-        /// Get config for the calling assembly. The calling assembly can be a library
-        /// or an executing.
-        /// </summary>
-        /// <typeparam name="T">
-        /// Config type that could be annotated by a <see cref="ConfigAttribute"/>.
-        /// </typeparam>
-        public T Calling<T>() where T : class
-        {
-            return QualifiedByAssembly<T>(Assembly.GetCallingAssembly());
-        }
-
-        /// <summary>
-        /// Get config for the entry assembly. The entry assembly is the executable file
-        /// that is running the main method insides.
-        /// </summary>
-        /// <typeparam name="T">
-        /// Config type that could be annotated by a <see cref="ConfigAttribute"/>.
-        /// </typeparam>
-        public T Entry<T>() where T : class
-        {
-            return QualifiedByAssembly<T>(Assembly.GetEntryAssembly());
         }
 
         /// <summary>
@@ -234,9 +197,6 @@ namespace Config4Net.Core
         /// The library will detect register information automatically by assembly name or the <see cref="ConfigAttribute"/>
         /// that is annotated to register type. If the key in <see cref="ConfigAttribute.Key"/>
         /// is null or empty then the library will use the assembly name that contains this register type instead.
-        /// There is an option is <see cref="ConfigAttribute.IsAppConfig"/>, if it's true then the library will
-        /// ignore the <see cref="ConfigAttribute.Key"/> and use the default app key for this config type
-        /// that defined by <see cref="Core.Settings.AppConfigKey"/>.
         /// </para>
         /// </summary>
         /// <param name="instance">
@@ -271,7 +231,7 @@ namespace Config4Net.Core
                     for (var i = _configObjectFactoryList.Count - 1; i >= 0; i--)
                     {
                         var configObjectFactory = _configObjectFactoryList[i];
-                        configObject = (T) configObjectFactory.CreateDefault(type);
+                        configObject = (T)configObjectFactory.CreateDefault(type);
                         if (configObject != null) break;
                     }
                 }
@@ -310,14 +270,6 @@ namespace Config4Net.Core
             }
         }
 
-        private T QualifiedByAssembly<T>(Assembly assembly) where T : class
-        {
-            var fileLocation = assembly.Location;
-            var key = GetKeyFromFile(fileLocation);
-
-            return GetConfig<T>(key);
-        }
-
         private T GetConfig<T>(string key) where T : class
         {
             EnsureConfigLoaded();
@@ -325,7 +277,7 @@ namespace Config4Net.Core
             lock (_configMap)
             {
                 if (_configMap.TryGetValue(key, out var configWrapper))
-                    return (T) configWrapper.ConfigObject;
+                    return (T)configWrapper.ConfigObject;
             }
 
             return Settings.AutoRegisterConfigType ? RegisterConfigType<T>() : null;
@@ -385,7 +337,7 @@ namespace Config4Net.Core
             if (string.IsNullOrWhiteSpace(json)) return null;
 
             var jsonObject = JObject.Parse(json);
-            var typeIdentify = (string) jsonObject.GetValue(nameof(ConfigWrapper.TypeIdentify));
+            var typeIdentify = (string)jsonObject.GetValue(nameof(ConfigWrapper.TypeIdentify));
             var type = Type.GetType(typeIdentify, true);
             var serializer = _jsonSerializerSettings != null
                 ? JsonSerializer.CreateDefault(_jsonSerializerSettings)
@@ -441,26 +393,9 @@ namespace Config4Net.Core
         private string GetConfigKey(Type type)
         {
             var configAttribute = type.GetCustomAttribute<ConfigAttribute>();
-
-            if (configAttribute != null)
-            {
-                if (configAttribute.IsAppConfig)
-                    return Settings.AppConfigKey;
-
-                if (!string.IsNullOrEmpty(configAttribute.Key))
-                {
-                    if (configAttribute.Key == Settings.AppConfigKey)
-                        throw new ArgumentException("A module config key must be difference to app key." +
-                                                    "If you intent to use it as the app config, you can set IsAppConfig property to true.");
-                    return configAttribute.Key;
-                }
-            }
-
-            var moduleKey = Path.GetFileNameWithoutExtension(type.Assembly.Location);
-            if (moduleKey == Settings.AppConfigKey)
-                throw new ArgumentException("A module config key must be difference to app key." +
-                                            "You should change your app config key in the Settings.");
-            return moduleKey;
+            return !string.IsNullOrEmpty(configAttribute?.Key)
+                ? configAttribute.Key 
+                : Path.GetFileNameWithoutExtension(type.Assembly.Location);
         }
 
         private void SaveToDir(string configDir)
