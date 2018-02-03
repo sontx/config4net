@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Config4Net.Core.Manager;
+using System;
 
 namespace Config4Net.Core
 {
     /// <summary>
-    /// Settings for <see cref="ConfigPool"/>.
+    /// Settings for <see cref="Config"/>.
     /// </summary>
-    public class Settings
+    public class Settings : ConfigDataManagerSettings
     {
         private readonly ApplicationClosingEventWrapper _applicationClosingEventWrapper = new ApplicationClosingEventWrapper();
 
@@ -20,53 +21,32 @@ namespace Config4Net.Core
         }
 
         /// <summary>
-        /// The store service that manages how the files are saved/loaded.
-        /// </summary>
-        public IStoreService StoreService { get; set; }
-
-        /// <summary>
         /// Auto register type whenever there have a request configuration data from an unkown type.
         /// </summary>
         public bool AutoRegisterConfigType { get; set; }
 
         /// <summary>
-        /// Auto save configuration data to files when application is closing.
-        /// Configuration will be saved into <see cref="ConfigDir"/> automatically.
+        /// Configuration data to files when application is closing automatically.
         /// </summary>
-        public bool AutoSaveWhenApplicationClosing { get; set; }
+        public bool SaveWhenApplicationClosing { get; set; }
 
         /// <summary>
-        /// Ignore mismatch type, the property that is mismatch type will be assigned
-        /// default value.
+        /// If it's true, the library will use app name as a config key as default.
+        /// Otherwise, the library will use config's class name as default.
         /// </summary>
-        public bool IgnoreMismatchType { get; set; }
+        /// <seealso cref="AppName"/>
+        public bool PreferAppNameAsKey { get; set; }
 
-        /// <summary>
-        /// The library will create new instance for null properties to prevent null reference.
-        /// </summary>
-        public bool PreventNullReference { get; set; }
-
-        /// <summary>
-        /// The directory that will be held configuration files. If it's null or empty,
-        /// library will use current directory instead.
-        /// </summary>
-        public string ConfigDir { get; set; }
-
-        /// <summary>
-        /// The extenstion of configuration file that store configuration data. These files
-        /// will be placed in <see cref="ConfigDir"/>
-        /// </summary>
-        public string ConfigFileExtension { get; set; }
-        
         /// <summary>
         /// The write file timeout in milliseconds.
         /// </summary>
         public int WriteFileTimeout { get; set; }
 
         /// <summary>
-        /// Ignore load file that is failed.
+        /// Gets or sets app name that could be used as default key when the request configuration key
+        /// is missing.
         /// </summary>
-        public bool IgnoreLoadFailure { get; set; }
+        public string AppName { get; set; }
 
         internal void SetOnApplicationClosing(Action onApplicationClosing)
         {
@@ -77,38 +57,38 @@ namespace Config4Net.Core
         {
             _applicationClosingEventWrapper.ApplicationClosingEvent?.Unregister();
         }
-    }
 
-    internal sealed class ApplicationClosingEventWrapper
-    {
-        private IApplicationClosingEvent _applicationClosingEvent;
-        public Action OnApplicationClosing { get; set; }
-
-        public IApplicationClosingEvent ApplicationClosingEvent
+        private class ApplicationClosingEventWrapper
         {
-            get => _applicationClosingEvent;
-            set
+            private IApplicationClosingEvent _applicationClosingEvent;
+            public Action OnApplicationClosing { get; set; }
+
+            public IApplicationClosingEvent ApplicationClosingEvent
             {
-                _applicationClosingEvent = value;
-                if (_applicationClosingEvent != null)
+                get => _applicationClosingEvent;
+                set
                 {
-                    _applicationClosingEvent.AppClosing -= ApplicationClosingEventOnAppClosing;
-                    _applicationClosingEvent.Unregister();
-                }
+                    _applicationClosingEvent = value;
+                    if (_applicationClosingEvent != null)
+                    {
+                        _applicationClosingEvent.AppClosing -= ApplicationClosingEventOnAppClosing;
+                        _applicationClosingEvent.Unregister();
+                    }
 
-                _applicationClosingEvent = value;
+                    _applicationClosingEvent = value;
 
-                if (_applicationClosingEvent != null)
-                {
-                    _applicationClosingEvent.AppClosing += ApplicationClosingEventOnAppClosing;
-                    _applicationClosingEvent.Register();
+                    if (_applicationClosingEvent != null)
+                    {
+                        _applicationClosingEvent.AppClosing += ApplicationClosingEventOnAppClosing;
+                        _applicationClosingEvent.Register();
+                    }
                 }
             }
-        }
 
-        private void ApplicationClosingEventOnAppClosing(object sender, EventArgs eventArgs)
-        {
-            OnApplicationClosing?.Invoke();
+            private void ApplicationClosingEventOnAppClosing(object sender, EventArgs eventArgs)
+            {
+                OnApplicationClosing?.Invoke();
+            }
         }
     }
 }

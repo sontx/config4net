@@ -1,10 +1,11 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 
-namespace Config4Net.Core
+namespace Config4Net.Core.StoreService
 {
-    /// <inheritdoc />
-    /// 
+    /// <summary>
+    /// Save and load config data from file system.
+    /// </summary>
     public abstract class FileStoreService : IStoreService
     {
         /// <inheritdoc />

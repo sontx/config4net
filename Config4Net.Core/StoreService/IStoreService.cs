@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Config4Net.Core
+namespace Config4Net.Core.StoreService
 {
     /// <summary>
     /// Manages the way to save/load config data.
@@ -8,7 +8,7 @@ namespace Config4Net.Core
     public interface IStoreService
     {
         /// <summary>
-        /// Get all available entries from config directory. Each entry can be a file from disk
+        /// Gets all available entries from config directory. Each entry can be a file from disk
         /// or a value name from win32 registry. 
         /// </summary>
         /// <param name="configDir">Config directory path that will be scanned to get all available entries.</param>
@@ -17,7 +17,7 @@ namespace Config4Net.Core
         Task<string[]> GetEntriesAsync(string configDir, string fileExtension);
 
         /// <summary>
-        /// Save config data to file.
+        /// Saves config data to file.
         /// </summary>
         /// <param name="filePath">File path that will be saved, if the file is already existing then it will be overwrited</param>
         /// <param name="content">The config content that will be saved.</param>
@@ -25,7 +25,7 @@ namespace Config4Net.Core
         Task SaveAsync(string filePath, string content);
 
         /// <summary>
-        /// Load config data from file.
+        /// Loads config data from file.
         /// </summary>
         /// <param name="filePath">File path that will be loaded.</param>
         /// <returns>Config content.</returns>

@@ -38,9 +38,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssertEx.cs" />
-    <Compile Include="ConfigPoolTest.cs" />
-    <Compile Include="FileUtils.cs" />
+    <Compile Include="ConfigTest.cs" />
+    <Compile Include="Mock\MockApplicationClosingEvent.cs" />
+    <Compile Include="Mock\MockConfigDataFactory.cs" />
+    <Compile Include="Mock\MockConfigFileAdapter.cs" />
+    <Compile Include="Mock\MockConfigFileFactory.cs" />
+    <Compile Include="Mock\MockConfigFileNameFactory.cs" />
+    <Compile Include="Mock\MockStoreService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

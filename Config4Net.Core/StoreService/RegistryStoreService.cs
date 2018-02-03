@@ -1,16 +1,16 @@
 ﻿using System;
-using Microsoft.Win32;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.Win32;
 
-namespace Config4Net.Core
+namespace Config4Net.Core.StoreService
 {
     /// <summary>
     /// Save and load config data from win32 registry.
     /// </summary>
-    public sealed class Win32RegistryStoreService : IStoreService
+    public sealed class RegistryStoreService : IStoreService
     {
         private const string RootKeyName = "Software";
 
@@ -19,7 +19,11 @@ namespace Config4Net.Core
         /// </summary>
         public bool IsUseAppName { get; set; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Get saved entries from registry.
+        /// </summary>
+        /// <param name="configDir">Uses to resolve registry key that saved entries.</param>
+        /// <param name="fileExtension">Ignored.</param>
         public Task<string[]> GetEntriesAsync(string configDir, string fileExtension)
         {
             return Task.Run(() =>

@@ -2,7 +2,7 @@
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Config4Net.Core
+namespace Config4Net.Core.StoreService
 {
     /// <summary>
     /// Save and load config data from plain text files.

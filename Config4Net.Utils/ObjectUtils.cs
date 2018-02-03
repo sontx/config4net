@@ -49,6 +49,26 @@ namespace Config4Net.Utils
                 : null;
         }
 
+        public static void IterateProperties(object source, Func<PropertyInfo, object, object> callback)
+        {
+            Precondition.ArgumentNotNull(source, nameof(source));
+            Precondition.ArgumentNotNull(callback, nameof(callback));
+
+            var sourceType = source.GetType();
+
+            var propertyInfos = sourceType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            foreach (var propertyInfo in propertyInfos)
+            {
+                var setMethodInfo = propertyInfo.GetSetMethod();
+                if (setMethodInfo == null || !setMethodInfo.IsPublic || !propertyInfo.CanWrite) continue;
+                var propertyValue = propertyInfo.GetValue(source);
+                propertyValue = callback(propertyInfo, propertyValue);
+                propertyInfo.SetValue(source, propertyValue);
+                if (propertyValue != null)
+                    IterateProperties(propertyValue, callback);
+            }
+        }
+
         public static void FillNullProperties(object source, Func<PropertyInfo, object> propertyValueFactory)
         {
             Precondition.ArgumentNotNull(source, nameof(source));

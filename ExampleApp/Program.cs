@@ -22,7 +22,7 @@ namespace ExampleApp
             // Load winform implementation
             new WinFormFlatformLoader().Load();
             // Load config from file or memory
-            var girlfriend = ConfigPool.Default.Get<GirlfriendSettings>();
+            var girlfriend = Config.Default.Get<GirlfriendSettings>();
             // Build UI from config instance
             var window = UiManager.Default.Build<IWindowContainer>(girlfriend);
 

@@ -1,9 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Config4Net.Utils.Wrapper
 {
-    internal sealed class EnumerableWrapper<T> : IEnumerable<T>
+    internal sealed class EnumerableWrapper<T> : IEnumerable<T>, IDisposable
     {
         private readonly IEnumerator<T> _enumerator;
 
@@ -25,6 +26,11 @@ namespace Config4Net.Utils.Wrapper
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        public void Dispose()
+        {
+            _enumerator?.Dispose();
         }
     }
 }
