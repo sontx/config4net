@@ -1,16 +1,15 @@
 # Config4Net
 ``` cs
-var awesomeAppSettings = ConfigPool.Default.Get<AwesomeAppSettings>();
-UiManager.Default.Build<IWindowContainer>(awesomeAppSettings).Show();
+var awesomeAppConfig = Config.Default.Get<AwesomeAppConfig>();
+UiManager.Default.Build<IWindowContainer>(awesomeAppConfig).Show();
 ```
-**Config4Net** manages user settings (save, load, automatically build UI and synchronize from UI to underlying data).
+**Config4Net** manages user configs (save, load, build UI automatically and synchronize from UI to underlying data).
 
 ![](https://2.bp.blogspot.com/-qFPl7LZA9wk/Wj4dzwdnslI/AAAAAAAATNc/rm9oBO1VWMchEGar_EmANktq2is82FHhACLcBGAs/s1600/Untitled+Diagram.png)
 
 ## Getting Started
-### Define settings classes.
+### Define a config class.
 ```cs
-[Config]
 class Person
 {
     [Showable]
@@ -24,17 +23,16 @@ class Person
 }
 ```
 
-> - [Config attribute](https://github.com/sontx/config4net/blob/master/Config4Net.Core/ConfigAttribute.cs): Annotate a class is a config type.
-> - [Showable attribute](https://github.com/sontx/config4net/blob/master/Config4Net.UI/ShowableAttribute.cs):  Annotate a property is a showable component that will be shown in the UI.
+> - [Showable attribute](https://github.com/sontx/config4net/blob/master/Config4Net.UI/ShowableAttribute.cs):  Annotates a property is a showable component that will be visible in the UI.
 
 ### Load config
 Load configuration from file if it already exists or creates new one.
 ```cs
-var person = ConfigPool.Default.Get<Person>();
+var person = Config.Default.Get<Person>();
 ```
 
-> [ConfigPool](https://github.com/sontx/config4net/blob/master/Config4Net.Core/ConfigPool.cs) automatically save the configs data to files when app's exiting and load these data again when the app starts.
-> If the config type that is demanding but it does not exist, an instance of this config type will be created and registered to the [ConfigPool](https://github.com/sontx/config4net/blob/master/Config4Net.Core/ConfigPool.cs) .
+> [Config](https://github.com/sontx/config4net/blob/master/Config4Net.Core/Config.cs) saves the configurations data to files when app's closing automatically and loads these data again when the app starts.
+> If the configuration type that is demanding but it does not exist, an instance of this configuration type will be created and registered to the [Config](https://github.com/sontx/config4net/blob/master/Config4Net.Core/Config.cs) .
 
 ### Show config to UI
 Load built-in components that were implemented for native-winform.
@@ -49,8 +47,8 @@ Show config to UI and enjoy ;)
 UiManager.Default.Build<IWindowContainer>(person).Show();
 ```
 
-> The UI builds based on config type (class structure), each property in the config will be bound to a component and type of component depends on type of the property.
-> The data from the config will be synchronized from/to the UI.
+> The UI builds based on configuration type (class structure), each property in the config will be bound to a component and type of component depends on property type.
+> The data from the configuration will be synchronized from/to the UI.
 
 -------------
 Full example: [Program.cs](https://github.com/sontx/config4net/blob/master/ExampleApp/Program.cs)
