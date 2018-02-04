@@ -54,5 +54,5 @@ Config.Default.SaveAsync();
 ## Install
 #### NuGet
 ``` bash
-Install-Package Config4Net.Core -Version 1.0.0
+Install-Package Config4Net.Core -Version 1.0.1
 ```

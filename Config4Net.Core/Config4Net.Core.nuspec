@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Config4Net.Core</id>
-    <version>$version$</version>
+    <version>1.0.1</version>
     <title>$title$</title>
     <authors>sontx</authors>
     <owners>sontx</owners>
@@ -13,8 +13,14 @@
     <releaseNotes></releaseNotes>
     <copyright>Copyright 2017</copyright>
     <tags>config json settings</tags>
+	<dependencies>
+      <group targetFramework="net45">
+        <dependency id="Newtonsoft.Json" version="10.0.3" />
+      </group>
+    </dependencies>
   </metadata>
   <files>
-    <file src="README.md" target="" />
+    <file src="readme.txt" target="" />
+	<file src="bin\Release\Config4Net.Utils.dll" target="lib\net45\Config4Net.Utils.dll" />
   </files>
 </package>

@@ -56,7 +56,7 @@ Full example: [Program.cs](https://github.com/sontx/config4net/blob/master/Examp
 #### NuGet
 [Config4Net.Core](https://github.com/sontx/config4net/tree/master/Config4Net.Core) a lightweight version without UI components.
 ``` bash
-Install-Package Config4Net.Core -Version 1.0.0
+Install-Package Config4Net.Core -Version 1.0.1
 ```
 ## Authors
 
