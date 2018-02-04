@@ -56,3 +56,5 @@ Config.Default.SaveAsync();
 ``` bash
 Install-Package Config4Net.Core -Version 1.0.1
 ```
+#### Standalone
+The lastest version: [v1.0.0](https://github.com/sontx/config4net/releases/tag/v1.0.0)

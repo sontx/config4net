@@ -68,6 +68,10 @@ See [Nuget package](https://www.nuget.org/packages/Config4Net.UI.WinForm/)
 ``` bash
 Install-Package Config4Net.UI.WinForm -Version 1.0.0
 ```
+
+#### Standalone
+The lastest version: [v1.0.0](https://github.com/sontx/config4net/releases/tag/v1.0.0)
+
 ## Authors
 
 * **Tran Xuan Son** - *main developer* - [sontx](https://github.com/sontx)
