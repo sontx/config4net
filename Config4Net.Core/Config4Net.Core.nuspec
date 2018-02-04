@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>Code4Bugs.Config4Net.Core</id>
+    <id>Config4Net.Core</id>
     <version>$version$</version>
     <title>$title$</title>
     <authors>sontx</authors>
@@ -9,9 +9,12 @@
     <licenseUrl>https://github.com/sontx/config4net/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/sontx/config4net</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Config4Net manages user settings that will be saved when app's exiting and load these data again when the app starts.</description>
+    <description>Manages multiple configurations, an alternative to built-in settings of .Net Framework, it's also simple, portable and customizable. A lightweight version of Config4Net without UI components, it can be used in almost.Net projects.</description>
     <releaseNotes></releaseNotes>
     <copyright>Copyright 2017</copyright>
     <tags>config json settings</tags>
   </metadata>
+  <files>
+    <file src="README.md" target="" />
+  </files>
 </package>

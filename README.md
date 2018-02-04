@@ -3,7 +3,7 @@
 var awesomeAppConfig = Config.Default.Get<AwesomeAppConfig>();
 UiManager.Default.Build<IWindowContainer>(awesomeAppConfig).Show();
 ```
-**Config4Net** manages user configs (save, load, build UI automatically and synchronize from UI to underlying data).
+**Config4Net** manages multiple configurations (saves, loads, builds UI automatically and synchronizes from UI to underlying data).
 
 ![](https://2.bp.blogspot.com/-qFPl7LZA9wk/Wj4dzwdnslI/AAAAAAAATNc/rm9oBO1VWMchEGar_EmANktq2is82FHhACLcBGAs/s1600/Untitled+Diagram.png)
 
@@ -23,10 +23,10 @@ class Person
 }
 ```
 
-> - [Showable attribute](https://github.com/sontx/config4net/blob/master/Config4Net.UI/ShowableAttribute.cs):  Annotates a property is a showable component that will be visible in the UI.
+> [Showable attribute](https://github.com/sontx/config4net/blob/master/Config4Net.UI/ShowableAttribute.cs):  Annotates a property is a visible component that will be shown in the UI. A property without Showable attribute will be invisible in the UI.
 
 ### Load config
-Load configuration from file if it already exists or creates new one.
+Loads configuration from file if it already exists or creates new one.
 ```cs
 var person = Config.Default.Get<Person>();
 ```
@@ -35,7 +35,7 @@ var person = Config.Default.Get<Person>();
 > If the configuration type that is demanding but it does not exist, an instance of this configuration type will be created and registered to the [Config](https://github.com/sontx/config4net/blob/master/Config4Net.Core/Config.cs) .
 
 ### Show config to UI
-Load built-in components that were implemented for native-winform.
+Loads built-in components that were implemented for native-winform.
 ``` cs
 new WinFormFlatformLoader().Load();
 ```
@@ -53,7 +53,11 @@ UiManager.Default.Build<IWindowContainer>(person).Show();
 -------------
 Full example: [Program.cs](https://github.com/sontx/config4net/blob/master/ExampleApp/Program.cs)
 ## Install
-Comming soon...
+#### NuGet
+[Config4Net.Core](https://github.com/sontx/config4net/tree/master/Config4Net.Core) a lightweight version without UI components.
+``` bash
+Install-Package Config4Net.Core -Version 1.0.0
+```
 ## Authors
 
 * **Tran Xuan Son** - *main developer* - [sontx](https://github.com/sontx)
