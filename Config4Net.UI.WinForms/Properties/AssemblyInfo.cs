@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Config4Net.UI.WinForms")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("WinForm UI Components")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Code4Bugs.com")]
 [assembly: AssemblyProduct("Config4Net.UI.WinForms")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]

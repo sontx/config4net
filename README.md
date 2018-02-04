@@ -53,10 +53,20 @@ UiManager.Default.Build<IWindowContainer>(person).Show();
 -------------
 Full example: [Program.cs](https://github.com/sontx/config4net/blob/master/ExampleApp/Program.cs)
 ## Install
+
 #### NuGet
 [Config4Net.Core](https://github.com/sontx/config4net/tree/master/Config4Net.Core) a lightweight version without UI components.
+See [Nuget package](https://www.nuget.org/packages/Config4Net.Core/)
+
 ``` bash
 Install-Package Config4Net.Core -Version 1.0.1
+```
+
+[Config4net.UI.WinForm](https://github.com/sontx/config4net/tree/master/Config4Net.UI.WinForms) a UI implementation for WinForm.
+See [Nuget package](https://www.nuget.org/packages/Config4Net.UI.WinForm/)
+
+``` bash
+Install-Package Config4Net.UI.WinForm -Version 1.0.0
 ```
 ## Authors
 
