@@ -334,7 +334,7 @@ namespace Config4Net.Core
                 AutoRegisterConfigType = true,
                 SaveWhenApplicationClosing = true,
                 IgnoreLoadingFailure = true,
-                PreferAppNameAsKey = true
+                PreferAppNameAsKey = false
             };
         }
 
