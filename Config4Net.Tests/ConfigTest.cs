@@ -161,6 +161,25 @@ namespace Config4Net.Tests
         }
 
         [Test]
+        public void Indexer_KeyDoesNotExist_ShouldThrowAnException()
+        {
+            var config = Utils.CreateConfig();
+            Assert.Throws<ConfigException>(() => { var configData = config["unknownKey"]; });
+            Utils.ReleaseConfig(config);
+        }
+
+        [Test]
+        public void Indexer_KeyExists_ShouldReturnDynamicConfigData()
+        {
+            var config = Utils.CreateConfig();
+            config.Settings.PreferAppNameAsKey = false;
+            config.Register(new TestConfig{Name = "sontx"});
+            Assert.DoesNotThrow(() => { var configData = config["TestConfig"]; });
+            Assert.AreEqual("sontx", config["TestConfig"].Name);
+            Utils.ReleaseConfig(config);
+        }
+
+        [Test]
         public void Register_KeyDoNotExist_RegisterShouldBeOk()
         {
             var config = Utils.CreateConfig();

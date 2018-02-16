@@ -62,7 +62,7 @@ namespace Config4Net.Core
         /// Configuration files must be placed in a specific directory that already set at
         /// <see cref="ConfigDataManagerSettings.ConfigDir"/>. All old configurations data will
         /// be cleared and fill up with new configurations data. All config objects that retrieved from
-        /// <see cref="Get{T}()"/> will not reference to <see cref="Config"/> instance anymore 
+        /// <see cref="Get{T}()"/> will not reference to <see cref="Config"/> instance anymore
         /// and any changes will be ignored. So you should call <see cref="Get{T}()"/> again
         /// to retrieve the config object that up to date and available to save.
         /// </remarks>
@@ -144,6 +144,29 @@ namespace Config4Net.Core
             }
         }
 
+        /// <summary>
+        /// Gets a confiuration by a specific config key.
+        /// </summary>
+        /// <exception cref="ConfigException">
+        /// Occurs when the config key does not exist.
+        /// </exception>
+        /// <remarks>
+        /// If the specific configuration does not exist, an exception will be thrown.
+        /// </remarks>
+        public dynamic this[string key]
+        {
+            get
+            {
+                EnsureLoaded();
+                lock (this)
+                {
+                    if (_configDataManager.Has(key))
+                        return _configDataManager.Get(key);
+                    throw new ConfigException($"Config key {key} does not exist");
+                }
+            }
+        }
+
         private void EnsureLoaded()
         {
             if (!_loaded)
@@ -164,7 +187,7 @@ namespace Config4Net.Core
                 }
                 return Settings.AppName;
             }
-                
+
             return type.Name;
         }
 
