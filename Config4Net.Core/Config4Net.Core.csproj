@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adapter\ConfigFile.cs" />
+    <Compile Include="Adapter\DefaultConfigFileFactory.cs" />
     <Compile Include="Adapter\IConfigFileFactory.cs" />
     <Compile Include="Adapter\IConfigFileNameFactory.cs" />
     <Compile Include="Adapter\JsonConfigFileAdapter.cs" />

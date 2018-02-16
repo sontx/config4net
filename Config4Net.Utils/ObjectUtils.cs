@@ -10,6 +10,11 @@ namespace Config4Net.Utils
 {
     public static class ObjectUtils
     {
+        private static readonly Dictionary<Type, object> DefaultTypeInstances= new Dictionary<Type, object>
+        {
+            { typeof(string), string.Empty }
+        };
+        
         public static void SetProperty(object source, string name, object value)
         {
             var propertyInfo = source.GetType().GetProperty(name);
@@ -44,11 +49,13 @@ namespace Config4Net.Utils
         public static object CreateDefaultInstance(Type fromType)
         {
             Precondition.ArgumentNotNull(fromType, nameof(fromType));
+            if (DefaultTypeInstances.ContainsKey(fromType))
+                return DefaultTypeInstances[fromType];
             return fromType.GetConstructors().Any(constructor => constructor.GetParameters().Length == 0) 
                 ? Activator.CreateInstance(fromType)
                 : null;
         }
-
+        
         public static void IterateProperties(object source, Func<PropertyInfo, object, object> callback)
         {
             Precondition.ArgumentNotNull(source, nameof(source));

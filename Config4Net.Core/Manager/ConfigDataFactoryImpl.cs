@@ -28,12 +28,7 @@ namespace Config4Net.Core.Manager
                 var defaultValueAttribute = propertyInfo.GetCustomAttribute<DefaultValueAttribute>();
                 if (defaultValueAttribute != null) return defaultValueAttribute.Value;
                 if (_preventNullReference && propertyValue == null)
-                {
-                    return propertyInfo.PropertyType == typeof(string)
-                        ? string.Empty
-                        : ObjectUtils.CreateDefaultInstance(propertyInfo.PropertyType);
-                }
-
+                    return ObjectUtils.CreateDefaultInstance(propertyInfo.PropertyType);
                 return propertyValue;
             });
             return configData;

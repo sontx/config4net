@@ -1,10 +1,10 @@
-﻿using System;
-using Config4Net.Utils;
+﻿using Config4Net.Utils;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Reflection;
-using Newtonsoft.Json;
 
 namespace Config4Net.Core.Manager
 {
@@ -81,7 +81,11 @@ namespace Config4Net.Core.Manager
             if (!Directory.Exists(Settings.ConfigDir))
                 return;
 
-            var entryFiles = Settings.StoreService.GetEntriesAsync(Settings.ConfigDir, Settings.ConfigFileExtension).Result;
+            var entryFiles = Settings
+                .StoreService
+                .GetEntriesAsync(Settings.ConfigDir, Settings.ConfigFileExtension)
+                .Result;
+
             lock (_configMap)
             {
                 _configMap.Clear();
@@ -89,29 +93,46 @@ namespace Config4Net.Core.Manager
                 {
                     try
                     {
-                        var configFileAsString = Settings.StoreService.LoadAsync(file).Result;
-                        var configFile = Settings.ConfigFileAdapter.ToConfigFile(configFileAsString);
-                        if (Settings.PreventNullReference)
-                            FillConfigData(configFile.ConfigData);
-                        _configMap.Add(configFile.Metadata.Key, configFile.ConfigData);
+                        LoadConfigDataFrom(file);
                     }
-                    catch (Exception ex) when (ex is IOException || ex is TypeLoadException || ex is JsonException)
+                    catch (Exception ex)
                     {
-                        if (!Settings.IgnoreLoadingFailure)
-                            throw new ConfigException("Can not load configuration file.", ex);
+                        OnLoadConfigDataFail(ex);
                     }
                 }
             }
         }
 
-        private void FillConfigData(object configData)
+        private void OnLoadConfigDataFail(Exception exception)
+        {
+            if (!IsHandlableException(exception)) throw exception;
+            if (!Settings.IgnoreLoadingFailure)
+                throw new ConfigException("Can not load configuration file.", exception);
+        }
+
+        private bool IsHandlableException(Exception exception)
+        {
+            return exception is IOException ||
+                   exception is TypeLoadException ||
+                   exception is JsonException;
+        }
+
+        private void LoadConfigDataFrom(string file)
+        {
+            var configFileAsString = Settings.StoreService.LoadAsync(file).Result;
+            var configFile = Settings.ConfigFileAdapter.ToConfigFile(configFileAsString);
+            if (Settings.PreventNullReference)
+                FillConfigValues(configFile.ConfigData);
+            _configMap.Add(configFile.Metadata.Key, configFile.ConfigData);
+        }
+
+        private void FillConfigValues(object configData)
         {
             ObjectUtils.FillNullProperties(configData, propertyInfo =>
             {
                 var defaultValueAttribute = propertyInfo.GetCustomAttribute<DefaultValueAttribute>();
-                if (defaultValueAttribute != null) return defaultValueAttribute.Value;
-                return propertyInfo.PropertyType == typeof(string)
-                    ? string.Empty
+                return defaultValueAttribute != null
+                    ? defaultValueAttribute.Value
                     : ObjectUtils.CreateDefaultInstance(propertyInfo.PropertyType);
             });
         }
