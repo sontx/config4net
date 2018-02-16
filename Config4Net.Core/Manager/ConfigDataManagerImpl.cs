@@ -121,20 +121,9 @@ namespace Config4Net.Core.Manager
         {
             var configFileAsString = Settings.StoreService.LoadAsync(file).Result;
             var configFile = Settings.ConfigFileAdapter.ToConfigFile(configFileAsString);
-            if (Settings.PreventNullReference)
-                FillConfigValues(configFile.ConfigData);
-            _configMap.Add(configFile.Metadata.Key, configFile.ConfigData);
-        }
-
-        private void FillConfigValues(object configData)
-        {
-            ObjectUtils.FillNullProperties(configData, propertyInfo =>
-            {
-                var defaultValueAttribute = propertyInfo.GetCustomAttribute<DefaultValueAttribute>();
-                return defaultValueAttribute != null
-                    ? defaultValueAttribute.Value
-                    : ObjectUtils.CreateDefaultInstance(propertyInfo.PropertyType);
-            });
+            _configMap.Add(
+                configFile.Metadata.Key, 
+                new ConfigDataCheckerImpl(Settings.PreventNullReference).Check(configFile.ConfigData));
         }
     }
 }

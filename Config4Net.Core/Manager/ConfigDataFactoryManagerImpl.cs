@@ -30,7 +30,7 @@ namespace Config4Net.Core.Manager
             {
                 return _factoryMap.ContainsKey(configType)
                     ? _factoryMap[configType]
-                    : new ConfigDataFactoryImpl(configType, preventNullReference);
+                    : new ConfigDataFactoryImpl(configType, new ConfigDataCheckerImpl(preventNullReference));
             }
         }
     }

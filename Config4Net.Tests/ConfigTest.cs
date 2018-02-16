@@ -2,7 +2,6 @@
 using Config4Net.Tests.Mock;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -227,7 +226,7 @@ namespace Config4Net.Tests
             Assert.AreEqual(configData2, config.Get<TestConfig>());
             Utils.ReleaseConfig(config);
         }
-        
+
         [Test]
         public void Register_DidNotLoad_ShouldLoadAutomatically()
         {
@@ -311,6 +310,15 @@ namespace Config4Net.Tests
             var config = Utils.CreateConfig();
             config.Register<AnotherTestConfig>();
             Assert.AreEqual(3393, config.Get<AnotherTestConfig>().Value);
+            Utils.ReleaseConfig(config);
+        }
+
+        [Test]
+        public void DefaultValueAttribute_PropertiesDoNotExistInFile_ShouldSetDefaultPropertyValueWhenLoad()
+        {
+            var config = Utils.CreateConfig();
+            Utils.WriteFile(config.Settings.ConfigDir, "TestConfig.json", ValidConfigSample);
+            Assert.AreEqual(175, config.Get<TestConfig>().Height);
             Utils.ReleaseConfig(config);
         }
 
@@ -529,6 +537,9 @@ namespace Config4Net.Tests
     internal class BaseConfig
     {
         public string City { get; set; }
+
+        [DefaultValue(175)]
+        public int Height { get; set; }
     }
 
     [Config("anotherConfig")]

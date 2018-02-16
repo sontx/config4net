@@ -12,26 +12,18 @@ namespace Config4Net.Core.Manager
     internal class ConfigDataFactoryImpl : IConfigDataFactory
     {
         private readonly Type _configType;
-        private readonly bool _preventNullReference;
+        private readonly IConfigDataChecker _configDataChecker;
 
-        public ConfigDataFactoryImpl(Type configType, bool preventNullReference)
+        public ConfigDataFactoryImpl(Type configType, IConfigDataChecker configDataChecker)
         {
             _configType = configType;
-            _preventNullReference = preventNullReference;
+            _configDataChecker = configDataChecker;
         }
 
         public object Create()
         {
             var configData = Activator.CreateInstance(_configType);
-            ObjectUtils.IterateProperties(configData, (propertyInfo, propertyValue) =>
-            {
-                var defaultValueAttribute = propertyInfo.GetCustomAttribute<DefaultValueAttribute>();
-                if (defaultValueAttribute != null) return defaultValueAttribute.Value;
-                if (_preventNullReference && propertyValue == null)
-                    return ObjectUtils.CreateDefaultInstance(propertyInfo.PropertyType);
-                return propertyValue;
-            });
-            return configData;
+            return _configDataChecker.Check(configData);
         }
     }
 }

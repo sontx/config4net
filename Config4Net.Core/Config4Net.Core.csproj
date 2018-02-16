@@ -58,6 +58,7 @@
     <Compile Include="Manager\ConfigDataFactoryImpl.cs" />
     <Compile Include="Manager\ConfigDataFactoryManagerImpl.cs" />
     <Compile Include="Manager\ConfigDataManagerImpl.cs" />
+    <Compile Include="Manager\IConfigDataChecker.cs" />
     <Compile Include="Manager\IConfigDataManager.cs" />
     <Compile Include="Manager\ConfigDataManagerSettings.cs" />
     <Compile Include="Manager\IConfigDataFactoryManager.cs" />
