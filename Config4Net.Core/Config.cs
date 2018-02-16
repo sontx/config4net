@@ -60,7 +60,11 @@ namespace Config4Net.Core
         /// </summary>
         /// <remarks>
         /// Configuration files must be placed in a specific directory that already set at
-        /// <see cref="ConfigDataManagerSettings.ConfigDir"/>.
+        /// <see cref="ConfigDataManagerSettings.ConfigDir"/>. All old configurations data will
+        /// be cleared and fill up with new configurations data. All config objects that retrieved from
+        /// <see cref="Get{T}()"/> will not reference to <see cref="Config"/> instance anymore 
+        /// and any changes will be ignored. So you should call <see cref="Get{T}()"/> again
+        /// to retrieve the config object that up to date and available to save.
         /// </remarks>
         public Task LoadAsync()
         {
