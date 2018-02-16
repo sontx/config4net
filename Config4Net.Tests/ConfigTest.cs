@@ -2,6 +2,7 @@
 using Config4Net.Tests.Mock;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -11,7 +12,7 @@ namespace Config4Net.Tests
     [TestFixture]
     public class ConfigTest
     {
-        private const string ValidConfigSample = "{\r\n  \"Metadata\": {\r\n    \"Key\": \"Config4Net.Tests\",\r\n    \"TypeId\": \"Config4Net.Tests.TestConfig, Config4Net.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null\",\r\n    \"Modified\": \"2018-02-03T16:36:56.2611672+07:00\"\r\n  },\r\n  \"ConfigData\": {\r\n    \"Name\": null,\r\n    \"Age\": 24\r\n  }\r\n}";
+        private const string ValidConfigSample = "{\r\n  \"Metadata\": {\r\n    \"Key\": \"TestConfig\",\r\n    \"TypeId\": \"Config4Net.Tests.TestConfig, Config4Net.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null\",\r\n    \"Modified\": \"2018-02-03T16:36:56.2611672+07:00\"\r\n  },\r\n  \"ConfigData\": {\r\n    \"Name\": null,\r\n    \"Age\": 24\r\n  }\r\n}";
         private const string CorruptedConfigSample = "Hello there!";
 
         [Test]
@@ -39,8 +40,7 @@ namespace Config4Net.Tests
         public void LoadAsync_HasConfigFilesInDisk_ShouldLoadOkWithConfigData()
         {
             var config = Utils.CreateConfig();
-            Directory.CreateDirectory(config.Settings.ConfigDir);
-            File.WriteAllText(Path.Combine(config.Settings.ConfigDir, "Config4Net.Tests.json"), ValidConfigSample);
+            Utils.WriteFile(config.Settings.ConfigDir, "TestConfig.json", ValidConfigSample);
             Assert.DoesNotThrowAsync(config.LoadAsync);
             Assert.AreEqual(24, config.Get<TestConfig>().Age);
             Utils.ReleaseConfig(config);
@@ -51,7 +51,7 @@ namespace Config4Net.Tests
         {
             var config = Utils.CreateConfig();
             config.Settings.IgnoreLoadingFailure = true;
-            File.WriteAllText(Path.Combine(config.Settings.ConfigDir, "Config4Net.Tests.json"), CorruptedConfigSample);
+            Utils.WriteFile(config.Settings.ConfigDir, "TestConfig.json", CorruptedConfigSample);
             Assert.DoesNotThrowAsync(config.LoadAsync);
             Assert.AreNotEqual(24, config.Get<TestConfig>().Age);
             Utils.ReleaseConfig(config);
@@ -64,6 +64,17 @@ namespace Config4Net.Tests
             config.Settings.IgnoreLoadingFailure = false;
             File.WriteAllText(Path.Combine(config.Settings.ConfigDir, "Config4Net.Tests.json"), CorruptedConfigSample);
             Assert.ThrowsAsync<ConfigException>(config.LoadAsync);
+            Utils.ReleaseConfig(config);
+        }
+
+        [Test]
+        public void LoadAsync__ShouldClearBeforeLoad()
+        {
+            var config = Utils.CreateConfig();
+            var config1 = config.Get<TestConfig>();
+            config.SaveAsync().Wait();
+            config.LoadAsync().Wait();
+            Assert.AreNotEqual(config1, config.Get<TestConfig>());
             Utils.ReleaseConfig(config);
         }
 
@@ -161,6 +172,15 @@ namespace Config4Net.Tests
         }
 
         [Test]
+        public void Get_DidNotLoad_ShouldLoadAutomatically()
+        {
+            var config = Utils.CreateConfig();
+            Utils.WriteFile(config.Settings.ConfigDir, "TestConfig.json", ValidConfigSample);
+            Assert.AreEqual(24, config.Get<TestConfig>().Age);
+            Utils.ReleaseConfig(config);
+        }
+
+        [Test]
         public void Indexer_KeyDoesNotExist_ShouldThrowAnException()
         {
             var config = Utils.CreateConfig();
@@ -173,9 +193,18 @@ namespace Config4Net.Tests
         {
             var config = Utils.CreateConfig();
             config.Settings.PreferAppNameAsKey = false;
-            config.Register(new TestConfig{Name = "sontx"});
+            config.Register(new TestConfig { Name = "sontx" });
             Assert.DoesNotThrow(() => { var configData = config["TestConfig"]; });
             Assert.AreEqual("sontx", config["TestConfig"].Name);
+            Utils.ReleaseConfig(config);
+        }
+
+        [Test]
+        public void Indexer_DidNotLoad_ShouldLoadAutomatically()
+        {
+            var config = Utils.CreateConfig();
+            Utils.WriteFile(config.Settings.ConfigDir, "TestConfig.json", ValidConfigSample);
+            Assert.AreEqual(24, config["TestConfig"].Age);
             Utils.ReleaseConfig(config);
         }
 
@@ -184,6 +213,28 @@ namespace Config4Net.Tests
         {
             var config = Utils.CreateConfig();
             Assert.DoesNotThrow(() => config.Register<TestConfig>());
+            Utils.ReleaseConfig(config);
+        }
+
+        [Test]
+        public void Register_KeyExists_RegisterShouldReplaceTheOldOne()
+        {
+            var config = Utils.CreateConfig();
+            var configData1 = new TestConfig();
+            var configData2 = new TestConfig();
+            config.Register(configData1);
+            config.Register(configData2);
+            Assert.AreEqual(configData2, config.Get<TestConfig>());
+            Utils.ReleaseConfig(config);
+        }
+        
+        [Test]
+        public void Register_DidNotLoad_ShouldLoadAutomatically()
+        {
+            var config = Utils.CreateConfig();
+            Utils.WriteFile(config.Settings.ConfigDir, "TestConfig.json", ValidConfigSample);
+            config.Register<TestConfig>();
+            Assert.IsTrue(Utils.GetFieldValueByPath<bool>(config, "_loaded"));
             Utils.ReleaseConfig(config);
         }
 
@@ -201,18 +252,6 @@ namespace Config4Net.Tests
             var config = Utils.CreateConfig();
             config.Register<TestConfig>();
             Assert.DoesNotThrow(() => config.Unregister<TestConfig>());
-            Utils.ReleaseConfig(config);
-        }
-
-        [Test]
-        public void Register_KeyExists_RegisterShouldReplaceTheOldOne()
-        {
-            var config = Utils.CreateConfig();
-            var configData1 = new TestConfig();
-            var configData2 = new TestConfig();
-            config.Register(configData1);
-            config.Register(configData2);
-            Assert.AreEqual(configData2, config.Get<TestConfig>());
             Utils.ReleaseConfig(config);
         }
 
@@ -318,9 +357,9 @@ namespace Config4Net.Tests
         {
             var config = Utils.CreateConfig();
             config.Settings.StoreService = new MockStoreService("sontx", ValidConfigSample);
-            Assert.AreEqual(24, config.Get<TestConfig>("Config4Net.Tests").Age);
+            Assert.AreEqual(24, config.Get<TestConfig>("TestConfig").Age);
             config.SaveAsync().Wait();
-            var configFilePath = Path.Combine(config.Settings.ConfigDir, "Config4Net.Tests.json");
+            var configFilePath = Path.Combine(config.Settings.ConfigDir, "TestConfig.json");
             Assert.AreEqual(0, File.ReadAllText(configFilePath).IndexOf("sontx", StringComparison.Ordinal));
             Utils.ReleaseConfig(config);
         }
@@ -404,8 +443,7 @@ namespace Config4Net.Tests
         public void PreventNullReference_IsTrue_ConfigDataShouldHaveNoNullProperty()
         {
             var config = Utils.CreateConfig();
-            Directory.CreateDirectory(config.Settings.ConfigDir);
-            File.WriteAllText(Path.Combine(config.Settings.ConfigDir, "Config4Net.Tests.json"), ValidConfigSample);
+            Utils.WriteFile(config.Settings.ConfigDir, "TestConfig.json", ValidConfigSample);
             config.Settings.PreventNullReference = true;
             Assert.NotNull(config.Get<TestConfig>().Name);
             Assert.NotNull(config.Get<TestConfig>("anotherConfigHere").Name);
@@ -416,8 +454,7 @@ namespace Config4Net.Tests
         public void PreventNullReference_IsFalse_ConfigDataShouldHaveNullPropertyIfItIs()
         {
             var config = Utils.CreateConfig();
-            Directory.CreateDirectory(config.Settings.ConfigDir);
-            File.WriteAllText(Path.Combine(config.Settings.ConfigDir, "Config4Net.Tests.json"), ValidConfigSample);
+            Utils.WriteFile(config.Settings.ConfigDir, "TestConfig.json", ValidConfigSample);
             config.Settings.PreventNullReference = false;
             Assert.IsNull(config.Get<TestConfig>().Name);
             Assert.IsNull(config.Get<TestConfig>("anotherConfigHere").Name);
@@ -469,12 +506,29 @@ namespace Config4Net.Tests
             Assert.AreEqual(config.Get<TestConfig>("TestConfig").Age, 25);
             Utils.ReleaseConfig(config);
         }
+
+        [Test]
+        public void Inherit__ShouldBeSavedAndLoaded()
+        {
+            var config = Utils.CreateConfig();
+            config.Settings.PreferAppNameAsKey = false;
+            config.Get<TestConfig>().City = "danang";
+            config.SaveAsync().Wait();
+            config.LoadAsync().Wait();
+            Assert.AreEqual("danang", config.Get<TestConfig>().City);
+            Utils.ReleaseConfig(config);
+        }
     }
 
-    internal class TestConfig
+    internal class TestConfig : BaseConfig
     {
         public string Name { get; set; }
         public int Age { get; set; }
+    }
+
+    internal class BaseConfig
+    {
+        public string City { get; set; }
     }
 
     [Config("anotherConfig")]

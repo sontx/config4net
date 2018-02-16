@@ -260,9 +260,8 @@ namespace Config4Net.Core
         public void Register(Type configType, object configData)
         {
             EnsureLoaded();
+            Unregister(configType);
             var configKey = GetConfigKeyByType(configType);
-            if (_configDataManager.Has(configKey))
-                _configDataManager.Remove(configKey);
             _configDataManager.Add(configKey, configData);
         }
 
