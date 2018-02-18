@@ -36,10 +36,13 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssertEx.cs" />
     <Compile Include="ConfigTest.cs" />
+    <Compile Include="ConfigUtilsTest.cs" />
     <Compile Include="Mock\MockApplicationClosingEvent.cs" />
     <Compile Include="Mock\MockConfigDataFactory.cs" />
     <Compile Include="Mock\MockConfigFileAdapter.cs" />

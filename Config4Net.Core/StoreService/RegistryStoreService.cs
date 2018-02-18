@@ -23,7 +23,7 @@ namespace Config4Net.Core.StoreService
         /// Get saved entries from registry.
         /// </summary>
         /// <param name="configDir">Uses to resolve registry key that saved entries.</param>
-        /// <param name="fileExtension">Ignored.</param>
+        /// <param name="fileExtension"></param>
         public Task<string[]> GetEntriesAsync(string configDir, string fileExtension)
         {
             return Task.Run(() =>
@@ -32,7 +32,10 @@ namespace Config4Net.Core.StoreService
                 var appName = ResolveAppName(Path.GetFileName(configDir));
                 using (var hkey = OpenAppRegistryKey(appName, false))
                 {
-                    return hkey?.GetValueNames() ?? new string[] {};
+                    var values =  hkey?.GetValueNames() ?? new string[] {};
+                    return string.IsNullOrEmpty(fileExtension)
+                        ? values
+                        : values.Where(value => value.EndsWith($".{fileExtension}")).ToArray();
                 }
             });
         }

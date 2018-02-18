@@ -42,6 +42,8 @@
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adapter\ConfigFile.cs" />
@@ -55,6 +57,7 @@
     <Compile Include="Config.cs" />
     <Compile Include="ConfigAttribute.cs" />
     <Compile Include="ConfigException.cs" />
+    <Compile Include="ConfigUtils.cs" />
     <Compile Include="Manager\ConfigDataFactoryImpl.cs" />
     <Compile Include="Manager\ConfigDataFactoryManagerImpl.cs" />
     <Compile Include="Manager\ConfigDataManagerImpl.cs" />
