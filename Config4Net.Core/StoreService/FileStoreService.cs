@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace Config4Net.Core.StoreService
 {
     /// <summary>
-    /// Save and load config data from file system.
+    ///     Save and load config data from file system.
     /// </summary>
     public abstract class FileStoreService : IStoreService
     {

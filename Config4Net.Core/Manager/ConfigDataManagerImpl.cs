@@ -1,10 +1,8 @@
-﻿using Config4Net.Utils;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
-using System.Reflection;
+using Config4Net.Utils;
+using Newtonsoft.Json;
 
 namespace Config4Net.Core.Manager
 {
@@ -58,21 +56,8 @@ namespace Config4Net.Core.Manager
 
             lock (_configMap)
             {
-                foreach (var configPair in _configMap)
-                {
-                    SaveConfig(configPair.Key, configPair.Value);
-                }
+                foreach (var configPair in _configMap) SaveConfig(configPair.Key, configPair.Value);
             }
-        }
-
-        private void SaveConfig(string key, object configData)
-        {
-            var configFile = Settings.ConfigFileFactory.Create(key, configData);
-            var configFileAsString = Settings.ConfigFileAdapter.ToString(configFile);
-            var configFilePath = Path.Combine(
-                Settings.ConfigDir,
-                Settings.ConfigFileNameFactory.Create(configFile, Settings.ConfigFileExtension));
-            Settings.StoreService.SaveAsync(configFilePath, configFileAsString).Wait();
         }
 
         public void Load()
@@ -90,7 +75,6 @@ namespace Config4Net.Core.Manager
             {
                 _configMap.Clear();
                 foreach (var file in entryFiles)
-                {
                     try
                     {
                         LoadConfigDataFrom(file);
@@ -99,8 +83,17 @@ namespace Config4Net.Core.Manager
                     {
                         OnLoadConfigDataFail(ex);
                     }
-                }
             }
+        }
+
+        private void SaveConfig(string key, object configData)
+        {
+            var configFile = Settings.ConfigFileFactory.Create(key, configData);
+            var configFileAsString = Settings.ConfigFileAdapter.ToString(configFile);
+            var configFilePath = Path.Combine(
+                Settings.ConfigDir,
+                Settings.ConfigFileNameFactory.Create(configFile, Settings.ConfigFileExtension));
+            Settings.StoreService.SaveAsync(configFilePath, configFileAsString).Wait();
         }
 
         private void OnLoadConfigDataFail(Exception exception)
@@ -122,7 +115,7 @@ namespace Config4Net.Core.Manager
             var configFileAsString = Settings.StoreService.LoadAsync(file).Result;
             var configFile = Settings.ConfigFileAdapter.ToConfigFile(configFileAsString);
             _configMap.Add(
-                configFile.Metadata.Key, 
+                configFile.Metadata.Key,
                 new ConfigDataCheckerImpl(Settings.PreventNullReference).Check(configFile.ConfigData));
         }
     }

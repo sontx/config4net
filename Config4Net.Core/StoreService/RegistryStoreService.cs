@@ -8,19 +8,19 @@ using Microsoft.Win32;
 namespace Config4Net.Core.StoreService
 {
     /// <summary>
-    /// Save and load config data from win32 registry.
+    ///     Save and load config data from win32 registry.
     /// </summary>
     public sealed class RegistryStoreService : IStoreService
     {
         private const string RootKeyName = "Software";
 
         /// <summary>
-        /// Uses app name instead of resolving from config directory.
+        ///     Uses app name instead of resolving from config directory.
         /// </summary>
         public bool IsUseAppName { get; set; }
 
         /// <summary>
-        /// Get saved entries from registry.
+        ///     Get saved entries from registry.
         /// </summary>
         /// <param name="configDir">Uses to resolve registry key that saved entries.</param>
         /// <param name="fileExtension"></param>
@@ -32,7 +32,7 @@ namespace Config4Net.Core.StoreService
                 var appName = ResolveAppName(Path.GetFileName(configDir));
                 using (var hkey = OpenAppRegistryKey(appName, false))
                 {
-                    var values =  hkey?.GetValueNames() ?? new string[] {};
+                    var values = hkey?.GetValueNames() ?? new string[] { };
                     return string.IsNullOrEmpty(fileExtension)
                         ? values
                         : values.Where(value => value.EndsWith($".{fileExtension}")).ToArray();
@@ -54,14 +54,26 @@ namespace Config4Net.Core.StoreService
             });
         }
 
+        /// <inheritdoc />
+        public Task<string> LoadAsync(string filePath)
+        {
+            return Task.Run(() =>
+            {
+                var appName = ResolveAppName(GetDirectoryName(filePath));
+                using (var hkey = OpenAppRegistryKey(appName, false))
+                {
+                    var key = ResolveKey(filePath);
+                    return hkey?.GetValue(key, "").ToString();
+                }
+            });
+        }
+
         private RegistryKey OpenAppRegistryKey(string appName, bool writable)
         {
             var rootKey = Registry.CurrentUser.OpenSubKey(RootKeyName, true);
             if (rootKey != null && rootKey.GetSubKeyNames().Any(keyName =>
-                string.Compare(keyName, appName, StringComparison.InvariantCultureIgnoreCase) == 0))
-            {
+                    string.Compare(keyName, appName, StringComparison.InvariantCultureIgnoreCase) == 0))
                 return rootKey.OpenSubKey(appName, writable);
-            }
 
             return rootKey?.CreateSubKey(appName);
         }
@@ -85,20 +97,6 @@ namespace Config4Net.Core.StoreService
         private string GetDirectoryName(string filePath)
         {
             return Path.GetFileName(Path.GetDirectoryName(filePath));
-        }
-
-        /// <inheritdoc />
-        public Task<string> LoadAsync(string filePath)
-        {
-            return Task.Run(() =>
-            {
-                var appName = ResolveAppName(GetDirectoryName(filePath));
-                using (var hkey = OpenAppRegistryKey(appName, false))
-                {
-                    var key = ResolveKey(filePath);
-                    return hkey?.GetValue(key, "").ToString();
-                }
-            });
         }
     }
 }

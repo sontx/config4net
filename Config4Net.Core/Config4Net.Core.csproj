@@ -54,6 +54,7 @@
     <Compile Include="Adapter\IMetadata.cs" />
     <Compile Include="Adapter\IConfigFile.cs" />
     <Compile Include="Adapter\Metadata.cs" />
+    <Compile Include="Config.Api.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="ConfigAttribute.cs" />
     <Compile Include="ConfigException.cs" />

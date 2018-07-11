@@ -1,6 +1,6 @@
-﻿using Config4Net.Utils;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Reflection;
+using Config4Net.Utils;
 
 namespace Config4Net.Core.Manager
 {

@@ -1,18 +1,19 @@
-﻿using Config4Net.Core.Manager;
-using System;
+﻿using System;
+using Config4Net.Core.Manager;
 
 namespace Config4Net.Core
 {
     /// <summary>
-    /// Settings for <see cref="Config"/>.
+    ///     Settings for <see cref="Config" />.
     /// </summary>
     public class Settings : ConfigDataManagerSettings
     {
-        private readonly ApplicationClosingEventWrapper _applicationClosingEventWrapper = new ApplicationClosingEventWrapper();
+        private readonly ApplicationClosingEventWrapper _applicationClosingEventWrapper =
+            new ApplicationClosingEventWrapper();
 
         /// <summary>
-        /// The receiver application closing event that should be triggered when the
-        /// application is shutting down.
+        ///     The receiver application closing event that should be triggered when the
+        ///     application is shutting down.
         /// </summary>
         public IApplicationClosingEvent ApplicationClosingEvent
         {
@@ -21,30 +22,30 @@ namespace Config4Net.Core
         }
 
         /// <summary>
-        /// Auto register type whenever there have a request configuration data from an unkown type.
+        ///     Auto register type whenever there have a request configuration data from an unkown type.
         /// </summary>
         public bool AutoRegisterConfigType { get; set; }
 
         /// <summary>
-        /// Configuration data to files when application is closing automatically.
+        ///     Configuration data to files when application is closing automatically.
         /// </summary>
         public bool SaveWhenApplicationClosing { get; set; }
 
         /// <summary>
-        /// If it's true, the library will use app name as a config key as default.
-        /// Otherwise, the library will use config's class name as default.
+        ///     If it's true, the library will use app name as a config key as default.
+        ///     Otherwise, the library will use config's class name as default.
         /// </summary>
-        /// <seealso cref="AppName"/>
+        /// <seealso cref="AppName" />
         public bool PreferAppNameAsKey { get; set; }
 
         /// <summary>
-        /// The write file timeout in milliseconds.
+        ///     The write file timeout in milliseconds.
         /// </summary>
         public int WriteFileTimeout { get; set; }
 
         /// <summary>
-        /// Gets or sets app name that could be used as default key when the request configuration key
-        /// is missing.
+        ///     Gets or sets app name that could be used as default key when the request configuration key
+        ///     is missing.
         /// </summary>
         public string AppName { get; set; }
 

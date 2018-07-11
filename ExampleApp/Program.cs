@@ -25,7 +25,7 @@ namespace ExampleApp
             var girlfriend = Config.Default.Get<GirlfriendSettings>();
             // Build UI from config instance
             var window = UiManager.Default.Build<IWindowContainer>(girlfriend);
-            ConfigUtils.Get<GirlfriendSettings>();
+            Config.Default.Get<GirlfriendSettings>();
             Application.Run((Form)window);
         }
 

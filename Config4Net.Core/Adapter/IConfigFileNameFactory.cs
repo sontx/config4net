@@ -3,12 +3,12 @@
 namespace Config4Net.Core.Adapter
 {
     /// <summary>
-    /// Creates config file name.
+    ///     Creates config file name.
     /// </summary>
     public interface IConfigFileNameFactory
     {
         /// <summary>
-        /// Creates config file name.
+        ///     Creates config file name.
         /// </summary>
         string Create(IConfigFile configFile, string extension);
     }

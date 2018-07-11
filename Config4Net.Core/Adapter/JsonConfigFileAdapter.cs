@@ -1,7 +1,7 @@
-﻿using Config4Net.Utils;
+﻿using System;
+using Config4Net.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
 
 namespace Config4Net.Core.Adapter
 {

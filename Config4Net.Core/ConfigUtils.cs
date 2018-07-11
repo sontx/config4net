@@ -1,21 +1,21 @@
-﻿using Config4Net.Core.Manager;
-using Config4Net.Core.StoreService;
-using System.IO;
+﻿using System.IO;
 using System.IO.Compression;
 using System.Text;
 using System.Threading.Tasks;
+using Config4Net.Core.Manager;
+using Config4Net.Core.StoreService;
 
 namespace Config4Net.Core
 {
     /// <summary>
-    /// Utilities for <see cref="Config"/> that uses <see cref="Config.Default"/>.
+    ///     Utilities for <see cref="Config" /> that uses <see cref="Config.Default" />.
     /// </summary>
     public static class ConfigUtils
     {
         /// <summary>
-        /// Backups all current configuration files to a zip file.
+        ///     Backups all current configuration files to a zip file.
         /// </summary>
-        /// <param name="config">Backups from this <see cref="Config"/> instance.</param>
+        /// <param name="config">Backups from this <see cref="Config" /> instance.</param>
         /// <param name="zipFilePath">Zip file that will save backup data.</param>
         public static Task BackupToZipAsync(this Config config, string zipFilePath)
         {
@@ -43,15 +43,16 @@ namespace Config4Net.Core
             {
                 var configFileAsString = config.Settings.StoreService.LoadAsync(entry).Result;
                 var configFile = config.Settings.ConfigFileAdapter.ToConfigFile(configFileAsString);
-                var configFileName = config.Settings.ConfigFileNameFactory.Create(configFile, config.Settings.ConfigFileExtension);
+                var configFileName =
+                    config.Settings.ConfigFileNameFactory.Create(configFile, config.Settings.ConfigFileExtension);
                 storeService.SaveAsync(Path.Combine(directoryPath, configFileName), configFileAsString).Wait();
             }
         }
 
         /// <summary>
-        /// Restores all configurations from zip file to <see cref="ConfigDataManagerSettings.ConfigDir"/>.
+        ///     Restores all configurations from zip file to <see cref="ConfigDataManagerSettings.ConfigDir" />.
         /// </summary>
-        /// <param name="config">Restores to this <see cref="Config"/> instance.</param>
+        /// <param name="config">Restores to this <see cref="Config" /> instance.</param>
         /// <param name="zipFilePath">Zip file that contains backup data.</param>
         public static Task RestoreFromZipAsync(this Config config, string zipFilePath)
         {

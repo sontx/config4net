@@ -6,7 +6,7 @@ namespace Config4Net.Core.Manager
     internal class ConfigDataFactoryManagerImpl : IConfigDataFactoryManager
     {
         private readonly Dictionary<Type, IConfigDataFactory> _factoryMap = new Dictionary<Type, IConfigDataFactory>();
-        
+
         public void Register(Type configType, IConfigDataFactory factory)
         {
             lock (this)

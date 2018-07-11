@@ -1,18 +1,15 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Reflection;
-using Config4Net.Utils;
 
 namespace Config4Net.Core.Manager
 {
     /// <summary>
-    /// Default implementation for <see cref="IConfigDataFactory"/> that creates a default instance
-    /// from a giving type uses the default constructor.
+    ///     Default implementation for <see cref="IConfigDataFactory" /> that creates a default instance
+    ///     from a giving type uses the default constructor.
     /// </summary>
     internal class ConfigDataFactoryImpl : IConfigDataFactory
     {
-        private readonly Type _configType;
         private readonly IConfigDataChecker _configDataChecker;
+        private readonly Type _configType;
 
         public ConfigDataFactoryImpl(Type configType, IConfigDataChecker configDataChecker)
         {
