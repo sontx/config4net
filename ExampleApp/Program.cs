@@ -51,7 +51,7 @@ namespace ExampleApp
         private class Contact
         {
             [Showable]
-            [Memo(VerticalScroll = true)]
+            [Memo(VerticalScroll = true, Height = 50)]
             public string Address { get; set; }
 
             [Showable(Description = "Don't forget it!!")]

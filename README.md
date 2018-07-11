@@ -7,6 +7,9 @@ UiManager.Default.Build<IWindowContainer>(awesomeAppConfig).Show();
 
 ![](https://2.bp.blogspot.com/-qFPl7LZA9wk/Wj4dzwdnslI/AAAAAAAATNc/rm9oBO1VWMchEGar_EmANktq2is82FHhACLcBGAs/s1600/Untitled+Diagram.png)
 
+[ExampleApp](https://github.com/sontx/config4net/tree/master/ExampleApp)
+![](https://4.bp.blogspot.com/-HWgnRsizfXc/W0WNSJsqFRI/AAAAAAAAVU0/ERafdp88Gyku0Q4cct7nlxPEuna_ud3agCLcBGAs/s1600/Capture.PNG)
+
 ## Getting Started
 ### Define a config class.
 ```cs
