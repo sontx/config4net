@@ -1,4 +1,7 @@
 # Config4Net
+
+**Deprecated**, use https://github.com/sontx/blackcat instead
+
 ``` cs
 var awesomeAppConfig = Config.Default.Get<AwesomeAppConfig>();
 UiManager.Default.Build<IWindowContainer>(awesomeAppConfig).Show();
